@@ -1,0 +1,21 @@
+{
+  "plugins": ["stylelint-declaration-strict-value"],
+  "reportDescriptionlessDisables": true,
+  "reportNeedlessDisables": true,
+  "rules": {
+    "color-no-hex": true,
+    "color-named": "never",
+    "function-disallowed-list": ["rgb", "rgba", "hsl", "hsla", "hwb", "lab", "lch", "oklab", "oklch", "color"],
+    "unit-disallowed-list": [
+      ["px", "rem", "em", "pt", "ms", "s"],
+      { "ignoreMediaFeatureNames": { "px": ["/width$/", "/height$/"], "rem": ["/width$/", "/height$/"], "em": ["/width$/", "/height$/"] } }
+    ],
+    "scale-unlimited/declaration-strict-value": [
+      ["font", "font-family", "font-weight", "line-height", "z-index", "opacity", "box-shadow"],
+      {
+        "ignoreValues": ["/^(inherit|initial|unset|revert|normal|auto|none|0|1)$/"],
+        "disableFix": true
+      }
+    ]
+  }
+}
