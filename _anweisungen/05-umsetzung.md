@@ -1,27 +1,27 @@
-# Stufe 5: Umsetzung bis Release
+# Stufe 5: Umsetzung
 
 Voraussetzung: Status `refined`, Dokument liegt in `anforderungen/`. Konkrete Befehle (Tests, Start, Deploy) stehen in `_kontext/projekt.md`.
 
 | Schritt | Wer | Ergebnis |
 |---|---|---|
 | 5a Go | Nutzer | Nummer vergeben, Status `in progress` |
-| 5b Plan | Agent schreibt, Nutzer gibt frei | Abschnitt `# Umsetzungsplan` |
+| 5b Plan | Agent schreibt, Rollen prüfen, Nutzer gibt frei | Abschnitt `# Umsetzungsplan`, Zusammenfassung für den Nutzer |
 | 5c Test zuerst | Agent | roter Test, Testnachweis „Rot" |
 | 5d Umsetzen | Agent | Änderung nach Plan, Entscheidungen und UI-Richtlinie |
-| 5e Grün und Prüfung | Agent | alle Tests grün, Testnachweis „Grün", Kriterien abgehakt |
-| 5f Abnahme | Nutzer | Status `review` → Abnahme |
-| 5g Abschluss | Agent + Nutzer | Commit durch den Nutzer, Status `done`, Dokument in `done/` |
-| 5h Rückblick | Agent | Erkenntnisse für Projekt bzw. Template |
+| 5e Grün | Agent | alle Tests und Prüflauf grün, Testnachweis „Grün", Status `qa` |
+
+Danach: Stufe 6 (QA), Stufe 7 (Abnahme), Stufe 8 (Release).
 
 ## 5a: Go
 
 -   Erst nach ausdrücklichem **„Go"** des Nutzers — vorher kein Code.
 -   **Nummer vergeben:** höchste vergebene Nummer in `anforderungen/` und `anforderungen/done/` + 1. Datei umbenennen in `<Nr>-<kurzer-name>.md`, Nummer **dreistellig mit führenden Nullen** (z. B. `007-boulder-log.md`), damit die Dateien richtig sortiert werden. Der Ordner eines Entwurfs (`mockups/<kurzer-name>/`) wird nicht umbenannt.
+-   **Branch** `feature/<Nr>-<kurzer-name>` von `main` anlegen. Der Agent darf Branches anlegen und wechseln; Commits, Zusammenführen und Tags macht der Nutzer.
 -   Status `in progress`.
 
 ## 5b: Plan
 
-Der Agent schreibt den Plan in den Abschnitt `# Umsetzungsplan` — **knapp**, ohne zu wiederholen, was in der Anforderung schon steht:
+Der Agent schreibt den Plan in den Abschnitt `# Umsetzungsplan` des Anforderungsdokuments — **keine eigene Datei**, **knapp**, ohne zu wiederholen, was in der Anforderung schon steht:
 
 1.  **Schritte** in Reihenfolge, jeder klein genug für einen Testlauf.
 2.  **Betroffene Dateien** — bestehende und neue.
@@ -42,14 +42,31 @@ Ist etwas davon offen: nicht anfangen, sondern mit dem Nutzer klären — ggf. z
 
 **Grundsatzfrage** im Plan (Architektur, Verhalten, Umfang) → zurück ins Refinement.
 
-Abschluss: Der **Nutzer gibt den Plan frei.** Erst dann folgt 5c.
+**Plan prüfen**, bevor er dem Nutzer vorgelegt wird:
+
+1.  **Selbstprüfung — immer:** Der Agent prüft den Plan mit den Prüfpunkten der Rollen (`_anweisungen/rollen/`), soweit sie den Plan betreffen, und bessert nach.
+2.  **Prüfung durch Rollen** — unabhängige Prüfer mit frischem Blick, die nur lesen (in Claude Code als Unteragenten unter `.claude/agents/`; ohne Unteragenten: eigene Sitzung je Rolle):
+    -   **Architekt** und **Senior Dev:** bei neuem Projekt oder Grundgerüst, neuen externen Abhängigkeiten oder einem Plan ab etwa fünf Schritten.
+    -   **DevOps** zusätzlich, wenn der Plan CI, Hosting, Auslieferung oder das Release-Modell berührt.
+    -   Sonst genügt die Selbstprüfung.
+3.  **Befunde einarbeiten:** blockierende immer, empfohlene in der Regel; was nicht übernommen wird, mit Grund im Plan unter „Annahmen und Risiken".
+4.  **Widersprechen sich Rollen** oder berührt ein Befund eine Entscheidung der Anforderung: nicht selbst auflösen — dem Nutzer als Entscheidung vorlegen, mit beiden Sichtweisen in Alltagssprache.
+
+**Zusammenfassung für den Nutzer** — kurz, in Alltagssprache, nicht im Dokument, sondern im Gespräch:
+
+-   **Was passiert:** drei bis fünf Sätze.
+-   **Was du entscheiden oder liefern musst** (z. B. eine Einstellung bestätigen, einmal einen Befehl ausführen).
+-   **Was riskant ist** und wie damit umgegangen wird.
+-   **Wer geprüft hat** und was sich dadurch am Plan geändert hat.
+
+Abschluss: Der **Nutzer gibt den Plan frei** — er beurteilt Umfang, Entscheidungen und Risiken; die technische Güte sichern Selbstprüfung und Rollen. Erst dann folgt 5c.
 
 ## 5c: Test zuerst (rot)
 
 -   Wo sinnvoll, zuerst einen Test schreiben, der das gewünschte Verhalten (bei Bugs: die Regression) absichert — Art laut Teststrategie der Anforderung.
 -   Der Agent führt die Tests selbst aus; der neue Test muss **ohne die Änderung rot** sein.
 -   Ergebnis unter `# Testnachweis → Rot`: Befehl, Anzahl bestanden/fehlgeschlagen, Namen der roten Tests.
--   Lässt sich ein Kriterium nicht sinnvoll automatisch testen: begründen, Prüfung erfolgt manuell in 5f.
+-   Lässt sich ein Kriterium nicht sinnvoll automatisch testen: begründen, Prüfung erfolgt manuell in der Abnahme (Stufe 7).
 
 ## 5d: Umsetzen
 
@@ -59,34 +76,21 @@ Abschluss: Der **Nutzer gibt den Plan frei.** Erst dann folgt 5c.
 -   **Neue Grundsatzfrage** (Architektur, Verhalten, Umfang) → nicht selbst entscheiden: zurück ins Refinement, Nutzer fragen, Entscheidung festhalten.
 -   Fehlt etwas im Design-System: wie in `_anweisungen/03-design.md` (benennen, lokal umsetzen, als Idee vermerken).
 
-## 5e: Grün und Prüfung
+## 5e: Grün
 
 -   Alle Tests grün — vom Agenten ausgeführt. Ergebnis unter `# Testnachweis → Grün`.
--   Jedes Akzeptanzkriterium prüfen und abhaken; was nur manuell prüfbar ist, für 5f markieren.
+-   Jedes Akzeptanzkriterium prüfen und abhaken; was nur manuell prüfbar ist, für die Abnahme (Stufe 7) markieren.
 -   **Prüflauf der UI-Richtlinie** ausführen (Befehl in `_kontext/projekt.md`) — Ergebnis unter `# Testnachweis → UI-Richtlinie`. Ausnahmen sind markiert und in `_kontext/design.md` eingetragen.
 -   **Kann der Prüflauf nicht laufen** (z. B. ohne Container und ohne CI): Der Agent sucht selbst nach festen Werten und Inline-Styles im geänderten Code und vermerkt im Testnachweis, dass der Prüflauf nicht lief.
+-   Status `qa`; weiter mit `_anweisungen/06-qa.md`.
 
-## 5f: Abnahme
+## Commits
 
--   Status `review`.
--   Der Nutzer prüft, was sich nicht automatisch prüfen lässt (z. B. am Gerät). Befunde → zurück zu 5d.
--   Zur UI-Richtlinie bleibt von Hand zu prüfen, was der Prüflauf nicht erkennt: z. B. eine eigene Komponente, wo das Design-System schon eine hat.
-
-## 5g: Abschluss
-
--   **Der Agent committet nie.** Er schlägt eine Commit-Nachricht vor:
+-   **Der Agent committet nie.** Er schlägt an sinnvollen Stellen (z. B. nach jedem grünen Schritt des Plans) eine Commit-Nachricht vor:
 
     ```
     <typ> - <kurzer-name>: <details>
     ```
 
     `typ` ∈ `feat`, `fix`, `test`, `refactor`, `chore`, `design`.
--   Der Nutzer committet. Release nach dem Modell in `_kontext/projekt.md`.
--   Status `done`; Dokument nach `anforderungen/done/` verschieben (mit Nummer).
-
-## 5h: Rückblick
-
-Kurz festhalten, was gehakt hat:
-
--   **Projekt betreffend** → `_kontext/` ergänzen.
--   **Prozess betreffend** → als Vorschlag fürs Template notieren (nicht `_anweisungen/` im Projekt ändern).
+-   Der Nutzer committet auf dem Feature-Branch.

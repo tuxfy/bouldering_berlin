@@ -1,5 +1,5 @@
 -   **Title** Kurzer Titel
--   **Status** idea | new | refined | in progress | review | done
+-   **Status** idea | new | refined | in progress | qa | review | accepted | done
 
 # Idee
 
@@ -80,3 +80,18 @@ Was der Nutzer sieht und tut.
 -   **Rot** (vor der Änderung): `<Befehl>` — <n> bestanden / <m> fehlgeschlagen; rot: `<Testname>`, …
 -   **Grün** (nach der Änderung): `<Befehl>` — <n> bestanden / 0 fehlgeschlagen
 -   **UI-Richtlinie:** `<Befehl>` — 0 Befunde; Ausnahmen: <keine | Liste> *(lief der Prüflauf nicht: Grund und manuelle Prüfung)*
+
+# QA
+
+*Vom Agenten in Stufe 6 ergänzt.*
+
+-   **Automatisch:** je Prüfung Befehl und Ergebnis; nicht Eingerichtetes nennen
+-   **Geprüft durch:** <Rollen>
+-   **Befunde:** je Befund kurz, was damit passiert ist
+
+# Abnahme
+
+*In Stufe 7 ergänzt.*
+
+-   **Abgenommen am:** <Datum> — <was geprüft wurde>
+-   **Release:** <version>

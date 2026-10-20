@@ -1,6 +1,6 @@
 # Design
 
-*Beim Anlegen eines Projekts ergänzen.*
+*In Stufe 0 (`_anweisungen/00-einrichtung.md`) ergänzen.*
 
 ## Design-System
 

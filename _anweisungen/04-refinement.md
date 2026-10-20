@@ -5,16 +5,15 @@ Aus der geklärten (und ggf. entworfenen) Idee wird eine **umsetzbare Anforderun
 ## Was der Agent macht
 
 1.  **Entscheidungen bündeln** — alles, was in Klärung, Entwurf und hier festgelegt wird, in den Abschnitt „Entscheidungen" (je Punkt kurz: was, ggf. warum). Beantwortete Fragen wandern aus „Offene Fragen" dorthin. Dabei prüfen, ob Hintergrund und Design-Brief noch zum aktuellen Stand passen — besonders nach einer Auffrischung des Design-Systems (z. B. Verweise auf Teile, die es nicht mehr gibt).
-2.  **Stack und Technik klären** — vor `refined`, damit in der Umsetzung keine Architekturentscheidung ohne den Nutzer fällt. Mindestens, soweit für diese Anforderung relevant:
-    -   Wie wird gebaut und ausgeliefert (z. B. statisch, ohne Build)?
-    -   Wie kommt das Design-System zur Laufzeit in die App (z. B. welche Dateien werden eingebunden)? Werden Dateien dafür kopiert: Kopierbefehl in `_kontext/projekt.md` festhalten und beim Auffrischen des Design-Systems mit ausführen.
-    -   Wie wird getestet (Werkzeuge, Befehle)?
-    -   Wie läuft der Prüflauf der UI-Richtlinie (Konfiguration aus `_anweisungen/pruefung/`, Befehl, CI)?
+2.  **Technik klären** — vor `refined`, damit in der Umsetzung keine Architekturentscheidung ohne den Nutzer fällt. Grundlage sind die Festlegungen aus Stufe 0 in `_kontext/projekt.md`; hier nur, was **diese Anforderung** zusätzlich braucht oder wo sie abweicht, soweit relevant:
+    -   Neue Bausteine, Bibliotheken oder Werkzeuge?
     -   Wie werden Daten gespeichert?
-    -   Wie wird released (falls in `_kontext/projekt.md` noch nicht festgelegt)?
     -   Welche externen Abhängigkeiten gibt es (Schnittstellen, Dienste, Bibliotheken, auch Hosting und Auslieferung)? Für jede: ist das How-to bekannt oder muss es vor der Umsetzung geklärt werden?
-    
-    Der Agent schlägt vor, **der Nutzer entscheidet**. Ergebnis in „Entscheidungen"; was für das ganze Projekt gilt, zusätzlich in `_kontext/projekt.md`.
+    -   Was lässt sich nur am echten Gerät prüfen?
+
+    Fehlt in `_kontext/projekt.md` etwas Grundlegendes (Stack, Prüfungen, Auslieferung, Abnahme): nicht in der Anforderung entscheiden, sondern Stufe 0 für diesen Teil nachholen.
+
+    Der Agent schlägt vor, **der Nutzer entscheidet**. Ergebnis in „Entscheidungen".
 3.  **Verhalten beschreiben** — was der Nutzer sieht und tut, aus seiner Sicht. Bei Design aus dem Entwurf.
 4.  **Akzeptanzkriterien** — jedes prüfbar und abgrenzbar. Standardmäßig enthalten:
     -   Test für das abzusichernde Verhalten geschrieben — ohne die Änderung rot
@@ -32,7 +31,7 @@ Aus der geklärten (und ggf. entworfenen) Idee wird eine **umsetzbare Anforderun
 `refined` erst, wenn alles erfüllt ist:
 
 -   [ ] Keine offenen Fragen
--   [ ] Entscheidungen festgehalten, inkl. Stack und Technik
+-   [ ] Entscheidungen festgehalten, inkl. Technik; Grundlegendes steht in `_kontext/projekt.md` (Stufe 0)
 -   [ ] Verhalten beschrieben
 -   [ ] Jedes Akzeptanzkriterium prüfbar und mit Teststrategie
 -   [ ] Abgrenzung formuliert
