@@ -1,0 +1,14 @@
+title = "Bouldering Berlin Toolkit — gitleaks"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Abhängigkeiten, vendorte/generierte Dateien, Prozess-Ordner und Test-Fixtures"
+paths = [
+  '''node_modules/''',
+  '''app/vendor/''',
+  '''_kontext/designsystem/''',
+  '''package-lock\.json''',
+  '''tests/fixtures/''',
+]

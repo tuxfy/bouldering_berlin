@@ -1,0 +1,4 @@
+/* Fixture: absichtlicher Verstoß gegen die UI-Richtlinie (Hex statt Token). */
+.x {
+  color: #ffffff;
+}

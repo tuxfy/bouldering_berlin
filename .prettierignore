@@ -1,0 +1,14 @@
+node_modules
+app/vendor
+app/sw-precache.js
+tests/fixtures
+package-lock.json
+_anweisungen
+_kontext
+anforderungen
+releases
+.claude
+test-results
+playwright-report
+coverage
+**/*.md

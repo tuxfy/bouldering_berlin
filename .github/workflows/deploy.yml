@@ -1,0 +1,66 @@
+name: Deploy
+
+# Auslieferung ist an das Release-Tag gebunden (Release-Modell: rc/<version> -> Tag v<version>).
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+env:
+  GITLEAKS_VERSION: "8.21.2"
+
+jobs:
+  # Gate: erst alle Prüfungen, dann (und nur dann) ausliefern.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: gitleaks installieren (gepinnt)
+        run: |
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+            | sudo tar -xz -C /usr/local/bin gitleaks
+      - run: npm test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # Precache-Liste + Cache-Kennung aus dem Ordner app/ erzeugen, Version = Release-Tag.
+      - name: Service Worker erzeugen (Version = Tag)
+        run: SW_VERSION="${GITHUB_REF_NAME}" node scripts/gen-sw.mjs
+      - name: Jekyll abschalten
+        run: touch app/.nojekyll
+      - uses: actions/configure-pages@v5
+      # Ausgeliefert wird genau der Ordner app/ — keine Allowlist nötig.
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: app
+      - id: deployment
+        uses: actions/deploy-pages@v4

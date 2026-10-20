@@ -8,7 +8,7 @@ Welches zentrale Design-System das Projekt nutzt und wie es eingebunden ist (z. 
 
 - **System:** „Bouldering Berlin Toolkit" — Design-System der Marke, maßgebliche Fassung im Repo `tuxfy/design_system_bb`.
 - **Quelle:** als **Git-Submodul** unter `_kontext/designsystem/`. Wird im Projekt **nie bearbeitet** (Änderungen nur im Design-System-Repo selbst).
-- **Einbindung:** **CSS-Vertrag + Vanilla.** In die App kommen nur die ausgelieferten CSS-Dateien und Assets — per `npm run ds:copy` kopiert nach `vendor/designsystem/`:
+- **Einbindung:** **CSS-Vertrag + Vanilla.** In die App kommen nur die ausgelieferten CSS-Dateien und Assets — per `npm run ds:copy` kopiert nach `app/vendor/designsystem/`:
   - `tokens.css` (alle Tokens als CSS-Variablen),
   - `components/bundle.css` (Komponenten-Klassen `.btn`, `.stepper`, `.tile`, `.stage` … + Schrift-/Motion-Atome),
   - `assets/Icons/`, `assets/Logos/`.

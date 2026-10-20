@@ -41,14 +41,14 @@ Eine Sammlung kleiner, mobiler Tools rund ums Bouldern („Bouldering Berlin Too
 
 **Alle Prüfungen:** `npm test` — ruft alle oben genannten nacheinander auf, **lokal (im Container) und in der CI identisch**. Bewusst weggelassen: *(keine)*
 
-Hinweis UI-Prüflauf: nur **App-Stylesheets** prüfen (z. B. `src/**/*.css`), **nicht** die Kopie des Design-Systems unter `vendor/designsystem/`.
+Hinweis UI-Prüflauf: nur **App-Stylesheets** prüfen (`app/**/*.css`), **nicht** die Kopie des Design-Systems unter `app/vendor/designsystem/`.
 
 ## Befehle
 
 *Lokal starten (Abnahme), Design-System kopieren (falls nötig), weitere.*
 
-- **Lokal starten (Abnahme):** `npm start` → statischer Server (z. B. `npx serve`) auf `http://localhost:<port>`. `localhost` gilt als sicherer Kontext, daher funktioniert der Service Worker lokal.
-- **Design-System kopieren:** `npm run ds:copy` → kopiert die ausgelieferten Dateien aus dem Submodul `_kontext/designsystem/` (`tokens.css`, `components/bundle.css`, `assets/Icons/`, `assets/Logos/`) nach `vendor/designsystem/`. Stand (Submodul-Commit) in `_kontext/design.md` eintragen.
+- **Lokal starten (Abnahme):** `npm start` → erzeugt den Service Worker (`npm run sw:build`) und startet einen statischen Server (z. B. `npx serve`) auf dem Ordner `app/` unter `http://localhost:<port>`. `localhost` gilt als sicherer Kontext, daher funktioniert der Service Worker lokal.
+- **Design-System kopieren:** `npm run ds:copy` → kopiert die ausgelieferten Dateien aus dem Submodul `_kontext/designsystem/` (`tokens.css`, `components/bundle.css`, `assets/Icons/`, `assets/Logos/`) nach `app/vendor/designsystem/`. Stand (Submodul-Commit) in `_kontext/design.md` eintragen.
 - **Design-System aktualisieren:** `git submodule update --remote _kontext/designsystem`, danach `npm run ds:copy` und neuen Commit-Stand in `design.md`.
 - **Dev-Werkzeuge installieren:** `npm ci` (aus der Lock-Datei).
 

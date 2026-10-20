@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="de" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#111111" />
+    <title>Bouldering Berlin</title>
+
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link
+      rel="icon"
+      href="./vendor/designsystem/assets/Logos/app-icon-192.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="./vendor/designsystem/assets/Logos/app-icon-192.png"
+    />
+
+    <link rel="stylesheet" href="./vendor/designsystem/tokens.css" />
+    <link rel="stylesheet" href="./vendor/designsystem/components/bundle.css" />
+    <link rel="stylesheet" href="./app.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="tool-header">
+        <h1 class="tool-header__title">Bouldering Berlin</h1>
+      </header>
+      <main class="app-main">
+        <ul class="tool-grid" data-testid="tool-list">
+          <!-- Tools folgen als eigene Anforderungen -->
+        </ul>
+        <p class="hint" data-testid="tool-list-empty">Noch keine Tools.</p>
+      </main>
+    </div>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

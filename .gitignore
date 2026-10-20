@@ -1,2 +1,13 @@
 .DS_Store
 .qa/
+
+# Abhängigkeiten
+node_modules/
+
+# Generiert (aus dem Ordner app/ erzeugt, nicht eingecheckt)
+app/sw-precache.js
+
+# Testausgaben
+test-results/
+playwright-report/
+coverage/

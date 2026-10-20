@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "rc/*", "feature/*"]
+  pull_request:
+
+# Prüfungen laufen ohne Recht zum Ausliefern.
+permissions:
+  contents: read
+
+env:
+  GITLEAKS_VERSION: "8.21.2"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: gitleaks installieren (gepinnt, gleiche Version wie check:secrets)
+        run: |
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+            | sudo tar -xz -C /usr/local/bin gitleaks
+      # Ein Befehl — identisch zu lokal (siehe _kontext/projekt.md):
+      - run: npm test
