@@ -4,11 +4,12 @@ title = "Bouldering Berlin Toolkit — gitleaks"
 useDefault = true
 
 [allowlist]
-description = "Abhängigkeiten, vendorte/generierte Dateien, Prozess-Ordner und Test-Fixtures"
+description = "Abhängigkeiten, vendorte/generierte Dateien, Prozess-Ordner und die eine Test-Dummy-Datei"
 paths = [
   '''node_modules/''',
   '''app/vendor/''',
   '''_kontext/designsystem/''',
   '''package-lock\.json''',
-  '''tests/fixtures/''',
+  # Eng gefasst: nur die bewusste Dummy-Datei der Negativprobe, nicht der ganze Fixture-Ordner.
+  '''tests/fixtures/secret/leak\.txt''',
 ]

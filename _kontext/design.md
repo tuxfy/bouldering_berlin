@@ -29,3 +29,12 @@ Töne pro Tool werden festgelegt, wenn das jeweilige Tool gebaut wird. Referenz 
 | Was | Wo im Projekt | Idee im Design-System vermerkt |
 |---|---|---|
 | *(noch keine)* | | |
+
+## Ausnahmen (feste Werte außerhalb von CSS)
+
+Der Stylelint-Prüflauf greift nur in CSS. An folgenden Stellen ist ein fester Farbwert technisch nötig, weil Meta-Tags und JSON keine CSS-Tokens (`var(--…)`) referenzieren können:
+
+| Stelle | Wert | Grund / Abgleich |
+|---|---|---|
+| `app/index.html` `<meta name="theme-color">` | `#111111` | Plattform-Vorgabe; entspricht `--color-bg` (= `--n-100` = `#111`). Bei Änderung des DS-Hintergrunds mitziehen. |
+| `app/manifest.webmanifest` `background_color`/`theme_color` | `#111111` | wie oben (Manifest ist JSON). |

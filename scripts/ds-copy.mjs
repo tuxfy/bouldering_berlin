@@ -44,7 +44,8 @@ for (const rel of ITEMS) {
   const to = join(DEST, rel);
   if (!existsSync(from)) continue; // optionale Assets (z. B. Icons) dürfen fehlen
   mkdirSync(dirname(to), { recursive: true });
-  cpSync(from, to, { recursive: true });
+  // READMEs des Design-Systems nicht mit ausliefern.
+  cpSync(from, to, { recursive: true, filter: (s) => !s.endsWith(".md") });
   console.log(`  ${rel}`);
 }
 

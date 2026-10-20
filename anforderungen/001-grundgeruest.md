@@ -1,5 +1,5 @@
 -   **Title** Grundgerüst
--   **Status** qa
+-   **Status** review
 
 # Idee
 
@@ -174,11 +174,25 @@ Gegenüber dem freigegebenen Plan, mit Grund (keine berührt eine Anforderungs-E
 -   **Rot** (vor der jeweiligen Änderung, test-first): `npx vitest run tests/unit/ds-copy.test.mjs` — 2 rot (Skript fehlt); `npx playwright test manifest.spec` — 1 rot („Manifest nicht erreichbar"); `offline.spec` — 1 rot (kein aktiver SW); `start.spec` — rot, da ohne `index.html` keine Seite ausgeliefert wird (Server-Readiness-Timeout). Negativproben belegen zusätzlich, dass Stylelint/ESLint/gitleaks bei einem Verstoß rot werden (`tests/unit/checks-fire.test.mjs`, 3 grün = die Prüfungen greifen).
 -   **Grün** (nach der Umsetzung): `npm test` — ein Befehl, alle Prüfungen grün: ESLint 0 Fehler · Prettier 0 · Stylelint 0 · Vitest **8/8** · E2E (Playwright, iPhone) **3/3** · gitleaks keine Funde.
 -   **Audit:** Prod (`--omit=dev`) **0** (blockierend sauber). Voller Audit: **5 High**, alle dev-only und unfixbar (`braces` ≤ 3.0.3 ohne Patch, transitiv über `stylelint`); wird nie ausgeliefert → als Warnung **hingenommen** (auf neueste `braces` aktualisiert, mehr nicht möglich).
--   **UI-Richtlinie:** `npm run check:ui` — **0 Befunde**; keine Ausnahmen. App-CSS nutzt nur Tokens; `app/vendor/**` ist ausgenommen.
+-   **UI-Richtlinie:** `npm run check:ui` — **0 Befunde**; keine CSS-Ausnahmen. App-CSS nutzt nur Tokens; `app/vendor/**` ist ausgenommen. Feste Farbwerte außerhalb von CSS (Meta/Manifest) sind als Ausnahme in `_kontext/design.md` dokumentiert.
+-   **Nach QA-Nacharbeit** (enge gitleaks-Ausnahme, Deploy ohne Submodul, Icons-README nicht ausgeliefert): `npm test` erneut **grün** — Vitest 8/8, E2E 3/3, Audit prod 0, gitleaks keine Funde.
 
 # QA
 
-*Vom Agenten in Stufe 6 ergänzt.*
+-   **Automatisch** (`npm test`, ein Befehl, lokal wie CI):
+    -   ESLint 0 Fehler · Prettier 0 · Stylelint (UI-Richtlinie) **0 Befunde**
+    -   Vitest **8/8** · Playwright (iPhone-Emulation) **3/3**
+    -   Audit: prod (`--omit=dev`) **0**; voller Audit **5 High**, alle dev-only (`braces`, unfixbar) — hingenommen
+    -   gitleaks: **keine Funde**
+    -   Barrierefreiheit (axe): **nicht eingerichtet** (optional); kommt bei Bedarf mit den ersten Tools.
+-   **Geprüft durch:** Reviewer, Security, Klicktester (alle nur lesend/bedienend). Screenshots: `.qa/grundgeruest/{start,offline}.png` (nicht committet).
+-   **Befunde:** keine blockierenden.
+    -   *Reviewer:* feste Farbe `#111111` in `theme-color`/Manifest → als Ausnahme in `_kontext/design.md` + Kommentar im HTML dokumentiert (Meta/JSON können keine Tokens nutzen).
+    -   *Security:* gitleaks-Ausnahme war zu breit (ganzer Fixture-Ordner) → auf die eine Dummy-Datei eingeengt. Deploy-Job holte das Submodul → `submodules` entfernt (nur eingechecktes `app/` wird ausgeliefert).
+    -   *Reviewer (Hinweis):* `assets/Icons/README.md` wurde mitausgeliefert → `ds-copy.mjs` filtert jetzt `.md`.
+    -   *Hinweise ohne Handlungsbedarf:* vierte Negativprobe (Audit) nur als Unit; `vitest` node-Umgebung (kein DOM-Unit nötig); SW-`state` „activating" beim Messen (Offline nachweislich ok); Touch-Ziele erst mit echten Tools relevant.
+    -   *Für später:* restriktive Meta-CSP mit den ersten Tools (Security-Hinweis); Dev-Audit-Warnung → Backlog-Idee `werkzeuge-aktualisieren`.
+    -   Nach den QA-Änderungen `npm test` erneut **grün** (siehe Testnachweis).
 
 # Abnahme
 
