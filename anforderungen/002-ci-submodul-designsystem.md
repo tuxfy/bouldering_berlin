@@ -170,4 +170,26 @@ Zwei **Hinweise** (nichts muss):
 | Sauberer Lauf vorhanden (`npm run check:clean`), in `_kontext/projekt.md` dokumentiert; er ist **ohne** die Korrektur rot und **mit** ihr grün | Sauberer Lauf |
 | Keine Abschwächung bestehender Prüfungen (nichts entfernt, nichts bedingt übersprungen, keine gelockerte Erwartung) | Review |
 
-*Der Umsetzungsplan für die Wiederaufnahme folgt nach Freigabe durch den Nutzer (Stufe 5b) unter `# Umsetzungsplan (Wiederaufnahme)`.*
+# Umsetzungsplan (Wiederaufnahme)
+
+*Vorschlag Stufe 5b — geprüft durch Senior Dev und DevOps, Befunde eingearbeitet. **Wartet auf Freigabe durch den Nutzer**; erst danach 5c.*
+
+1.  **Schritte (Reihenfolge):**
+    1.  **Sauberer Lauf als Werkzeug anlegen** — `scripts/check-clean.mjs` + npm-Script `check:clean` (eigenständig, **nicht** Teil von `npm test` → keine Rekursion). Das Skript: `git clone` des **lokalen Repos** (aktueller Commit) **ohne** `--recurse-submodules` in einen frischen Temp-Ordner (kein `cp`/`rsync` des Arbeitsverzeichnisses — sonst käme das lokal ausgecheckte Submodul mit), dort `npm ci` und `npm test`, danach `try/finally`-Aufräumen (auch bei rotem Lauf). Als Selbsttest einmal belegen, dass `_kontext/designsystem` im Temp **leer** ist (die load-bearing Eigenschaft). *Noch kein Rot/Grün — nur das Werkzeug.*
+    2.  **Rot-Nachweis dieser Korrektur (5c)** — Fall 1 in `tests/unit/ds-copy.test.mjs` auf `DS_SRC=tests/fixtures/designsystem` umstellen, Fixture **noch nicht** anlegen. `npx vitest run tests/unit/ds-copy.test.mjs` → **rot** (ds-copy.mjs bricht ab: Pflichtdateien in der Fixture fehlen). Testnachweis „Rot". **Nicht committen** (kein Commit mit rotem Test).
+        -   *Zusätzlich, als Beleg der fehlenden Prüfung:* `node scripts/check-clean.mjs` gegen den **noch nicht korrigierten** committeten Stand → **rot** (reproduziert die CI: ds-copy-Happy-Path ohne Submodul). Nur Nachweis, nicht committet.
+    3.  **Fixture anlegen (5d)** — `tests/fixtures/designsystem/` eingecheckt mit:
+        -   Pflichtdateien: `tokens.css`, `components/bundle.css`, `assets/Logos/app-icon-192.png`, `assets/Logos/app-icon-512.png` (PNGs: gültige, **minimale** Platzhalter — der Test prüft nur Existenz), ein Icon unter `assets/Icons/`.
+        -   React-Quellen-**Attrappen**: `components/bundle.js`, `components/src/<datei>` — müssen vorhanden sein, damit die Ausschluss-Prüfung echt greift (der Test behält `toBe(false)` für `bundle.js`/`src`).
+    4.  **Grün (5e)** — `npx vitest run tests/unit/ds-copy.test.mjs` grün; voller `npm test` grün; `npm run check:clean` **grün** (submodul-freier Klon). Testnachweis „Grün" + „UI-Richtlinie" (`check:ui` 0 Befunde, keine UI berührt). Erst dieser grüne Stand wird committet (Fixture + Teständerung + `check:clean` + `package.json` + `_kontext/projekt.md`). Status `qa`.
+2.  **Betroffene Dateien:**
+    -   neu: `scripts/check-clean.mjs`, `tests/fixtures/designsystem/…`
+    -   geändert: `package.json` (Script `check:clean`), `tests/unit/ds-copy.test.mjs` (Fall 1: `DS_SRC`→Fixture), `_kontext/projekt.md` (Sauberer Lauf in der Prüfungen-Tabelle **und** Voraussetzungen unter „Umgebung des Agenten")
+    -   unverändert: `scripts/ds-copy.mjs`, `app/vendor/designsystem/`, `.gitmodules`, `.github/workflows/*`, Fall 2 des Tests
+3.  **Testfälle (je Akzeptanzkriterium):** Fall 1 gegen Fixture grün; ohne Fixture rot (Rot-Nachweis); `bundle.js`/`src`-Attrappen **nicht** nach `dest` kopiert (Ausschluss bleibt wirksam); Fall 2 unverändert grün; `check:clean` rot (vor) → grün (nach).
+4.  **Entwurf → Code:** entfällt (kein Design, keine UI).
+5.  **Externe Abhängigkeiten / Umgebung:** keine neuen Pakete. `check:clean` braucht im Temp-Klon eine erreichbare npm-Registry (bzw. Cache) für `npm ci`, die Playwright-Browser (über geerbtes `PLAYWRIGHT_BROWSERS_PATH`, sonst Chromium im Klon nachinstallieren) und die `gitleaks`-Binär auf `PATH`. Im Agent-Container laut `_kontext/projekt.md` vorhanden; Voraussetzungen dort dokumentieren. **Risiko:** Ist die Registry im Container offline, scheitert `npm ci` im Klon — dann `npm ci --offline` gegen den Cache bzw. Einschränkung dokumentieren; im Zweifel in 5e Rücksprache.
+6.  **Annahmen und Risiken:**
+    -   Das echte Submodul ist für `npm test` nirgends sonst nötig (in der Klärung belegt; `check:clean` sichert das dauerhaft mit).
+    -   `check:clean` läuft **gegen den committeten Stand** (klont HEAD) — Rot vor der Korrektur daher nur als Nachweis; committet wird erst der grüne Stand.
+7.  **Nicht angefasst / Abgrenzung:** `scripts/ds-copy.mjs`, Vendor-Kopie, Submodul/`.gitmodules`, `ds:copy`-Ablauf, die App, die bereits erledigte Submodul-Entfernung in den Workflows. **Nur** der Sauberer Lauf wird aus den Stufe-0-Lücken mitgenommen (er erbringt den Rot-Nachweis); die ebenfalls fehlenden Leitplanken (Git-Hook vor dem Commit, Commit-Format-Prüfung) gehören in eine **eigene** Anforderung `leitplanken-ergaenzen` (Backlog), nicht hierher.
