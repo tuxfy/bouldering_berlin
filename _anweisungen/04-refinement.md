@@ -41,5 +41,5 @@ Aus der geklärten (und ggf. entworfenen) Idee wird eine **umsetzbare Anforderun
 
 ## Übergang
 
--   Bei `refined` wandert das Dokument von `anforderungen/backlog/` nach `anforderungen/` — **ohne Nummer**, Dateiname bleibt `<kurzer-name>.md`.
+-   Bei `refined` wandert das Dokument (auf dem Feature-Branch) von `anforderungen/backlog/` nach `anforderungen/` — **ohne Nummer**, Dateiname bleibt `<kurzer-name>.md`.
 -   Die Nummer wird erst beim **„Go"** vergeben (Stufe 5).

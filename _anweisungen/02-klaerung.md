@@ -1,5 +1,7 @@
 # Stufe 2: Klärung
 
+**Beginn:** Greift der Nutzer einen Eintrag auf, legt der Agent den Branch `feature/<kurzer-name>` (bei Bugs `fix/<kurzer-name>`) von `main` an; alle weiteren Stufen dieser Anforderung bis zur Abnahme laufen dort. Voraussetzung: Der Eintrag ist schon auf `main` (Backlog-Pull-Request zusammengeführt).
+
 Der Nutzer greift eine Idee auf. Bevor über Lösungen nachgedacht wird, klärt der Agent den **Rahmen**.
 
 ## Start
@@ -27,7 +29,7 @@ Der Nutzer greift eine Idee auf. Bevor über Lösungen nachgedacht wird, klärt 
 
     Bei einem **neuen Projekt** ohne bestehenden Stand gilt meist alles als änderbar — dann das kurz sagen statt vier Einzelfragen zu stellen.
 4.  **Offene Fragen sammeln** — als Liste, noch ohne Antworten.
-5.  **Weg vorschlagen**: Braucht es ein Design (→ Stufe 3)? Bei einem Bug: Ursache bestätigen ist Pflicht (siehe `_anweisungen/01-idee.md`, Weg eines Bugs).
+5.  **Weg vorschlagen**: Braucht es ein Design (→ Stufe 3)? Bei einem Bug: Ursache bestätigen und „Welche Prüfung hätte ihn finden müssen?" sind Pflicht (siehe `_anweisungen/01-idee.md`, Weg eines Bugs).
 
 ## Was noch nicht hineingehört
 

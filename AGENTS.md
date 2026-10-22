@@ -28,7 +28,16 @@ Prozess von der Idee bis zum Release — unabhängig von Sprache, Framework und 
 | 7. Abnahme | `review` → `accepted` | `_anweisungen/07-abnahme.md` |
 | 8. Release *(mehrere Anforderungen)* | `accepted` → `done` | `_anweisungen/08-release.md` |
 
-Branches: je Anforderung `feature/<Nr>-<kurzer-name>` (bei Bugs `fix/<Nr>-<kurzer-name>`) von `main`; nach der Abnahme in den Release-Kandidaten `rc/<version>`; beim Release nach `main` mit Tag `v<version>`. Ist im Projekt „Zusammenführen = Ausliefern" festgelegt, entfällt der Release-Kandidat (siehe `08-release.md`, Abkürzung).
+Branches — `main` ist beim Hoster geschützt; dorthin gelangt alles nur per Pull Request:
+
+| Branch | Zweck | Weg nach `main` |
+|---|---|---|
+| `backlog` | neue Ideen und Bugs (Stufe 1) | Pull Request, Nutzer führt zusammen |
+| `feature/<kurzer-name>` bzw. `fix/<kurzer-name>` | eine Anforderung ab ihrer Aufnahme (Stufe 2) bis zur Abnahme: Dokument, Plan, Code, QA | Pull Request in `rc/<version>` (Stufe 6/7) |
+| `rc/<version>` | Release-Kandidat: abgenommene Anforderungen, Release-Dokument | Pull Request nach `main` (Stufe 8), danach Tag `v<version>` |
+| `release/<version>-abschluss` | Abschluss nach dem Ausliefern: Status `done`, Release `released` | Pull Request |
+
+Ist im Projekt „Zusammenführen = Ausliefern" festgelegt, entfällt der Release-Kandidat (siehe `08-release.md`, Abkürzung).
 
 ## Regeln
 
@@ -42,8 +51,8 @@ Branches: je Anforderung `feature/<Nr>-<kurzer-name>` (bei Bugs `fix/<Nr>-<kurze
 -   **Abhängigkeiten und Werkzeuge** (Pakete, Browser für Tests u. ä.) installiert der Agent **selbst in seiner Umgebung** (z. B. im Container), nach Rückfrage — nie auf dem Rechner des Nutzers und nie als Aufgabe an den Nutzer.
     -   Neue Pakete nur, wenn sie im freigegebenen Umsetzungsplan stehen.
     -   Die Lock-Datei (z. B. `package-lock.json`) ändert sich nur durch genau diese Installation; sonst wird aus ihr installiert (z. B. `npm ci`).
--   **Git:** Der Agent committet an festen Stellen selbst, führt zusammen und taggt nur nach Rückfrage und pusht nie — siehe Abschnitt „Commits".
--   **Kennung** einer Anforderung ist ihr kurzer Name (Dateiname im Backlog). Die **Nummer** wird erst beim „Go" vergeben: höchste vergebene Nummer in `anforderungen/` und `anforderungen/done/` + 1, dreistellig mit führenden Nullen (`007-boulder-log.md`); Nummern werden nie wiederverwendet.
+-   **Git:** Der Agent committet und pusht Arbeits-Branches selbst und eröffnet Pull Requests; **zusammenführen und taggen nur der Nutzer** — siehe Abschnitt „Commits".
+-   **Kennung** einer Anforderung ist ihr kurzer Name (Dateiname im Backlog). Die **Nummer** wird erst beim „Go" vergeben (nur im Dateinamen, der Branch behält den kurzen Namen): höchste vergebene Nummer in `anforderungen/` und `anforderungen/done/` + 1, dreistellig mit führenden Nullen (`007-boulder-log.md`); Nummern werden nie wiederverwendet.
 
 ## Commits
 
@@ -53,18 +62,22 @@ Format: Conventional Commits mit dem kurzen Namen als Scope — `<typ>(<kurzer-n
 
 | Stelle | Branch | Inhalt |
 |---|---|---|
-| Nach Idee, Klärung, Refinement (Stufen 1, 2, 4) | `main` | Anforderungsdokument, ggf. `_kontext/` |
+| Neue Idee bzw. neuer Bug (Stufe 1) | `backlog` | Eintrag im Backlog |
+| Nach Klärung, Design-Übergabe, Refinement (Stufen 2–4) | Feature-Branch | Anforderungsdokument, Entwurf, ggf. `_kontext/` |
 | Nach freigegebenem Plan (5b) | Feature-Branch | Plan im Anforderungsdokument |
 | Nach jedem grünen Schritt des Plans (5c–5e) | Feature-Branch | Code, Tests, Testnachweis |
 | Je Korrektur in der QA (6c) | Feature-Branch | Korrektur mit ihrem Test |
 | Nach der Abnahme (7c, 7d) | Feature-Branch | Status `accepted`, Rückblick |
-| Im Release (8a, 8f) | Release-Kandidat bzw. `main` | Release-Dokument, Status `done` |
+| Im Release (8a, 8b) | `rc/<version>` | Release-Dokument |
+| Nach dem Ausliefern (8f) | `release/<version>-abschluss` | Status `done`, Release `released` |
 
 -   **Leitplanken** (in Stufe 0 festgelegt, im Grundgerüst eingerichtet): Vor jedem Commit laufen alle Prüfungen (ein Befehl) und die Prüfung des Commit-Formats. Der Agent umgeht sie nie (z. B. kein `--no-verify`).
 -   Ein Commit mit rotem Test gibt es nicht: In 5c wird der rote Test nachgewiesen, committet wird erst der grüne Schritt.
--   **Nur nach Rückfrage**, jedes Mal: Zusammenführen (in den Release-Kandidaten, nach `main`) und Tags setzen. Der Agent nennt vorher, was zusammengeführt bzw. getaggt wird.
--   **Nie durch den Agenten:** Pushen. Ausgeliefert wird erst, wenn der Nutzer pusht (z. B. den Tag).
--   Verlauf nicht umschreiben (kein Rebase, kein Reset, kein Amend auf geteilten Branches).
+-   **Pushen:** Der Agent pusht nur die Branches aus der Tabelle oben (nie `main`, nie Tags) und eröffnet die Pull Requests — mit kurzer Beschreibung, was drin ist, und Verweis auf das Anforderungs- bzw. Release-Dokument.
+-   **Zusammenführen und Tags: nur der Nutzer** — Zusammenführen im Pull Request beim Hoster (erst bei grüner CI möglich), den Tag `v<version>` setzt und pusht er nach dem Release-Pull-Request. Erst damit wird ausgeliefert.
+-   **Grün heißt grün in der CI.** Ein lokales Grün reicht nicht für Abnahme oder Tag; maßgeblich ist der CI-Lauf auf dem gepushten Branch.
+-   Verlauf nicht umschreiben (kein Rebase, kein Reset, kein Amend).
+-   **Git-Befehle:** Branch wechseln oder anlegen **nur mit `git switch`** (`git switch <branch>`, `git switch -c <branch>`); Datei auf den letzten Commit zurücksetzen mit `git restore <datei>` (fragt nach). **Nicht verwenden** — in der Umgebung des Agenten gesperrt, Versuche kosten nur Zeit: `git checkout`, `git merge`, `git tag`, Push von `main` oder Tags, `--force`, `git rebase`, `git reset`, `git stash`, `git cherry-pick`, `git commit --amend`, `git commit --no-verify`, `git -c …`.
 
 ## UI-Richtlinie
 
