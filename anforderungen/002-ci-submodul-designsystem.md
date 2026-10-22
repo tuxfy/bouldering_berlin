@@ -1,5 +1,5 @@
 -   **Title** CI bricht am Klonen des Design-System-Submoduls ab
--   **Status** review
+-   **Status** accepted
 
 # Bug
 
@@ -131,3 +131,15 @@ Zwei **Hinweise** (nichts muss):
 
 1.  Die Dateiliste `WORKFLOWS` im Guard-Test ist statisch — eine künftige dritte Workflow-Datei mit `submodules: true` würde nicht erfasst. Folge gering (aktuell nur zwei Dateien, beide vollständig geprüft). Optionale spätere Robustheit: Liste per Glob `.github/workflows/*.yml`. Für diesen Bug nicht umgesetzt — Scope eng gehalten.
 2.  Erinnerung, den QA-Abschnitt zu füllen — hiermit erledigt.
+
+# Abnahme
+
+-   **Datum:** 2026-10-22
+-   **Abgenommen von:** Nutzer (ausdrücklich), auf dem Feature-Branch `fix/002-ci-submodul-designsystem`, lokal.
+-   **Geprüft (Checkliste des Abnahmepakets):**
+    -   Guard-Test vorher rot (2 Fundstellen) → nach Korrektur grün — bestätigt.
+    -   Kein `actions/checkout` zieht Submodule mehr: `grep -rn submodules .github/` ohne Treffer.
+    -   Alle Tests grün (`npm test`): Unit 10/0 (inkl. 2 Guard-Tests), E2E 3/0, Lint/Format/Audit/Secrets grün.
+    -   UI-Richtlinie: `check:ui` 0 Befunde; keine UI/CSS berührt.
+    -   Unverändert: `git diff main...HEAD` leer für `.gitmodules` und `app/vendor/designsystem/`.
+-   **Offen (bauartbedingt):** Das Kriterium „CI erreicht `npm test` und bricht nicht mehr am Submodul ab" ist erst nach dem Merge auf GitHub beobachtbar — Nachprüfung im Release.
