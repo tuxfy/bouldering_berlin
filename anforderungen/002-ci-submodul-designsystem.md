@@ -1,5 +1,5 @@
 -   **Title** CI bricht am Klonen des Design-System-Submoduls ab
--   **Status** qa
+-   **Status** review
 
 # Bug
 
@@ -205,3 +205,41 @@ Zwei **Hinweise** (nichts muss):
     -   `npm run check:clean` (submodul-freier Klon, Selbsttest „_kontext/designsystem leer: ja") → **grün**: Vitest 10/10, Playwright 3/3, alle übrigen Prüfungen grün. Belegt, dass `npm test` **ohne** Submodul durchläuft — damit erreicht die CI `npm test`, der Deploy-Gate ist nicht mehr blockiert.
 -   **UI-Richtlinie:** `npm run check:ui` — 0 Befunde (Teil von `npm test`); keine UI/CSS berührt. Ausnahmen: keine.
 -   **Offen (bauartbedingt):** „CI-Lauf erreicht `npm test` / Pages-Deploy" ist erst im realen CI-Lauf nach dem Push/Merge beobachtbar — Gegenprobe in der Abnahme/im Release 0.1.2.
+
+# QA (Wiederaufnahme)
+
+Stufe 6, Lauf vom 2026-10-22 auf `fix/002-ci-submodul-designsystem`. Die erste QA (oben) bleibt zur Nachvollziehbarkeit stehen.
+
+## Automatisch
+
+Frischer Lauf im Container (`npm ci` aus der Lock-Datei, danach alle Prüfungen aus `_kontext/projekt.md`):
+
+| Prüfung | Befehl | Ergebnis |
+|---|---|---|
+| Lint | `npm run lint` | grün |
+| Format | `npm run format:check` | grün |
+| UI-Prüflauf | `npm run check:ui` | 0 Befunde |
+| Unit (Vitest) | `npm run test:unit` | 10 bestanden / 0 |
+| Audit | `npm run audit` | 0 Prod-Schwachstellen; 5 Dev-Warnungen (Hinweis) |
+| Secrets (gitleaks) | `npm run check:secrets` | keine |
+| E2E (Playwright, iPhone/dark) | `npm run test:e2e` | 3 bestanden / 0 |
+| **Sauberer Lauf** | `npm run check:clean` | **grün** — submodul-freier Klon, alle Prüfungen bestanden (Selbsttest „`_kontext/designsystem` leer: ja") |
+
+-   **Hinweis:** 5 Schwachstellen-Warnungen in Entwicklungswerkzeugen (nicht ausgeliefert) — bekannt, als Idee `werkzeuge-aktualisieren` im Backlog.
+-   **Umgebung:** Nach frischem `npm ci` war der Playwright-Chromium neu zu installieren (dokumentierte Test-Umgebung, kein neues Paket; Lock-Datei unverändert). E2E lief in Chromium mit iPhone-Emulation (WebKit-Libs fehlen im Image, siehe `_kontext/projekt.md`) — für diese CI-/Test-Änderung ohne Belang.
+
+## Geprüft durch
+
+Reviewer (nur lesend). Klicktester entfällt (keine UI). Security auf Nutzerwunsch ausgelassen (reine CI-/Test-Konfiguration, keine neuen externen Dienste/Daten).
+
+## Befunde
+
+Reviewer: **keine blockierenden** Befunde an der fachlichen Umsetzung. Bestätigt: neue Akzeptanzkriterien erfüllt (Happy-Path gegen eingecheckte Fixture statt Submodul; Ausschluss „keine React-Quellen" greift echt — `components/bundle.js`/`components/src` werden nicht kopiert; Fall 2 unverändert; `check:clean` klont ohne Submodule, räumt per `try/finally` auf, belegt leeres `_kontext/designsystem`); keine Prüfung abgeschwächt; Abgrenzung eingehalten (`ds-copy.mjs`, `app/vendor/designsystem/`, `.gitmodules` per `git diff` unverändert).
+
+Ein **empfohlener** Befund, bearbeitet: Ein branchfremder Commit mit einer Änderung an `run-ai-agent.sh` (GitHub-Token aus dem Schlüsselbund) war zwischenzeitlich auf dem Branch gelandet. **Erledigt:** aus dem Branch entfernt, sodass `origin/fix/002` nur den geplanten 002-Umfang trägt. Kein Test — reines Umgebungs-Tooling, kein App-/Testverhalten. Die Token-Tooling-Idee wird separat im Backlog festgehalten.
+
+Zwei **Hinweise** (nichts muss): `check:clean` installiert den Browser bei jedem Lauf neu (robust, aber netz-/cache-abhängig — in `_kontext/projekt.md` als Einschränkung vermerkt); die Workflow-Dateiliste im Guard-Test ist statisch (bereits in Runde 1 notiert, kein Handlungsbedarf).
+
+## CI (vorab)
+
+Pull Request [#1](https://github.com/tuxfy/bouldering_berlin/pull/1) `fix/002-ci-submodul-designsystem` → `rc/0.1.2`, Lauf [39820121763](https://github.com/tuxfy/bouldering_berlin/actions/runs/39820121763): **`test` grün** (erreicht `npm test` und läuft submodul-frei durch), Socket Security grün. Damit ist das Kriterium „CI-Lauf erreicht `npm test` und bricht nicht mehr am Submodul ab" **real auf GitHub** belegt — nicht erst nach dem Merge. Der Merge in `rc/0.1.2` selbst folgt nach der Abnahme (Stufe 7/8).
