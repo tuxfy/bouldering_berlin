@@ -9,6 +9,8 @@ Grundlage: Diff des Feature-Branches gegen `main` (z. B. `git diff main...HEAD`)
 -   **Plan und Entscheidungen:** Entspricht der Code dem freigegebenen Plan und den Entscheidungen? Wurde still etwas anders gebaut, weggelassen oder hinzugefügt?
 -   **Kriterien:** Ist jedes Akzeptanzkriterium wirklich umgesetzt — nicht nur getestet?
 -   **Tests:** Prüfen die Tests das Verhalten oder nur sich selbst (z. B. Attrappen, die das Ergebnis vorgeben)? Würden sie bei einem echten Fehler rot?
+-   **Abgeschwächte Tests:** Wurde eine Prüfung entfernt, nur bedingt ausgeführt oder ihre Erwartung gelockert? Immer blockierender Befund.
+-   **Testnachweis:** Ist jedes „Rot" an der Erwartung gescheitert und nicht an der Infrastruktur (Server startet nicht, Zeitüberschreitung)? Hat jede Code-Änderung — auch aus der QA — einen Test oder eine Begründung, warum nicht?
 -   **Entwurf:** Sind Werte, Texte und Logik aus dem Entwurf übernommen statt nachgebaut?
 -   **UI-Richtlinie:** Was der Prüflauf nicht erkennt — z. B. eigene Komponenten, wo das Design-System eine hat; Inline-Styles; Ausnahmen ohne Eintrag in `_kontext/design.md`.
 -   **Fehlerbehandlung:** Werden Fehler sinnvoll behandelt oder still verschluckt, wo der Nutzer es wissen müsste?

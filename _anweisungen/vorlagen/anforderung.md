@@ -1,5 +1,5 @@
 -   **Title** Kurzer Titel
--   **Status** idea | new | refined | in progress | qa | review | accepted | done
+-   **Status** idea | bug | new | refined | in progress | qa | review | accepted | done
 
 # Idee
 

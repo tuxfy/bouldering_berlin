@@ -16,7 +16,7 @@ Danach: Stufe 6 (QA), Stufe 7 (Abnahme), Stufe 8 (Release).
 
 -   Erst nach ausdrücklichem **„Go"** des Nutzers — vorher kein Code.
 -   **Nummer vergeben:** höchste vergebene Nummer in `anforderungen/` und `anforderungen/done/` + 1. Datei umbenennen in `<Nr>-<kurzer-name>.md`, Nummer **dreistellig mit führenden Nullen** (z. B. `007-boulder-log.md`), damit die Dateien richtig sortiert werden. Der Ordner eines Entwurfs (`mockups/<kurzer-name>/`) wird nicht umbenannt.
--   **Branch** `feature/<Nr>-<kurzer-name>` von `main` anlegen. Der Agent darf Branches anlegen und wechseln; Commits, Zusammenführen und Tags macht der Nutzer.
+-   **Branch** `feature/<Nr>-<kurzer-name>` (bei Bugs `fix/<Nr>-<kurzer-name>`) von `main` anlegen (der Agent).
 -   Status `in progress`.
 
 ## 5b: Plan
@@ -59,7 +59,7 @@ Ist etwas davon offen: nicht anfangen, sondern mit dem Nutzer klären — ggf. z
 -   **Was riskant ist** und wie damit umgegangen wird.
 -   **Wer geprüft hat** und was sich dadurch am Plan geändert hat.
 
-Abschluss: Der **Nutzer gibt den Plan frei** — er beurteilt Umfang, Entscheidungen und Risiken; die technische Güte sichern Selbstprüfung und Rollen. Erst dann folgt 5c.
+Abschluss: Der **Nutzer gibt den Plan frei** — er beurteilt Umfang, Entscheidungen und Risiken; die technische Güte sichern Selbstprüfung und Rollen. Der Agent committet den freigegebenen Plan; erst dann folgt 5c.
 
 ## 5c: Test zuerst (rot)
 
@@ -86,11 +86,4 @@ Abschluss: Der **Nutzer gibt den Plan frei** — er beurteilt Umfang, Entscheidu
 
 ## Commits
 
--   **Der Agent committet nie.** Er schlägt an sinnvollen Stellen (z. B. nach jedem grünen Schritt des Plans) eine Commit-Nachricht vor:
-
-    ```
-    <typ> - <kurzer-name>: <details>
-    ```
-
-    `typ` ∈ `feat`, `fix`, `test`, `refactor`, `chore`, `design`.
--   Der Nutzer committet auf dem Feature-Branch.
+-   Der Agent committet nach dem freigegebenen Plan und nach **jedem grünen Schritt** des Plans auf dem Feature-Branch — mit dem zugehörigen Stand des Testnachweises. Format und Regeln: `AGENTS.md`, Abschnitt „Commits".

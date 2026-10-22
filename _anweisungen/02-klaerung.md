@@ -27,7 +27,7 @@ Der Nutzer greift eine Idee auf. Bevor über Lösungen nachgedacht wird, klärt 
 
     Bei einem **neuen Projekt** ohne bestehenden Stand gilt meist alles als änderbar — dann das kurz sagen statt vier Einzelfragen zu stellen.
 4.  **Offene Fragen sammeln** — als Liste, noch ohne Antworten.
-5.  **Weg vorschlagen**: Braucht es ein Design (→ Stufe 3)? Muss bei einem Bug die Ursache erst bestätigt werden?
+5.  **Weg vorschlagen**: Braucht es ein Design (→ Stufe 3)? Bei einem Bug: Ursache bestätigen ist Pflicht (siehe `_anweisungen/01-idee.md`, Weg eines Bugs).
 
 ## Was noch nicht hineingehört
 

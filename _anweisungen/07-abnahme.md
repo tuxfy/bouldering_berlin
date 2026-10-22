@@ -22,7 +22,7 @@ Der Nutzer nimmt eine Anforderung ab — auf ihrem Feature-Branch, lokal. Voraus
 ## 7c: Abgenommen
 
 -   Der Nutzer gibt ausdrücklich frei. Status `accepted`, Ergebnis unter `# Abnahme` (Datum, was geprüft wurde).
--   **Release-Kandidat:** Der Feature-Branch wird in den Branch des nächsten Releases `rc/<version>` zusammengeführt — vom Nutzer.
+-   **Release-Kandidat:** Der Agent committet Status und Abnahme und führt den Feature-Branch **nach Rückfrage** in den Branch des nächsten Releases `rc/<version>` zusammen.
     -   Gibt es noch keinen offenen Release-Kandidaten: Der Nutzer legt die Version fest; der Agent legt `releases/<version>.md` nach `_anweisungen/vorlagen/release.md` an, der Branch `rc/<version>` entsteht von `main`.
     -   Die Anforderung wird im Release-Dokument eingetragen.
 -   Das Anforderungsdokument bleibt in `anforderungen/` bis zum Release.
@@ -33,3 +33,4 @@ Kurz festhalten, was gehakt hat:
 
 -   **Projekt betreffend** → `_kontext/` ergänzen.
 -   **Prozess betreffend** → als Vorschlag fürs Template notieren (nicht `_anweisungen/` im Projekt ändern).
+-   Rückblick committen.

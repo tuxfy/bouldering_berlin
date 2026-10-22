@@ -7,7 +7,7 @@ Bringt einen Release-Kandidaten mit einer oder mehreren abgenommenen Anforderung
 | 8a Umfang | Nutzer | Inhalt des Releases festgelegt |
 | 8b Gesamtprüfung | Agent | alle Prüfungen grün auf `rc/<version>` |
 | 8c Freigabe | Nutzer | Release freigegeben |
-| 8d Ausliefern | Nutzer (+ Automatik) | `rc/<version>` in `main`, Tag `v<version>`, ausgeliefert |
+| 8d Ausliefern | Agent nach Rückfrage, Nutzer pusht | `rc/<version>` in `main`, Tag `v<version>`, ausgeliefert |
 | 8e Nachprüfen | Agent + Nutzer | kurzer Test des ausgelieferten Stands |
 | 8f Abschluss | Agent | Anforderungen `done`, Release-Dokument abgeschlossen |
 
@@ -30,7 +30,8 @@ Die Anforderungen sind einzeln geprüft — hier wird geprüft, ob sie **zusamme
 
 ## 8d: Ausliefern
 
--   Der Nutzer führt `rc/<version>` in `main` zusammen und setzt den Tag `v<version>`; der Agent schlägt die Befehle vor.
+-   Der Agent führt `rc/<version>` **nach Rückfrage** in `main` zusammen und setzt **nach Rückfrage** den Tag `v<version>`.
+-   **Der Nutzer pusht** `main` und den Tag; erst damit wird ausgeliefert.
 -   Ausgeliefert wird nach `_kontext/projekt.md` bzw. dem How-to in `_kontext/` (z. B. automatisch beim Push auf `main`).
 
 ## 8e: Nachprüfen
@@ -46,4 +47,4 @@ Die Anforderungen sind einzeln geprüft — hier wird geprüft, ob sie **zusamme
 
 ## Abkürzung
 
-Ist im Projekt festgelegt, dass Zusammenführen bereits ausliefert (z. B. „jeder Stand auf `main` geht live"), gibt es keinen Release-Kandidaten: Nach der Abnahme führt der Nutzer den Feature-Branch direkt in `main` zusammen; Stufe 8 besteht dann nur aus 8b (auf dem Feature-Branch), 8e und 8f, ein Release-Dokument entfällt.
+Ist im Projekt festgelegt, dass Zusammenführen bereits ausliefert (z. B. „jeder Stand auf `main` geht live"), gibt es keinen Release-Kandidaten: Nach der Abnahme führt der Agent den Feature-Branch nach Rückfrage direkt in `main` zusammen, der Nutzer pusht; Stufe 8 besteht dann nur aus 8b (auf dem Feature-Branch), 8e und 8f, ein Release-Dokument entfällt.

@@ -19,7 +19,7 @@ Prozess von der Idee bis zum Release — unabhängig von Sprache, Framework und 
 | Stufe | Status | Anweisung |
 |---|---|---|
 | 0. Projekt einrichten *(einmal, bei Bedarf erneut)* | — | `_anweisungen/00-einrichtung.md` |
-| 1. Idee | `idea` | `_anweisungen/01-idee.md` |
+| 1. Idee oder Bug | `idea` / `bug` | `_anweisungen/01-idee.md` |
 | 2. Klärung | `new` | `_anweisungen/02-klaerung.md` |
 | 3. Design *(nur bei Bedarf)* | `new` | `_anweisungen/03-design.md` |
 | 4. Refinement | `new` → `refined` | `_anweisungen/04-refinement.md` |
@@ -28,19 +28,43 @@ Prozess von der Idee bis zum Release — unabhängig von Sprache, Framework und 
 | 7. Abnahme | `review` → `accepted` | `_anweisungen/07-abnahme.md` |
 | 8. Release *(mehrere Anforderungen)* | `accepted` → `done` | `_anweisungen/08-release.md` |
 
-Branches: je Anforderung `feature/<Nr>-<kurzer-name>` von `main`; nach der Abnahme in den Release-Kandidaten `rc/<version>`; beim Release nach `main` mit Tag `v<version>`. Ist im Projekt „Zusammenführen = Ausliefern" festgelegt, entfällt der Release-Kandidat (siehe `08-release.md`, Abkürzung).
+Branches: je Anforderung `feature/<Nr>-<kurzer-name>` (bei Bugs `fix/<Nr>-<kurzer-name>`) von `main`; nach der Abnahme in den Release-Kandidaten `rc/<version>`; beim Release nach `main` mit Tag `v<version>`. Ist im Projekt „Zusammenführen = Ausliefern" festgelegt, entfällt der Release-Kandidat (siehe `08-release.md`, Abkürzung).
 
 ## Regeln
 
 -   **Vor der Arbeit an einer Stufe** die zugehörige Anweisungsdatei lesen.
 -   **Vor jeder Arbeit am Projekt** `_kontext/projekt.md` lesen, bei Design-Arbeit zusätzlich `_kontext/design.md`. Ist `_kontext/projekt.md` noch nicht ausgefüllt: zuerst Stufe 0.
 -   Eine Stufe wird erst begonnen, wenn die vorherige abgeschlossen ist.
+-   **Meldet der Nutzer einen Fehler oder Wunsch: zuerst als Bug bzw. Idee festhalten** (`_anweisungen/01-idee.md`) — nicht sofort beheben. Code entsteht nur für eine Anforderung nach ihrem „Go" (Stufe 5).
+-   **Abgenommene und abgeschlossene Anforderungsdokumente** (`accepted`, `done`) werden nicht mehr geändert; Nachträge gehören in eine neue Anforderung.
+-   **Tests werden nie abgeschwächt,** um grün zu werden (Prüfung entfernt, nur bedingt ausgeführt, Erwartung gelockert). Passt ein Test nicht mehr zur Umgebung: die Umgebung des Tests anpassen, nicht die Prüfung.
 -   **Am Ende jeder Stufe** sagt der Agent dem Nutzer kurz: was erledigt ist, was als Nächstes kommt (Stufe bzw. Schritt und Anweisungsdatei) und was der Nutzer dafür tun oder entscheiden muss (z. B. Status setzen, freigeben, committen).
 -   **Abhängigkeiten und Werkzeuge** (Pakete, Browser für Tests u. ä.) installiert der Agent **selbst in seiner Umgebung** (z. B. im Container), nach Rückfrage — nie auf dem Rechner des Nutzers und nie als Aufgabe an den Nutzer.
     -   Neue Pakete nur, wenn sie im freigegebenen Umsetzungsplan stehen.
     -   Die Lock-Datei (z. B. `package-lock.json`) ändert sich nur durch genau diese Installation; sonst wird aus ihr installiert (z. B. `npm ci`).
--   **Der Agent committet nie** — Commits, Zusammenführen und Tags macht der Nutzer; Branches anlegen und wechseln darf der Agent. Format der Commit-Nachricht: siehe `_anweisungen/05-umsetzung.md`.
+-   **Git:** Der Agent committet an festen Stellen selbst, führt zusammen und taggt nur nach Rückfrage und pusht nie — siehe Abschnitt „Commits".
 -   **Kennung** einer Anforderung ist ihr kurzer Name (Dateiname im Backlog). Die **Nummer** wird erst beim „Go" vergeben: höchste vergebene Nummer in `anforderungen/` und `anforderungen/done/` + 1, dreistellig mit führenden Nullen (`007-boulder-log.md`); Nummern werden nie wiederverwendet.
+
+## Commits
+
+Format: Conventional Commits mit dem kurzen Namen als Scope — `<typ>(<kurzer-name>): <details>`, `typ` ∈ `feat`, `fix`, `test`, `refactor`, `chore`, `design`; bricht eine Änderung Bestehendes: `!` nach dem Scope. Für Prozess-Dokumente ohne Code: `chore(<kurzer-name>): …`.
+
+**Der Agent committet selbst** (ohne Rückfrage), nur an diesen Stellen:
+
+| Stelle | Branch | Inhalt |
+|---|---|---|
+| Nach Idee, Klärung, Refinement (Stufen 1, 2, 4) | `main` | Anforderungsdokument, ggf. `_kontext/` |
+| Nach freigegebenem Plan (5b) | Feature-Branch | Plan im Anforderungsdokument |
+| Nach jedem grünen Schritt des Plans (5c–5e) | Feature-Branch | Code, Tests, Testnachweis |
+| Je Korrektur in der QA (6c) | Feature-Branch | Korrektur mit ihrem Test |
+| Nach der Abnahme (7c, 7d) | Feature-Branch | Status `accepted`, Rückblick |
+| Im Release (8a, 8f) | Release-Kandidat bzw. `main` | Release-Dokument, Status `done` |
+
+-   **Leitplanken** (in Stufe 0 festgelegt, im Grundgerüst eingerichtet): Vor jedem Commit laufen alle Prüfungen (ein Befehl) und die Prüfung des Commit-Formats. Der Agent umgeht sie nie (z. B. kein `--no-verify`).
+-   Ein Commit mit rotem Test gibt es nicht: In 5c wird der rote Test nachgewiesen, committet wird erst der grüne Schritt.
+-   **Nur nach Rückfrage**, jedes Mal: Zusammenführen (in den Release-Kandidaten, nach `main`) und Tags setzen. Der Agent nennt vorher, was zusammengeführt bzw. getaggt wird.
+-   **Nie durch den Agenten:** Pushen. Ausgeliefert wird erst, wenn der Nutzer pusht (z. B. den Tag).
+-   Verlauf nicht umschreiben (kein Rebase, kein Reset, kein Amend auf geteilten Branches).
 
 ## UI-Richtlinie
 
