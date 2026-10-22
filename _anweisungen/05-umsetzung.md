@@ -16,7 +16,7 @@ Danach: Stufe 6 (QA), Stufe 7 (Abnahme), Stufe 8 (Release).
 
 -   Erst nach ausdrücklichem **„Go"** des Nutzers — vorher kein Code.
 -   **Nummer vergeben:** höchste vergebene Nummer in `anforderungen/` und `anforderungen/done/` + 1. Datei umbenennen in `<Nr>-<kurzer-name>.md`, Nummer **dreistellig mit führenden Nullen** (z. B. `007-boulder-log.md`), damit die Dateien richtig sortiert werden. Der Ordner eines Entwurfs (`mockups/<kurzer-name>/`) wird nicht umbenannt.
--   **Branch** `feature/<Nr>-<kurzer-name>` (bei Bugs `fix/<Nr>-<kurzer-name>`) von `main` anlegen (der Agent).
+-   Weiter auf dem Branch der Anforderung (angelegt in Stufe 2).
 -   Status `in progress`.
 
 ## 5b: Plan
@@ -79,6 +79,7 @@ Abschluss: Der **Nutzer gibt den Plan frei** — er beurteilt Umfang, Entscheidu
 ## 5e: Grün
 
 -   Alle Tests grün — vom Agenten ausgeführt. Ergebnis unter `# Testnachweis → Grün`.
+-   **Sauberer Lauf** (Befehl in `_kontext/projekt.md`) grün — Ergebnis im Testnachweis.
 -   Jedes Akzeptanzkriterium prüfen und abhaken; was nur manuell prüfbar ist, für die Abnahme (Stufe 7) markieren.
 -   **Prüflauf der UI-Richtlinie** ausführen (Befehl in `_kontext/projekt.md`) — Ergebnis unter `# Testnachweis → UI-Richtlinie`. Ausnahmen sind markiert und in `_kontext/design.md` eingetragen.
 -   **Kann der Prüflauf nicht laufen** (z. B. ohne Container und ohne CI): Der Agent sucht selbst nach festen Werten und Inline-Styles im geänderten Code und vermerkt im Testnachweis, dass der Prüflauf nicht lief.

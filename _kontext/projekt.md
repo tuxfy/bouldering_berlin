@@ -38,8 +38,11 @@ Eine Sammlung kleiner, mobiler Tools rund ums Bouldern („Bouldering Berlin Too
 | Schwachstellen in Abhängigkeiten | npm audit | `npm run audit` (`npm audit --omit=dev` blockiert; voller `npm audit` nur Warnung) |
 | Geheimnisse im Code | gitleaks | `npm run check:secrets` |
 | Barrierefreiheit *(optional)* | axe-core in Playwright | Teil von `npm run test:e2e` |
+| Sauberer Lauf | Klon des aktuellen Commits **ohne Submodule**, dann `npm ci` + `npm test` im Klon (reproduziert die CI; findet, was nur lokal vorhanden ist) | `npm run check:clean` |
 
 **Alle Prüfungen:** `npm test` — ruft alle oben genannten nacheinander auf, **lokal (im Container) und in der CI identisch**. Bewusst weggelassen: *(keine)*
+
+Der **Sauberer Lauf** (`npm run check:clean`) ist **nicht** Teil von `npm test` (sonst Rekursion), sondern ein eigener Schritt vor Abnahme/Release: Er klont den committeten Stand in einen leeren Ordner **ohne Submodule** und fährt dort `npm ci` + `npm test` wie die CI. Er deckt auf, wenn `npm test` nur lokal grün ist, weil etwas nur lokal vorhanden ist (z. B. ein ausgechecktes Submodul). Voraussetzungen siehe „Umgebung des Agenten".
 
 Hinweis UI-Prüflauf: nur **App-Stylesheets** prüfen (`app/**/*.css`), **nicht** die Kopie des Design-Systems unter `app/vendor/designsystem/`.
 
@@ -59,6 +62,7 @@ Hinweis UI-Prüflauf: nur **App-Stylesheets** prüfen (`app/**/*.css`), **nicht*
 - Docker-Container über `run-ai-agent.sh` (Image `ai-agents`), mit gemountetem `/workspace` und `node_modules` als container-eigenem Volume (bei jedem Start `npm ci`).
 - Verfügbar sein muss: **Node + npm**, **Chromium** für Playwright (`npx playwright install --with-deps chromium`), **gitleaks**. Der Agent installiert Abhängigkeiten/Werkzeuge **selbst in seiner Umgebung**, nach Rückfrage — nie auf dem Rechner des Nutzers.
 - **gitleaks:** fest im Container-Image und in der CI als gepinnte Binär (gleiche Version wie `check:secrets`); `npm test` ruft die Binär.
+- **Sauberer Lauf (`npm run check:clean`):** braucht im Temp-Klon eine erreichbare npm-Registry bzw. den npm-Cache (für `npm ci`), die Playwright-Browser (Standard-Cache `~/.cache/ms-playwright`, wie oben) und die `gitleaks`-Binär auf dem `PATH`. Im Container vorhanden; **offline** schlägt `npm ci` im Klon fehl — dann `npm ci --offline` gegen den Cache bzw. Einschränkung dokumentieren.
 - **Empfehlung (offen):** Für originalgetreue Safari-E2E fehlen im aktuellen Image die **WebKit-System-Bibliotheken** (`npx playwright install --with-deps webkit` braucht root). Solange sie fehlen, laufen die E2E in **Chromium mit iPhone-Emulation**; Safari-Eigenheiten bleiben der Geräte-Nachprüfung vorbehalten. WebKit-Libs ins Image aufnehmen, dann auf WebKit umstellen.
 
 ## Auslieferung und Release

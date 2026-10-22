@@ -1,5 +1,5 @@
 -   **Version** <version>
--   **Status** planned | testing | released
+-   **Status** planned | testing | released | failed
 
 # Inhalt
 
