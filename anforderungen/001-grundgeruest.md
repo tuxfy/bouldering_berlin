@@ -1,5 +1,5 @@
 -   **Title** Grundgerüst
--   **Status** review
+-   **Status** accepted
 
 # Idee
 
@@ -196,4 +196,5 @@ Gegenüber dem freigegebenen Plan, mit Grund (keine berührt eine Anforderungs-E
 
 # Abnahme
 
-*In Stufe 7 ergänzt.*
+-   **Abgenommen am:** 2026-10-22 — lokal geprüft: Startseite dark + ToolHeader „Bouldering Berlin", Manifest `standalone`, Service Worker erreichbar, Offline-Reload (Hülle bleibt), unbekannte Pfade 404; `npm test` grün (Vitest 8/8, E2E 3/3, Audit prod 0, gitleaks keine Funde). Geräte-Teile (PWA-Installation, Standalone-Darstellung, echtes Offline am iPhone/Safari) als **Nachprüfung nach dem Release**.
+-   **Release:** v0.1.0

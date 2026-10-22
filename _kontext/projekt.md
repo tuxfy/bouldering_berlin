@@ -58,7 +58,8 @@ Hinweis UI-Prüflauf: nur **App-Stylesheets** prüfen (`app/**/*.css`), **nicht*
 
 - Docker-Container über `run-ai-agent.sh` (Image `ai-agents`), mit gemountetem `/workspace` und `node_modules` als container-eigenem Volume (bei jedem Start `npm ci`).
 - Verfügbar sein muss: **Node + npm**, **Chromium** für Playwright (`npx playwright install --with-deps chromium`), **gitleaks**. Der Agent installiert Abhängigkeiten/Werkzeuge **selbst in seiner Umgebung**, nach Rückfrage — nie auf dem Rechner des Nutzers.
-- *(offen)* Ob gitleaks fest ins Image kommt oder pro Lauf bezogen wird — beim Grundgerüst festlegen.
+- **gitleaks:** fest im Container-Image und in der CI als gepinnte Binär (gleiche Version wie `check:secrets`); `npm test` ruft die Binär.
+- **Empfehlung (offen):** Für originalgetreue Safari-E2E fehlen im aktuellen Image die **WebKit-System-Bibliotheken** (`npx playwright install --with-deps webkit` braucht root). Solange sie fehlen, laufen die E2E in **Chromium mit iPhone-Emulation**; Safari-Eigenheiten bleiben der Geräte-Nachprüfung vorbehalten. WebKit-Libs ins Image aufnehmen, dann auf WebKit umstellen.
 
 ## Auslieferung und Release
 
