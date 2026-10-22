@@ -1,5 +1,5 @@
 -   **Title** Grundgerüst
--   **Status** accepted
+-   **Status** done
 
 # Idee
 
