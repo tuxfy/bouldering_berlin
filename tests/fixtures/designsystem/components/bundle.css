@@ -1,0 +1,4 @@
+/* Fixture: Platzhalter-Komponenten-CSS fuer den ds-copy-Test. */
+.ds-button {
+  color: var(--ds-color-bg);
+}

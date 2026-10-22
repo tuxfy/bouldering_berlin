@@ -17,7 +17,11 @@ describe("ds-copy", () => {
   it("kopiert den CSS-Vertrag und Icons, aber keine React-Quellen", () => {
     const dest = mkdtempSync(join(tmpdir(), "ds-ok-"));
     try {
-      run({ DS_DEST: dest });
+      // Quelle ist das eingecheckte Fixture statt des Submoduls: deterministisch
+      // und submodul-unabhaengig (laeuft so auch in der CI, wo das Submodul fehlt).
+      // Das Fixture enthaelt bewusst React-Quellen-Attrappen, damit die
+      // Ausschluss-Pruefung unten echt greift (keine Abschwaechung).
+      run({ DS_SRC: "tests/fixtures/designsystem", DS_DEST: dest });
       expect(existsSync(join(dest, "tokens.css"))).toBe(true);
       expect(existsSync(join(dest, "components/bundle.css"))).toBe(true);
       expect(existsSync(join(dest, "assets/Logos/app-icon-192.png"))).toBe(

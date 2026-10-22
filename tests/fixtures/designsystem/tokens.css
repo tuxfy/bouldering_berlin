@@ -1,0 +1,7 @@
+/* Fixture fuer den ds-copy-Test — KEIN echtes Design-System, nur eine
+   deterministische, submodul-unabhaengige Quelle. Wird von check:ui nicht
+   geprueft (das laeuft nur auf app/**/*.css). */
+:root {
+  --ds-color-bg: #000000;
+  --ds-space-1: 4px;
+}
