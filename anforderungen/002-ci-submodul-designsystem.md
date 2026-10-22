@@ -1,5 +1,5 @@
 -   **Title** CI bricht am Klonen des Design-System-Submoduls ab
--   **Status** accepted
+-   **Status** in progress
 
 # Bug
 
@@ -134,6 +134,8 @@ Zwei **Hinweise** (nichts muss):
 
 # Abnahme
 
+> **Aufgehoben am 2026-10-22.** Diese Abnahme beruhte auf einem **lokalen** Grün (`npm test` mit ausgechecktem Submodul). Maßgeblich ist aber das Grün in der CI (AGENTS.md: „Grün heißt grün in der CI"). Dort ist `npm test` **rot**: Der Unit-Test `tests/unit/ds-copy.test.mjs` (Happy-Path) ruft `scripts/ds-copy.mjs` gegen das Submodul `_kontext/designsystem`, das in der CI seit 002 bewusst **nicht** mehr ausgecheckt wird → Abbruch → Test rot → Deploy-Gate rot → kein Pages-Deploy. Die Anforderung ist damit **nicht fertig**; Status zurück auf `in progress`. Der ursprüngliche Eintrag bleibt zur Nachvollziehbarkeit stehen. Weiteres unter `# Wiederaufnahme`.
+
 -   **Datum:** 2026-10-22
 -   **Abgenommen von:** Nutzer (ausdrücklich), auf dem Feature-Branch `fix/002-ci-submodul-designsystem`, lokal.
 -   **Geprüft (Checkliste des Abnahmepakets):**
@@ -143,3 +145,29 @@ Zwei **Hinweise** (nichts muss):
     -   UI-Richtlinie: `check:ui` 0 Befunde; keine UI/CSS berührt.
     -   Unverändert: `git diff main...HEAD` leer für `.gitmodules` und `app/vendor/designsystem/`.
 -   **Offen (bauartbedingt):** Das Kriterium „CI erreicht `npm test` und bricht nicht mehr am Submodul ab" ist erst nach dem Merge auf GitHub beobachtbar — Nachprüfung im Release.
+
+# Wiederaufnahme (2026-10-22)
+
+**Warum wieder geöffnet.** 002 hat die beiden CI-Test-Checkouts vom Submodul befreit (erledigt, gemerged), damit aber ein zweites, bis dahin verdecktes Problem aufgedeckt: `npm test` lief lokal nur deshalb grün, weil Entwickler das Submodul ausgecheckt haben. In der submodul-freien CI ist `npm test` **rot** — der Happy-Path-Fall von `tests/unit/ds-copy.test.mjs` ruft `scripts/ds-copy.mjs` ohne `DS_SRC`, also gegen `_kontext/designsystem` (Submodul), findet die Pflichtdateien nicht und bricht ab. Die Abnahme war verfrüht (nur lokales Grün). Release 0.1.1 wurde deshalb nie ausgeliefert und steht auf `failed`; 002 kommt mit **0.1.2**.
+
+**Befund.** `npm test` in der CI rot, weil der `ds-copy`-Test das Submodul braucht, das es in der CI nicht gibt.
+
+**Welche Prüfung hätte das finden müssen?** Der **Sauberer Lauf** (Standardprüfung „immer" aus `_anweisungen/00-einrichtung.md`): ein Befehl, der den aktuellen Commit in einen leeren Ordner klont — **ohne Submodule**, ohne vorhandene Abhängigkeiten, ohne ungetrackte Dateien — und dort wie die CI installiert und alle Prüfungen ausführt. Genau er findet, „was nur lokal vorhanden ist". Das normale lokale `npm test` und ein Commit-Hook hätten es **nicht** gefunden, weil beide mit dem ausgecheckten Submodul des Entwicklers laufen und grün bleiben — nur der submodul-freie Lauf reproduziert die CI. Dieser Sauberer Lauf fehlt im Projekt (nicht in `_kontext/projekt.md` — Lücke gegenüber Stufe 0). **Konsequenz:** Er wird in diesem Zuge ergänzt (`npm run check:clean` + Eintrag in `_kontext/projekt.md`) und dient zugleich als Rot-/Grün-Nachweis dieser Korrektur.
+
+**Umfang der Wiederaufnahme** (zusätzlich zur bereits erledigten Submodul-Entfernung):
+
+1.  `npm test` läuft ohne ausgechecktes Submodul vollständig grün — der `ds-copy`-Happy-Path läuft gegen eine eingecheckte, deterministische Quelle statt gegen das Submodul; **ohne Abschwächung** (die Ausschluss-Prüfung „keine React-Quellen" bleibt wirksam).
+2.  Der **Sauberer Lauf** wird als Projektprüfung ergänzt und dokumentiert.
+
+**Neue Akzeptanzkriterien** (zusätzlich zu den oben genannten, die für die Submodul-Entfernung weiter gelten):
+
+| Kriterium | Prüfung |
+|---|---|
+| `ds-copy`-Happy-Path läuft gegen eine eingecheckte Quelle (nicht gegen das Submodul); ohne diese Quelle ist er rot (Nachweis vor der Korrektur) | Unit (Vitest) |
+| Ausschluss bleibt wirksam: die eingecheckte Quelle enthält React-Quellen-Attrappen, die **nicht** nach `dest` kopiert werden | Unit |
+| Fall 2 (Abbruch bei fehlender/leerer Quelle, klare Meldung, Exit ≠ 0) unverändert grün | Unit |
+| `scripts/ds-copy.mjs`, `app/vendor/designsystem/`, `.gitmodules` und der Entwickler-Ablauf (`npm run ds:copy` gegen das Submodul) unverändert | Review / `git diff` |
+| Sauberer Lauf vorhanden (`npm run check:clean`), in `_kontext/projekt.md` dokumentiert; er ist **ohne** die Korrektur rot und **mit** ihr grün | Sauberer Lauf |
+| Keine Abschwächung bestehender Prüfungen (nichts entfernt, nichts bedingt übersprungen, keine gelockerte Erwartung) | Review |
+
+*Der Umsetzungsplan für die Wiederaufnahme folgt nach Freigabe durch den Nutzer (Stufe 5b) unter `# Umsetzungsplan (Wiederaufnahme)`.*
