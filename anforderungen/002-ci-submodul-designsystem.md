@@ -1,5 +1,5 @@
 -   **Title** CI bricht am Klonen des Design-System-Submoduls ab
--   **Status** review
+-   **Status** accepted
 
 # Bug
 
@@ -243,3 +243,19 @@ Zwei **Hinweise** (nichts muss): `check:clean` installiert den Browser bei jedem
 ## CI (vorab)
 
 Pull Request [#1](https://github.com/tuxfy/bouldering_berlin/pull/1) `fix/002-ci-submodul-designsystem` → `rc/0.1.2`, Lauf [39820121763](https://github.com/tuxfy/bouldering_berlin/actions/runs/39820121763): **`test` grün** (erreicht `npm test` und läuft submodul-frei durch), Socket Security grün. Damit ist das Kriterium „CI-Lauf erreicht `npm test` und bricht nicht mehr am Submodul ab" **real auf GitHub** belegt — nicht erst nach dem Merge. Der Merge in `rc/0.1.2` selbst folgt nach der Abnahme (Stufe 7/8).
+
+# Abnahme (Wiederaufnahme)
+
+-   **Datum:** 2026-10-22
+-   **Abgenommen von:** Nutzer (ausdrücklich), auf dem Feature-Branch `fix/002-ci-submodul-designsystem`.
+-   **Geprüft (Checkliste des Abnahmepakets):**
+    -   CI real grün: PR #1, Check `test` erreicht `npm test` und läuft submodul-frei durch (vorher Abbruch am Submodul) — belegt (Lauf 39820121763).
+    -   Submodul-frei lokal: `npm run check:clean` endet „grün — alle Prüfungen ohne Submodul bestanden".
+    -   Entwickler-Ablauf unberührt: `npm run ds:copy` gegen das Submodul funktioniert weiter.
+-   **Offen (bauartbedingt):** Der Pages-Deploy selbst ist erst beim Release (Merge nach `main` + Tag `v0.1.2`) beobachtbar — Gegenprobe in Stufe 8e.
+
+# Rückblick (Wiederaufnahme)
+
+-   **Projekt:** Der **Sauberer Lauf** (`npm run check:clean`) fehlte und ist jetzt ergänzt und in `_kontext/projekt.md` dokumentiert. Er ist der einzige Lauf, der „nur lokal Vorhandenes" (hier: das ausgecheckte Submodul) aufdeckt; das normale `npm test` eines Entwicklers bleibt trügerisch grün. Vor Abnahme/Release künftig immer mitlaufen lassen.
+-   **Prozess (Vorschlag fürs Template, hier nicht geändert):** Der Sauberer Lauf gehört zu den Stufe-0-Standardprüfungen — seine Abwesenheit hat die verfrühte Abnahme 0.1.1 und das fehlgeschlagene Release ermöglicht. Ebenso fehlen noch die Leitplanken „Prüfungen + Commit-Format vor jedem Commit" (eigene Backlog-Idee `leitplanken-ergaenzen`).
+-   **Betrieb:** „Grün heißt grün in der CI" hat sich konkret bewährt — das lokale Grün (mit Submodul) war hier irreführend; maßgeblich war erst der CI-Lauf auf dem gepushten Branch.
