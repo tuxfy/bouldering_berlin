@@ -1,5 +1,5 @@
 -   **Title** CI bricht am Klonen des Design-System-Submoduls ab
--   **Status** qa
+-   **Status** review
 
 # Bug
 
@@ -102,4 +102,32 @@ Aus Sicht von Entwickler/CI:
 
 # QA
 
-*Vom Agenten in Stufe 6 ergänzt.*
+## Automatisch
+
+Ein Lauf, `npm test` (alle Prüfungen aus `_kontext/projekt.md`, lokal im Container):
+
+| Prüfung | Befehl | Ergebnis |
+|---|---|---|
+| Lint | `npm run lint` | grün |
+| Format | `npm run format:check` | grün |
+| UI-Prüflauf | `npm run check:ui` | 0 Befunde |
+| Unit (Vitest) | `npm run test:unit` | 10 bestanden / 0 (inkl. 2 Guard-Tests) |
+| Audit | `npm run audit` | 0 Prod-Schwachstellen; 5 Dev-Warnungen (Hinweis) |
+| Secrets (gitleaks) | `npm run check:secrets` | keine |
+| E2E (Playwright, iPhone/dark) | `npm run test:e2e` | 3 bestanden / 0 |
+
+-   **Hinweis:** 5 Schwachstellen-Warnungen in Entwicklungswerkzeugen (nicht ausgeliefert). Bereits als Idee im Backlog erfasst (`werkzeuge-aktualisieren`), kein neuer Eintrag nötig.
+-   E2E lief in **Chromium mit iPhone-Emulation** (WebKit-Libs fehlen im Image, siehe `_kontext/projekt.md`) — für diese CI-Änderung ohne Belang.
+
+## Geprüft durch
+
+Reviewer (nur lesend). Klicktester entfällt (keine UI); Security auf Wunsch ausgelassen (reine CI-Konfiguration).
+
+## Befunde
+
+Reviewer: **keine blockierenden, keine empfohlenen** Befunde. Bestätigt: Guard-Test deckt die Kriterien ab und erkennt die Regression echt (Regex gegen mehrere Formatierungen geprüft, `true`/`recursive` erkannt, `false` durchgelassen); Korrektur vollständig (kein `submodules`-Vorkommen mehr in `.github/`); Abgrenzung eingehalten (`git diff` ohne Änderung an `.gitmodules`, `app/vendor/designsystem/`, `deploy`-Job, App); keine übersehene Submodul-Nutzung in `npm test`; Plan/Testnachweis/Änderung stimmen überein.
+
+Zwei **Hinweise** (nichts muss):
+
+1.  Die Dateiliste `WORKFLOWS` im Guard-Test ist statisch — eine künftige dritte Workflow-Datei mit `submodules: true` würde nicht erfasst. Folge gering (aktuell nur zwei Dateien, beide vollständig geprüft). Optionale spätere Robustheit: Liste per Glob `.github/workflows/*.yml`. Für diesen Bug nicht umgesetzt — Scope eng gehalten.
+2.  Erinnerung, den QA-Abschnitt zu füllen — hiermit erledigt.
