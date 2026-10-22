@@ -1,5 +1,5 @@
 -   **Title** CI bricht am Klonen des Design-System-Submoduls ab
--   **Status** in progress
+-   **Status** qa
 
 # Bug
 
@@ -93,3 +93,13 @@ Aus Sicht von Entwickler/CI:
     -   DevOps-Empfehlung (nicht übernommen in diesem Bug, bewusst): In `_kontext/hoster.md` einen Halbsatz ergänzen, dass das Submodul nur für lokales `ds:copy`/DS-Update gebraucht wird und für CI/Deploy ohne Belang ist. Gehört zur `_kontext/`-Doku, die dieser Bug ausgrenzt — später als Doku-Pflege.
     -   DevOps-Prüfung: keine blockierenden Befunde; Korrektur für CI, Deploy-Gate, Pages-Deploy und Release-Modell vollständig und korrekt.
 7.  **Nicht angefasst:** `.gitmodules`, das Submodul selbst, `app/vendor/designsystem/`, der `ds:copy`-Ablauf, der `deploy`-Job, die App.
+
+# Testnachweis
+
+-   **Rot** (vor der Änderung): `npx vitest run tests/unit/ci-workflows.test.mjs` — 0 bestanden / 2 fehlgeschlagen; rot: `ci.yml: kein actions/checkout mit truthy submodules`, `deploy.yml: kein actions/checkout mit truthy submodules` (je `expected [ 'true' ] to deeply equal []`).
+-   **Grün** (nach der Änderung): `npm test` — alle Prüfungen grün. Unit (Vitest): 10 bestanden / 0 fehlgeschlagen (inkl. der 2 Guard-Tests); E2E (Playwright, iPhone/dark): 3 bestanden / 0; Audit: 0 Prod-Schwachstellen (5 Dev-Warnungen hingenommen); Secrets (gitleaks): keine.
+-   **UI-Richtlinie:** `npm run check:ui` — 0 Befunde (Teil von `npm test`); keine UI/CSS berührt. Ausnahmen: keine.
+
+# QA
+
+*Vom Agenten in Stufe 6 ergänzt.*
