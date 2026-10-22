@@ -38,6 +38,7 @@ Kategorien, unabhängig vom Stack. Welches Werkzeug, entscheidet der Stack; Konf
 | Schwachstellen in Abhängigkeiten | immer | **ausgelieferte** Abhängigkeiten blockieren (z. B. `npm audit --omit=dev`); **Entwicklungswerkzeuge** nur als Warnung (voller Audit, blockiert nicht) |
 | Geheimnisse im Code | immer | Suche nach Zugangsdaten, Schlüsseln, Tokens |
 | Barrierefreiheit | optional bei UI | z. B. axe in den E2E-Tests |
+| Sauberer Lauf | immer | ein Befehl, der den aktuellen Commit in einen leeren Ordner klont (ohne Submodule, Abhängigkeiten, ungetrackte Dateien) und dort wie die CI installiert und alle Prüfungen ausführt — findet, was nur lokal vorhanden ist |
 | Git-Hook vor dem Commit | immer | führt alle Prüfungen (ein Befehl) aus; Commit nur bei grün |
 | Commit-Format | immer | prüft Conventional Commits mit Scope (z. B. commitlint) |
 

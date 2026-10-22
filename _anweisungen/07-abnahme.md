@@ -6,7 +6,7 @@ Der Nutzer nimmt eine Anforderung ab — auf ihrem Feature-Branch, lokal. Voraus
 |---|---|---|
 | 7a Prüfen | Nutzer | Abnahme nach Checkliste des Abnahmepakets |
 | 7b Befunde | Agent | zurück zu Stufe 5, danach QA erneut |
-| 7c Abgenommen | Nutzer | Status `accepted`, Branch im Release-Kandidaten |
+| 7c Abgenommen | Nutzer | Status `accepted`, Pull Request vom Nutzer zusammengeführt |
 | 7d Rückblick | Agent | Erkenntnisse für Projekt bzw. Template |
 
 ## 7a: Prüfen
@@ -22,9 +22,9 @@ Der Nutzer nimmt eine Anforderung ab — auf ihrem Feature-Branch, lokal. Voraus
 ## 7c: Abgenommen
 
 -   Der Nutzer gibt ausdrücklich frei. Status `accepted`, Ergebnis unter `# Abnahme` (Datum, was geprüft wurde).
--   **Release-Kandidat:** Der Agent committet Status und Abnahme und führt den Feature-Branch **nach Rückfrage** in den Branch des nächsten Releases `rc/<version>` zusammen.
-    -   Gibt es noch keinen offenen Release-Kandidaten: Der Nutzer legt die Version fest; der Agent legt `releases/<version>.md` nach `_anweisungen/vorlagen/release.md` an, der Branch `rc/<version>` entsteht von `main`.
-    -   Die Anforderung wird im Release-Dokument eingetragen.
+-   Der Agent committet Status, Abnahme und Rückblick (7d) auf dem Feature-Branch und pusht; die CI im Pull Request läuft erneut.
+-   **Der Nutzer führt den Pull Request zusammen** (in `rc/<version>`).
+-   Danach trägt der Agent die Anforderung im Release-Dokument auf `rc/<version>` ein und pusht.
 -   Das Anforderungsdokument bleibt in `anforderungen/` bis zum Release.
 
 ## 7d: Rückblick
