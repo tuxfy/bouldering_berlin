@@ -1,5 +1,5 @@
 -   **Title** CI bricht am Klonen des Design-System-Submoduls ab
--   **Status** in progress
+-   **Status** qa
 
 # Bug
 
@@ -172,7 +172,7 @@ Zwei **Hinweise** (nichts muss):
 
 # Umsetzungsplan (Wiederaufnahme)
 
-*Vorschlag Stufe 5b — geprüft durch Senior Dev und DevOps, Befunde eingearbeitet. **Wartet auf Freigabe durch den Nutzer**; erst danach 5c.*
+*Stufe 5b — geprüft durch Senior Dev und DevOps, Befunde eingearbeitet. Vom Nutzer **freigegeben am 2026-10-22** und umgesetzt (Nachweis unter `# Testnachweis (Wiederaufnahme)`).*
 
 1.  **Schritte (Reihenfolge):**
     1.  **Sauberer Lauf als Werkzeug anlegen** — `scripts/check-clean.mjs` + npm-Script `check:clean` (eigenständig, **nicht** Teil von `npm test` → keine Rekursion). Das Skript: `git clone` des **lokalen Repos** (aktueller Commit) **ohne** `--recurse-submodules` in einen frischen Temp-Ordner (kein `cp`/`rsync` des Arbeitsverzeichnisses — sonst käme das lokal ausgecheckte Submodul mit), dort `npm ci` und `npm test`, danach `try/finally`-Aufräumen (auch bei rotem Lauf). Als Selbsttest einmal belegen, dass `_kontext/designsystem` im Temp **leer** ist (die load-bearing Eigenschaft). *Noch kein Rot/Grün — nur das Werkzeug.*
@@ -193,3 +193,15 @@ Zwei **Hinweise** (nichts muss):
     -   Das echte Submodul ist für `npm test` nirgends sonst nötig (in der Klärung belegt; `check:clean` sichert das dauerhaft mit).
     -   `check:clean` läuft **gegen den committeten Stand** (klont HEAD) — Rot vor der Korrektur daher nur als Nachweis; committet wird erst der grüne Stand.
 7.  **Nicht angefasst / Abgrenzung:** `scripts/ds-copy.mjs`, Vendor-Kopie, Submodul/`.gitmodules`, `ds:copy`-Ablauf, die App, die bereits erledigte Submodul-Entfernung in den Workflows. **Nur** der Sauberer Lauf wird aus den Stufe-0-Lücken mitgenommen (er erbringt den Rot-Nachweis); die ebenfalls fehlenden Leitplanken (Git-Hook vor dem Commit, Commit-Format-Prüfung) gehören in eine **eigene** Anforderung `leitplanken-ergaenzen` (Backlog), nicht hierher.
+
+# Testnachweis (Wiederaufnahme)
+
+-   **Rot** (vor der Korrektur):
+    -   `npx vitest run tests/unit/ds-copy.test.mjs` — Fall 1 auf das Fixture umgestellt, Fixture noch **nicht** angelegt → **rot**: 1 fehlgeschlagen / 1 bestanden; `ds-copy.mjs` bricht ab („Design-System unter 'tests/fixtures/designsystem' unvollständig …"; fehlend: `tokens.css`, `components/bundle.css`, `app-icon-192/512.png`).
+    -   **Beleg der fehlenden Prüfung:** `node scripts/check-clean.mjs` gegen den committeten Stand **vor** der Korrektur → **rot**: der submodul-freie Klon bricht in `test:unit` ab (ds-copy-Happy-Path ohne Submodul), `npm test` endet mit Exit 1 — genau das CI-Verhalten. (Nur Nachweis, nicht committet.)
+-   **Grün** (nach der Korrektur):
+    -   `npx vitest run tests/unit/ds-copy.test.mjs` → **2/2 grün** (Happy-Path gegen Fixture; Attrappen `components/bundle.js`/`components/src` **nicht** kopiert; Fall 2 unverändert).
+    -   `npm test` (lokal, mit Submodul) → **grün**: ESLint 0 · Prettier 0 · Stylelint (UI) 0 · Vitest 10/10 · Audit 0 prod (5 dev-Warnungen hingenommen) · gitleaks keine · Playwright (iPhone/dark) 3/3.
+    -   `npm run check:clean` (submodul-freier Klon, Selbsttest „_kontext/designsystem leer: ja") → **grün**: Vitest 10/10, Playwright 3/3, alle übrigen Prüfungen grün. Belegt, dass `npm test` **ohne** Submodul durchläuft — damit erreicht die CI `npm test`, der Deploy-Gate ist nicht mehr blockiert.
+-   **UI-Richtlinie:** `npm run check:ui` — 0 Befunde (Teil von `npm test`); keine UI/CSS berührt. Ausnahmen: keine.
+-   **Offen (bauartbedingt):** „CI-Lauf erreicht `npm test` / Pages-Deploy" ist erst im realen CI-Lauf nach dem Push/Merge beobachtbar — Gegenprobe in der Abnahme/im Release 0.1.2.
