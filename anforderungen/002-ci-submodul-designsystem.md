@@ -1,5 +1,5 @@
 -   **Title** CI bricht am Klonen des Design-System-Submoduls ab
--   **Status** refined
+-   **Status** in progress
 
 # Bug
 
@@ -72,3 +72,24 @@ Aus Sicht von Entwickler/CI:
 -   Betroffen: `.github/workflows/ci.yml` (Job `test`, Schritt `actions/checkout`), `.github/workflows/deploy.yml` (Job `test`, Schritt `actions/checkout`). Je das `with: submodules: true` entfernen (und das dann leere `with:` mit).
 -   Neuer Test z. B. `tests/unit/ci-workflows.test.mjs` (passt zu `include: tests/unit/**/*.test.mjs`).
 -   Größe: klein, ein Umsetzungsdurchgang.
+
+# Umsetzungsplan
+
+1.  **Schritte:**
+    1.  Guard-Test `tests/unit/ci-workflows.test.mjs` schreiben: liest beide Workflow-Dateien und stellt sicher, dass **kein** `actions/checkout`-Schritt Submodule zieht. Ausführen → **rot** (beide enthalten noch `submodules: true`). Testnachweis „Rot".
+    2.  Korrektur: in `ci.yml` (Job `test`) und `deploy.yml` (Job `test`) beim `actions/checkout@v4` das `with: submodules: true` entfernen (das dann leere `with:` mit). Der `deploy`-Job bleibt unverändert.
+    3.  Alle Prüfungen ausführen (`npm test`) → **grün**. Testnachweis „Grün" und „UI-Richtlinie". Status `qa`.
+2.  **Betroffene Dateien:**
+    -   neu: `tests/unit/ci-workflows.test.mjs`
+    -   geändert: `.github/workflows/ci.yml`, `.github/workflows/deploy.yml`
+3.  **Testfälle:**
+    -   `ci-workflows.test.mjs`: Invariante „**für jeden** `actions/checkout`-Schritt in `ci.yml` und `deploy.yml` gilt: kein truthy `submodules` (`true`/`recursive`)". Prüft alle Jobs beider Dateien — schützt damit dauerhaft auch den `deploy`-Job, nicht nur die zwei Test-Jobs; nicht auf eine feste Anzahl Fundstellen fixiert. Ist-Zustand vor der Korrektur: 2 Fundstellen → rot; nach der Korrektur 0 → grün. Deckt die Kriterien „Guard-Test rot vorher", „kein `submodules: true` mehr", „nach Korrektur grün".
+    -   Unverändert-Kriterien (`.gitmodules`, `app/vendor/designsystem/`) über `git diff` im Review; `check:ui` bleibt Teil von `npm test`.
+4.  **Entwurf → Code:** entfällt (kein Design).
+5.  **Externe Abhängigkeiten:** keine neuen. Der Test nutzt nur `node:fs`; Hosting/CI-How-to steht in `_kontext/hoster.md`. Kein Zugang, kein Geheimnis nötig.
+6.  **Annahmen und Risiken:**
+    -   Annahme: `npm test` greift nirgends auf das Submodul zu (in der Klärung belegt). Risiko gering; der nächste CI-Lauf nach Merge ist die Gegenprobe.
+    -   Risiko: Der Text-Guard (ohne YAML-Parser) könnte theoretisch an ungewöhnlicher Formatierung vorbeigehen. Abgedeckt, indem der Test auf das Schlüsselwort `submodules:` im Checkout-Kontext prüft, nicht auf eine exakte Zeile.
+    -   DevOps-Empfehlung (nicht übernommen in diesem Bug, bewusst): In `_kontext/hoster.md` einen Halbsatz ergänzen, dass das Submodul nur für lokales `ds:copy`/DS-Update gebraucht wird und für CI/Deploy ohne Belang ist. Gehört zur `_kontext/`-Doku, die dieser Bug ausgrenzt — später als Doku-Pflege.
+    -   DevOps-Prüfung: keine blockierenden Befunde; Korrektur für CI, Deploy-Gate, Pages-Deploy und Release-Modell vollständig und korrekt.
+7.  **Nicht angefasst:** `.gitmodules`, das Submodul selbst, `app/vendor/designsystem/`, der `ds:copy`-Ablauf, der `deploy`-Job, die App.
