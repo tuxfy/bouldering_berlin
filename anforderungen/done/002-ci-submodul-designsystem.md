@@ -1,5 +1,5 @@
 -   **Title** CI bricht am Klonen des Design-System-Submoduls ab
--   **Status** accepted
+-   **Status** done
 
 # Bug
 
