@@ -1,5 +1,5 @@
 -   **Title** Prozess-Repo-Umstellung: Verweise auf neue Pfade nachziehen
--   **Status** accepted
+-   **Status** done
 
 # Idee
 
