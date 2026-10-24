@@ -112,7 +112,9 @@ function buildRow(f) {
   dec.addEventListener("click", () => setVal(cfg[f.key] - f.step));
   inc.addEventListener("click", () => setVal(cfg[f.key] + f.step));
   input.addEventListener("change", () => {
-    const n = parseInt(String(input.value).replace(/[^0-9]/g, ""), 10);
+    // Rohwert parsen (Vorzeichen bleibt erhalten), dann clampField klemmen —
+    // so landet eine Eingabe unter dem Minimum auf dem Minimum, nicht auf ihrem Betrag.
+    const n = parseInt(String(input.value).trim(), 10);
     if (Number.isNaN(n)) input.value = cfg[f.key];
     else setVal(n);
   });

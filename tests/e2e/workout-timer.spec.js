@@ -35,6 +35,12 @@ test.describe("Workout-Timer — Einstellen & Navigation", () => {
     await sets.fill("999");
     await sets.blur();
     await expect(sets).toHaveValue("20");
+
+    // Negative Direkteingabe wird auf das Minimum geklemmt (Pause min 0).
+    const pause = page.getByLabel("Pause", { exact: true });
+    await pause.fill("-5");
+    await pause.blur();
+    await expect(pause).toHaveValue("0");
   });
 
   test("zuletzt genutzte Werte bleiben über einen Reload erhalten", async ({
