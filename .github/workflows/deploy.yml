@@ -1,6 +1,6 @@
 name: Deploy
 
-# Auslieferung ist an das Release-Tag gebunden (Release-Modell: rc/<version> -> Tag v<version>).
+# Auslieferung ist an das Release-Tag gebunden (Release-Modell: next -> Tag v<version>).
 on:
   push:
     tags: ["v*"]

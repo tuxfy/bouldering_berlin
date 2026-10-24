@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Sauberer Lauf (Stufe-0-Standardpruefung "immer", siehe _anweisungen/00-einrichtung.md
-// und _kontext/projekt.md): klont den AKTUELLEN COMMIT in einen leeren Temp-Ordner
+// Sauberer Lauf (Stufe-0-Standardpruefung "immer", siehe _agent-process/anweisungen/00-einrichtung.md
+// und _context/projekt.md): klont den AKTUELLEN COMMIT in einen leeren Temp-Ordner
 // OHNE Submodule, ohne vorhandene Abhaengigkeiten und ohne ungetrackte Dateien, und
 // fuehrt dort wie die CI `npm ci` + `npm test` aus. Findet damit, "was nur lokal
 // vorhanden ist" (z. B. ein lokal ausgechecktes Submodul, das der CI fehlt).
@@ -33,10 +33,10 @@ try {
 
   // Selbsttest (load-bearing): das Submodul-Verzeichnis MUSS im Klon leer sein,
   // sonst reproduziert der Lauf die CI-Bedingung nicht.
-  const sub = join(clone, "_kontext", "designsystem");
+  const sub = join(clone, "_design-system");
   const subEmpty = !existsSync(sub) || readdirSync(sub).length === 0;
   console.log(
-    `[sauberer Lauf] Selbsttest "_kontext/designsystem leer": ${subEmpty ? "ja" : "NEIN"}`,
+    `[sauberer Lauf] Selbsttest "_design-system leer": ${subEmpty ? "ja" : "NEIN"}`,
   );
   if (!subEmpty) {
     throw new Error(

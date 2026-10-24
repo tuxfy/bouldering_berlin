@@ -2,12 +2,12 @@
 
 Sammlung kleiner, mobiler Tools rund ums Bouldern — eine installierbare PWA, **ohne Build**, nur mit nativen ES-Modulen. Zielgerät: iPhone/Safari (Standalone-PWA, Dark Mode, Bedienung mit einer Hand). Einzelne Tools folgen als eigene Anforderungen; dieses Repo enthält das gemeinsame Grundgerüst.
 
-Der Prozess (Idee → Release) ist in `AGENTS.md` beschrieben; Projekt-Festlegungen stehen in `_kontext/projekt.md` und `_kontext/design.md`.
+Der Prozess (Idee → Release) ist in `AGENTS.md` beschrieben; Projekt-Festlegungen stehen in `_context/projekt.md` und `_context/design.md`.
 
 ## Voraussetzungen
 
 - Node 20
-- Das Design-System ist als Git-Submodul unter `_kontext/designsystem/` eingebunden.
+- Das Design-System ist als Git-Submodul unter `_design-system/` eingebunden.
 
 ## Einrichten
 
@@ -38,12 +38,12 @@ npm run ds:copy               # Design-System nach app/vendor/designsystem/ kopi
 - `tests/` — `unit/` (Vitest) und `e2e/` (Playwright); `fixtures/` für die Negativproben
 - `.github/workflows/` — `ci.yml` (Prüfungen) und `deploy.yml` (Pages)
 
-Prozess-/Dev-Ordner (`_anweisungen/`, `_kontext/`, `anforderungen/`, Tests, `node_modules/`) liegen außerhalb von `app/` und werden nicht ausgeliefert.
+Prozess-/Dev-Ordner (`_agent-process/`, `_context/`, `_requirements/`, `_releases/`, `_design-system/`, Tests, `node_modules/`) liegen außerhalb von `app/` und werden nicht ausgeliefert.
 
 ## Design-System
 
-Nur Dark Mode. Die App nutzt ausschließlich Tokens und Komponenten-Klassen des Design-Systems (`tokens.css`, `components/bundle.css`) — keine festen Werte, keine Inline-Styles. Das Design-System wird im Projekt nie bearbeitet; Aktualisierung über das Submodul und `npm run ds:copy`. Details: `_kontext/design.md`.
+Nur Dark Mode. Die App nutzt ausschließlich Tokens und Komponenten-Klassen des Design-Systems (`tokens.css`, `components/bundle.css`) — keine festen Werte, keine Inline-Styles. Das Design-System wird im Projekt nie bearbeitet; Aktualisierung über das Submodul und `npm run ds:copy`. Details: `_context/design.md`.
 
 ## Auslieferung
 
-GitHub Pages, automatisch beim Release-Tag `v<version>`. Einrichtung, Ausliefern und Zurückrollen: `_kontext/hoster.md`.
+GitHub Pages, automatisch beim Release-Tag `v<version>`. Einrichtung, Ausliefern und Zurückrollen: `_context/hoster.md`.

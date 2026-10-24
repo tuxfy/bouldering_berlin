@@ -13,14 +13,14 @@ Die App wird als statischer Ordner `app/` über GitHub Actions nach GitHub Pages
    ```bash
    git submodule update --init
    ```
-   Das Submodul `_kontext/designsystem` wird **nur lokal** für `npm run ds:copy` bzw. ein DS-Update gebraucht. **CI und Deploy fassen es nicht an** — sie arbeiten mit der eingecheckten Kopie unter `app/vendor/designsystem/`; ihre Checkouts ziehen bewusst keine Submodule (siehe Anforderung `002-ci-submodul-designsystem`).
+   Das Submodul `_design-system` wird **nur lokal** für `npm run ds:copy` bzw. ein DS-Update gebraucht. **CI und Deploy fassen es nicht an** — sie arbeiten mit der eingecheckten Kopie unter `app/vendor/designsystem/`; ihre Checkouts ziehen bewusst keine Submodule (siehe Anforderung `002-ci-submodul-designsystem`).
 3. **Pages aktivieren:** GitHub → Repo → **Settings → Pages → Build and deployment → Source: „GitHub Actions"**.
 
 Danach ist nichts weiter zu tun — CI läuft bei jedem Push, der Deploy bei jedem Release-Tag.
 
 ## Ausliefern (Release)
 
-Auslieferung ist an das Release-Tag gebunden (Release-Modell `rc/<version>` → Tag `v<version>`, siehe `_anweisungen/08-release.md`):
+Auslieferung ist an das Release-Tag gebunden (Release-Modell `next` → Tag `v<version>`, siehe `_agent-process/anweisungen/08-release.md`):
 
 ```bash
 git tag v<version>
