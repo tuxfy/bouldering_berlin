@@ -1,5 +1,5 @@
 -   **Title** Boulder-Log
--   **Status** review
+-   **Status** accepted
 
 # Idee
 
@@ -279,4 +279,11 @@ Architektur: Tool als **statische Seite + ES-Modul-Controller** (Light DOM mit D
 
 # Abnahme
 
-*In Stufe 7 ergänzt.*
+-   **Abgenommen am:** 2026-10-24 — lokal/am Gerät geprüft: Kopieren → Einfügen (Text stimmt), Grad-Vorschläge und freie Eingabe, Offline-Betrieb, PWA-Installation/Standalone, Einhand-Bedienung im Dark Mode. Stepper-Touch-Ziel < 44px **akzeptiert** (DS-Lücke, als DS-Idee geführt — Entscheidung A: nicht lokal nachbessern).
+
+# Rückblick (7d)
+
+-   **Projekt:** Neue Tool-Seiten brauchen für Direkteinstieg und Offline (a) Verlinkung mit **explizitem `index.html`** (die Navigations-URL muss ein Precache-Asset treffen; sonst greift der Navigate-Fallback und zeigt die Shell) und (b) eine **eigene Service-Worker-Registrierung** in der Tool-Seite. In `_context/projekt.md` ergänzt.
+-   **Prozess (Vorschlag fürs Prozess-Repo, hier nur notiert — `_agent-process/` wird im Projekt nicht geändert):**
+    -   DS-Komponenten können Projekt-Vorgaben unterschreiten (hier: Stepper-Buttons < 44px). Der QA-Klicktester fängt das; es wäre sinnvoll, DS-Komponenten schon in Stufe 3 gegen die Zielformat-Vorgaben (Touch-Ziele) zu prüfen.
+    -   Eine Rollen-Annahme in Stufe 5b („`sw-precache.js` wird committet") war falsch — die Datei ist gitignored (generiert). Kein Schaden, aber: generierte Artefakte früh als solche kennzeichnen.
