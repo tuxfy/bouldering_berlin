@@ -106,6 +106,34 @@ test.describe("Workout-Timer — Lauf", () => {
     await expect(page.locator("#value")).toHaveText("0:10");
   });
 
+  test("mehrere Pause/Weiter-Zyklen: nur laufende Zeit zählt (driftfrei)", async ({
+    page,
+  }) => {
+    await page.clock.install();
+    await page.addInitScript(
+      preset({ sets: 1, reps: 1, work: 60, rest: 1, pause: 0 }),
+    );
+    await page.goto(TOOL);
+    await page.getByRole("button", { name: "Start" }).click();
+    await page.clock.runFor(10000); // Vorlauf → Work (0:60)
+    await page.clock.runFor(3000); // rem 57
+
+    // Zyklus 1
+    await page.getByRole("button", { name: "Pause" }).click();
+    await page.clock.runFor(10000); // angehalten — zählt nicht
+    await page.getByRole("button", { name: "Weiter" }).click();
+    await page.clock.runFor(3000); // rem 54
+
+    // Zyklus 2
+    await page.getByRole("button", { name: "Pause" }).click();
+    await page.clock.runFor(10000); // angehalten — zählt nicht
+    await page.getByRole("button", { name: "Weiter" }).click();
+    await page.clock.runFor(4000); // rem 50
+
+    // 60 − (3+3+4) = 50; die 20 s Pause bleiben unberücksichtigt.
+    await expect(page.locator("#value")).toHaveText("0:50");
+  });
+
   test("Skip beendet die Phase, aus der letzten Phase folgt Fertig", async ({
     page,
   }) => {
