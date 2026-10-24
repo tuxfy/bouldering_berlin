@@ -1,5 +1,5 @@
 -   **Title** Prozess-Repo-Umstellung: Verweise auf neue Pfade nachziehen
--   **Status** in progress
+-   **Status** review
 
 # Idee
 
@@ -107,7 +107,34 @@ Aus Sicht von Entwickler/CI:
 
 # QA
 
-*Vom Agenten in Stufe 6 ergänzt.*
+## Automatisch
+
+Lauf im Container (`npm ci` aus der Lock-Datei, alle Prüfungen aus `_context/projekt.md`):
+
+| Prüfung | Befehl | Ergebnis |
+|---|---|---|
+| Lint | `npm run lint` | grün (vorher 80 Fehler) |
+| Format | `npm run format:check` | grün (vorher 81 Dateien) |
+| UI-Prüflauf | `npm run check:ui` (`.stylelintrc.json`) | 0 Befunde (vorher Config-ENOENT) |
+| Unit (Vitest) | `npm run test:unit` | 24/24 (inkl. 14 `repo-paths`-Guards) |
+| Audit | `npm run audit` | 0 Prod / 0 Dev |
+| Secrets (gitleaks) | `npm run check:secrets` | keine |
+| E2E (Playwright, iPhone/dark) | `npm run test:e2e` | 3/3 |
+| Sauberer Lauf | `npm run check:clean` | grün (submodul-frei; Selbsttest „`_design-system` leer: ja") |
+
+## Geprüft durch
+
+Reviewer (durch den Agenten, da keine Prüfer-Unteragenten mehr verfügbar; nur lesende Diff-Prüfung gegen Anforderung/Plan/Abgrenzung). Klicktester entfällt (keine UI/App-Änderung). Security entfällt (keine neuen Dienste/Daten; gitleaks grün).
+
+## Befunde
+
+Reviewer: **keine blockierenden, keine empfohlenen** Befunde. Bestätigt: alle CI-brechenden Referenzen behoben (`npm test` grün); Guard `repo-paths` greift echt (vorher 11/14 rot); `checks-fire` prüft Stylelint wieder über `.stylelintrc.json` (erkennt die Hex-Farbe → Regeln aktiv, nicht abgeschwächt); `.stylelintrc.json`-Änderung ist reine Prettier-Formatierung (JSON-Semantik gleich); gitleaks-Allowlist nicht zu weit (Dummy-Leak wird weiter gefunden); `check:clean`-Selbsttest auf `_design-system` umgestellt und weiterhin aussagekräftig. Abgrenzung eingehalten: `git diff` ohne Änderung an `_requirements/done/*`, `_releases/*`, `_agent-process/`, `_design-system/`, `app/vendor/`.
+
+Ein **Hinweis** (nichts muss): Der `.gitmodules`-Sektionsname `[submodule "_kontext/designsystem"]` bleibt bewusst stehen (der `path = _design-system` ist korrekt; den internen Namen umzubenennen berührt `.git/modules`, ist riskant und nicht CI-relevant).
+
+## CI
+
+Pull Request [#4](https://github.com/tuxfy/bouldering_berlin/pull/4) `feature/prozess-repo-umstellen` → `next`, Lauf [40071325294](https://github.com/tuxfy/bouldering_berlin/actions/runs/40071325294): **`test` grün**, Socket Security grün. `MERGEABLE`/`CLEAN`.
 
 # Abnahme
 
