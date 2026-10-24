@@ -46,6 +46,7 @@ Content (app-spezifisch, nicht im Design-System):
 | ToolHeader ohne sichtbaren Titel, Aktion mittig (nur „⊞ Tools") | Boulder Log (geplant; Entwurf `_requirements/mockups/boulder-log/`) | vorgemerkt — noch nicht im Design-System eingetragen |
 | Text nur für Screenreader (z. B. versteckter Titel), keine Klasse im Design-System | Boulder Log (geplant) | vorgemerkt — noch nicht im Design-System eingetragen |
 | Vorschlagsliste am TextInput (native `<datalist>`, Aussehen durch iOS) — prüfen, ob ein Muster im Design-System nötig ist | Boulder Log (geplant), Grad-Eingabe | vorgemerkt — noch nicht im Design-System eingetragen |
+| Stepper-Buttons (−/+) unter 44px Touch-Ziel (`.stepper button` = `--space-10`/40px, effektiv ~40×42) — Zielformat fordert ≥ 44px | Boulder Log (DS-Komponente `.stepper`, im Projekt **nicht** lokal überschrieben); in QA (Klicktester) festgestellt | vorgemerkt — Stepper-Buttons ≥ 44px im Design-System |
 
 ## Ausnahmen (feste Werte außerhalb von CSS)
 

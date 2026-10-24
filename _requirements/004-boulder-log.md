@@ -253,9 +253,29 @@ Architektur: Tool als **statische Seite + ES-Modul-Controller** (Light DOM mit D
 -   **Sauberer Lauf:** `npm run check:clean` (Klon ohne Submodule, `npm ci` + `npm test`) — grün (E2E 20/20), bestätigt CI-Äquivalenz.
 -   **Nur am Gerät prüfbar (→ Abnahme Stufe 7):** echter Zwischenablage-Inhalt in Safari, echtes Offline-Verhalten/PWA-Installation/Standalone am iPhone, Darstellung der nativen `<datalist>` auf iOS. Alle übrigen Akzeptanzkriterien sind durch Unit-/E2E-Tests abgedeckt.
 
+**QA-Korrektur (6c):**
+
+-   **Rot:** `npx vitest run tests/unit/boulder-log-format.test.mjs` — 3 fehlgeschlagen (`clampTries` nicht exportiert).
+-   **Grün:** nach Auslagern von `clampTries` (1…999) und Verdrahtung in `setTries` — 16/16 Unit; voller Lauf `npm test` grün (Unit 40, E2E 20).
+
 # QA
 
-*Vom Agenten in Stufe 6 ergänzt.*
+**Automatisch (6a):**
+
+-   `npm test` — grün: ESLint, Prettier (`format:check`), Stylelint UI-Richtlinie (`check:ui`, nur `app/**/*.css`), Vitest Unit **40/40**, `npm audit` (0 prod, 0 dev), gitleaks (keine Funde), Playwright E2E **20/20**.
+-   `npm run check:clean` — grün (Klon ohne Submodule, `npm ci` + `npm test`; CI-Äquivalenz).
+-   Nicht eingerichtet/ausgelassen: keine. Nicht-blockierende Warnungen: keine neuen.
+
+**Geprüft durch (6b):** Reviewer, Klicktester (iPhone-Emulation, Dark), Security — jeweils **keine** blockierenden und **keine** empfohlenen Befunde.
+
+**Befunde (6c):**
+
+-   *Reviewer (Hinweis):* Der Plan nannte einen E2E für die Stepper-Obergrenze 999; der Wert ist nur per Klick änderbar (kein sinnvoller E2E). **Behoben:** Clamping in die reine Funktion `clampTries` ausgelagert, Unit-Tests für beide Grenzen. Test: `clampTries` in `tests/unit/boulder-log-format.test.mjs`.
+-   *Klicktester (Hinweis):* Stepper-Buttons (−/+) ~40×42px, unter dem Zielformat-Minimum 44px — Ursache in der DS-Komponente `.stepper`, nicht im App-Code. **Als DS-Lücke** in `_context/design.md` vermerkt und als DS-Idee gemeldet; im Projekt nicht lokal überschrieben. Berührt die Zielformat-Festlegung (≥ 44px) → dem Nutzer zur Abnahme vorgelegt.
+-   *Security (Hinweis):* Ein fehlgeschlagenes `writeText` zeigt dennoch „Kopiert ✓" (nur Schreibzugriff, keine Datenpreisgabe) — Robustheits-/UX-Punkt, entspricht dem freigegebenen Entwurf; keine Änderung, Kandidat für eine spätere Idee.
+-   *Weitere Hinweise ohne Änderung:* kein Escape-Handler am Sheet (nicht gefordert, nicht im Entwurf); `.sr-only` nutzt `--border-width` als 1px-Maß (token-rein, vom Plan vorgesehen); `eslint.config.js`-Ignore für Mockups (notwendig, folgt dem bestehenden `_design-system/**`-Muster).
+
+**CI (6d):** *(folgt nach dem Pull Request nach `next`)*
 
 # Abnahme
 
