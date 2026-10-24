@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const TOOL = "/tools/boulder-log/";
+const TOOL = "/tools/boulder-log/index.html";
 
 test.describe("Boulder Log — Eingabe", () => {
   test.beforeEach(async ({ page }) => {
@@ -12,7 +12,7 @@ test.describe("Boulder Log — Eingabe", () => {
   }) => {
     await page.goto("/");
     await page.getByRole("link", { name: "Boulder Log" }).click();
-    await expect(page).toHaveURL(/\/tools\/boulder-log\/$/);
+    await expect(page).toHaveURL(/\/tools\/boulder-log\/index\.html$/);
     await expect(page.getByLabel("Grad")).toBeVisible();
 
     await page.getByRole("link", { name: "⊞ Tools" }).click();
@@ -204,5 +204,31 @@ test.describe("Boulder Log — Speichern & Kopieren", () => {
     await expect(page.locator("#copy")).toHaveText("Kopieren", {
       timeout: 4000,
     });
+  });
+});
+
+test.describe("Boulder Log — Offline", () => {
+  test("Tool-Seite lädt ohne Netz aus dem Precache (nicht der Shell-Fallback)", async ({
+    page,
+    context,
+  }) => {
+    await page.goto(TOOL);
+
+    // Auf den aktiven, kontrollierenden Service Worker warten.
+    await page.waitForFunction(
+      () =>
+        navigator.serviceWorker && navigator.serviceWorker.controller !== null,
+      null,
+      { timeout: 20_000 },
+    );
+
+    await context.setOffline(true);
+    await page.reload();
+
+    // Tool-spezifische Elemente müssen erscheinen — nicht der Shell-Titel.
+    await expect(page.getByLabel("Grad")).toBeVisible();
+    await expect(page.getByRole("link", { name: "⊞ Tools" })).toBeVisible();
+
+    await context.setOffline(false);
   });
 });

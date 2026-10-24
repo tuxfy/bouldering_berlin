@@ -194,3 +194,13 @@ sheetEl.addEventListener("click", (ev) => {
 
 updateAddState();
 updateActionsState();
+
+// Service Worker registrieren (wie die Shell), damit auch der direkte Einstieg
+// ins Tool offline funktioniert. Script liegt im App-Wurzelverzeichnis.
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("../../sw.js").catch((err) => {
+      console.error("Service-Worker-Registrierung fehlgeschlagen:", err);
+    });
+  });
+}

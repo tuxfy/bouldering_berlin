@@ -184,14 +184,14 @@ Architektur: Tool als **statische Seite + ES-Modul-Controller** (Light DOM mit D
     2.  **a) Shell-Anbindung + Tool-Grundgerüst + Eingabe:** Kachel in `app/index.html` (verlinkt `./tools/boulder-log/`, Icon `icon-boulderlog.svg`), „Noch keine Tools"-Hinweis entfernen, `start.spec.js` **im selben Schritt** auf die Kachel anpassen (bleibt positiv: Kachel vorhanden + verlinkt, Hinweis weg). Tool-Seite `index.html` (Markup, DS-Klassen, **keine** Inline-Styles) + `boulder-log.css` (Layout aus Entwurf, nur Tokens) + `boulder-log.js` (Zustand Grad/tries/send/Style/Weitere, Hinzufügen). E2E: Navigation hin/zurück; „+" ohne Grad deaktiviert / mit Grad aktiv; Hinzufügen hängt Zeile an; danach tries=1, send aus, Styles+Weitere leer, Grad bleibt; Datalist-Options + freie Eingabe; Leerzustand-Platzhalter.
         **b) Reset + ConfirmSheet** (eigener Unterschritt, eigener roter→grüner E2E): Reset → Sheet; Abbrechen behält; Löschen leert; Scrim-Klick schließt; Kopieren+Reset bei leerem Log disabled.
     3.  **Dauerhaftigkeit + Kopieren:** `localStorage` laden/speichern (neu ggü. Entwurf); `navigator.clipboard.writeText` + „Kopiert ✓" (2 s, dann zurück). E2E: nach Reload erhalten; Kopieren-Label + disabled-Logik (deterministisch).
-    4.  **Offline + Feinschliff:** expliziter Offline-E2E der **Tool-Seite** (DevOps 1); `sw-precache.js` per `npm run sw:build` neu erzeugen und **mitcommitten** (nie von Hand ändern).
+    4.  **Offline + Feinschliff:** expliziter Offline-E2E der **Tool-Seite** (DevOps 1). *Abweichung:* `app/sw-precache.js` ist **gitignored** (wird durch `sw:build` lokal/CI erzeugt, nicht committet) — es nimmt die Tool-Dateien automatisch auf. Die Kachel verlinkt auf `index.html` (nicht `./tools/boulder-log/`), damit die Navigations-URL die **gecachte** Datei trifft; außerdem registriert die Tool-Seite den Service Worker selbst (direkter Einstieg offline).
     5.  **Grün:** `npm test`, `npm run check:ui`, `npm run check:clean`; Kriterien abhaken, nur-am-Gerät-Prüfbares für die Abnahme markieren.
 
 2.  **Betroffene Dateien:**
     -   neu: `app/tools/boulder-log/{index.html,boulder-log.js,boulder-log.css,format.js}`
     -   neu (Tests): `tests/unit/boulder-log-format.test.mjs`, `tests/e2e/boulder-log.spec.js`
     -   geändert: `app/index.html` (Kachel + Hinweis), `tests/e2e/start.spec.js` (Kachel statt leer)
-    -   neu erzeugt + mitcommittet: `app/sw-precache.js` (durch `npm run sw:build`; nicht von Hand)
+    -   erzeugt (gitignored, **nicht** committet): `app/sw-precache.js` (durch `npm run sw:build` lokal/CI; nimmt die Tool-Dateien automatisch auf)
 
 3.  **Testfälle je Akzeptanzkriterium:**
     -   *Unit* (`boulder-log-format.test.mjs`, reine Logik): `1 try` vs. `n tries`; mit/ohne `(send)`; mit Styles; Styles + Weitere; nur Weitere; Join „, "; **Grenzfälle:** Grad mit umgebenden Leerzeichen → getrimmt; `note` nur Leerzeichen → nicht angehängt; `styles` **und** `note` leer → keine ` - `-Liste; `appendLine`: leeres Log → **keine** führende Leerzeile; Log mit Trailing-Newline → genau ein `\n`.
@@ -241,7 +241,10 @@ Architektur: Tool als **statische Seite + ES-Modul-Controller** (Light DOM mit D
 -   **Rot** (vor der Umsetzung): `npx playwright test tests/e2e/boulder-log.spec.js --grep "Speichern & Kopieren"` — 3 fehlgeschlagen (Neuladen behält Einträge, manuelle Änderung bleibt, Kopieren), 1 bestanden (Reset-leer trivial).
 -   **Grün** (nach der Umsetzung): dieselbe Auswahl 4/4. Voller Lauf `npm test` grün (E2E 19, Unit 37). Zwischenablage-Inhalt in Chromium bestätigt; Safari-Clipboard = Geräteprüfung (Stufe 7).
 
-*(weitere Schritte folgen)*
+**Schritt 4 — Offline der Tool-Seite:**
+
+-   **Rot** (vor SW-Registrierung/Precache): `npx playwright test tests/e2e/boulder-log.spec.js --grep Offline` — fehlgeschlagen (kein kontrollierender Service Worker beim direkten Einstieg).
+-   **Grün** (nach SW-Registrierung in der Tool-Seite + Kachel-Link auf `index.html`): dieselbe Auswahl 1/1. Voller Lauf `npm test` grün (E2E 20, Unit 37).
 
 # QA
 

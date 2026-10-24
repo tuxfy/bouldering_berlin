@@ -15,7 +15,7 @@ test("Startseite zeigt den ToolHeader und die Boulder-Log-Kachel (dark)", async 
   await expect(list.locator("> *")).toHaveCount(1);
 
   const tile = list.getByRole("link", { name: "Boulder Log" });
-  await expect(tile).toHaveAttribute("href", "./tools/boulder-log/");
+  await expect(tile).toHaveAttribute("href", "./tools/boulder-log/index.html");
 
   // Der „Noch keine Tools"-Hinweis entfällt, sobald ein Tool vorhanden ist.
   await expect(page.getByTestId("tool-list-empty")).toHaveCount(0);
