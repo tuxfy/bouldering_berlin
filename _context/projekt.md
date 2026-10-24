@@ -65,6 +65,8 @@ Hinweis UI-Prüflauf: nur **App-Stylesheets** prüfen (`app/**/*.css`), **nicht*
 - **gitleaks:** fest im Container-Image und in der CI als gepinnte Binär (gleiche Version wie `check:secrets`); `npm test` ruft die Binär.
 - **Sauberer Lauf (`npm run check:clean`):** braucht im Temp-Klon eine erreichbare npm-Registry bzw. den npm-Cache (für `npm ci`), die Playwright-Browser (Standard-Cache `~/.cache/ms-playwright`, wie oben) und die `gitleaks`-Binär auf dem `PATH`. Im Container vorhanden; **offline** schlägt `npm ci` im Klon fehl — dann `npm ci --offline` gegen den Cache bzw. Einschränkung dokumentieren.
 - **Empfehlung (offen):** Für originalgetreue Safari-E2E fehlen im aktuellen Image die **WebKit-System-Bibliotheken** (`npx playwright install --with-deps webkit` braucht root). Solange sie fehlen, laufen die E2E in **Chromium mit iPhone-Emulation**; Safari-Eigenheiten bleiben der Geräte-Nachprüfung vorbehalten. WebKit-Libs ins Image aufnehmen, dann auf WebKit umstellen.
+- **Erkenntnis (005):** Startet der Container ohne vorab gefüllte Volumes, fehlen `node_modules` (dann `npm ci`) und die **Playwright-Chromium-Headless-Shell** (`npx playwright install chromium` — die volle Binär allein genügt nicht). Beides nach Rückfrage installieren.
+- **Offen (005):** Die in Stufe 0 vorgesehene **Leitplanke „alle Prüfungen vor jedem Commit"** ist im Repo nicht eingerichtet (kein `prepare`/husky, kein `.git/hooks/pre-commit`). Bis sie nachgezogen ist, fährt der Agent `npm test` vor Commits selbst; verlässlich grün ist ohnehin erst die CI. (Einrichtung gehört in Stufe 0.)
 
 ## Auslieferung und Release
 

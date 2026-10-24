@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="de" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="color-scheme" content="dark" />
+    <title>Workout-Timer</title>
+
+    <link rel="manifest" href="../../manifest.webmanifest" />
+    <link
+      rel="icon"
+      href="../../vendor/designsystem/assets/Logos/app-icon-192.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="../../vendor/designsystem/assets/Logos/app-icon-192.png"
+    />
+
+    <link rel="stylesheet" href="../../vendor/designsystem/tokens.css" />
+    <link
+      rel="stylesheet"
+      href="../../vendor/designsystem/components/bundle.css"
+    />
+    <link rel="stylesheet" href="./workout-timer.css" />
+  </head>
+  <body>
+    <div class="screen">
+      <header class="tool-header wt-header">
+        <h1 class="sr-only">Workout-Timer</h1>
+        <a class="btn btn--secondary btn--compact" href="../../">⊞ Tools</a>
+      </header>
+
+      <!-- Einstellen -->
+      <main class="wt-config" id="config">
+        <div class="cfg-group" id="group-a"></div>
+        <div class="cfg-group" id="group-b"></div>
+        <div class="wt-spacer"></div>
+        <p class="wt-total">
+          Gesamt · <b id="total" aria-live="polite">0:00</b>
+        </p>
+        <button type="button" class="btn btn--primary btn--block" id="start">
+          Start
+        </button>
+      </main>
+
+      <!-- Lauf / Fertig -->
+      <div class="stage wt-stage" id="stage" data-tone="neutral" hidden>
+        <div class="counters">
+          <span>Rep <b id="rep">1 / 1</b></span>
+          <span>Set <b id="set">1 / 1</b></span>
+        </div>
+        <div class="ring">
+          <svg viewBox="0 0 300 300" aria-hidden="true">
+            <circle class="ring__track" cx="150" cy="150" r="138"></circle>
+            <circle
+              class="ring__prog"
+              id="ring-prog"
+              cx="150"
+              cy="150"
+              r="138"
+            ></circle>
+          </svg>
+          <div class="ring__center" role="timer" aria-live="off">
+            <div class="ring__label" id="label">GET READY</div>
+            <div class="ring__value" id="value">0:10</div>
+            <div class="ring__caption" id="caption">Mach dich bereit</div>
+          </div>
+        </div>
+        <div
+          class="segments"
+          id="segments"
+          data-tone="orange"
+          aria-hidden="true"
+        ></div>
+        <div class="hint">
+          <span class="hint__dot" id="hint-dot"></span><span id="hint"></span>
+        </div>
+        <div class="control-bar" id="controls"></div>
+      </div>
+
+      <!-- Beenden -->
+      <div class="sheet-scrim" id="sheet" hidden>
+        <div
+          class="sheet"
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="sheet-title"
+        >
+          <h2 class="sheet__title" id="sheet-title">Workout beenden?</h2>
+          <p class="sheet__text">
+            Der Lauf wird abgebrochen, die Einstellungen bleiben.
+          </p>
+          <div class="sheet__actions">
+            <button
+              type="button"
+              class="btn btn--destructive btn--block"
+              id="sheet-confirm"
+            >
+              Beenden
+            </button>
+            <button
+              type="button"
+              class="btn btn--secondary btn--block"
+              id="sheet-cancel"
+            >
+              Weitermachen
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./workout-timer.js"></script>
+  </body>
+</html>

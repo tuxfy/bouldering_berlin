@@ -39,14 +39,29 @@ Content (app-spezifisch, nicht im Design-System):
 - **Style-Tags:** `slab, vertical, overhang, roof, dyno, crimp, sloper, pinch, jug, technical, powerful`.
 - **Log-Zeile:** `- <grad>: <n> tries[ (send)][ - <style>, <style>, <weitere Angaben>]`, bei genau einem Versuch `1 try`.
 
+**Workout-Timer** (Entwurf: `_requirements/mockups/workout-timer/`):
+
+| Element | Rolle/Ton |
+|---|---|
+| Vorlauf, Fertig | neutral |
+| Work | orange |
+| Rest, Pause (zwischen Sets) | green |
+| Konfig-Kanten: Work, Reps | orange |
+| Konfig-Kanten: Rest, Pause | green |
+| Sets | ohne Ton |
+| Reset, Beenden (im ConfirmSheet) | danger (Rot) |
+
+Töne (Web Audio, app-spezifisch — Werte aus dem Entwurf `Main.dc.html`): Countdown 3-2-1 je Phase 1760 Hz/180 ms; Beginn Work 2093 Hz/800 ms; Beginn Rest und Pause 1046 Hz/800 ms; Fertig drei aufsteigende Töne 1318/1760/2637 Hz.
+
 ## Lokal umgesetzt — gehört ins Design-System
 
 | Was | Wo im Projekt | Idee im Design-System vermerkt |
 |---|---|---|
-| ToolHeader ohne sichtbaren Titel, Aktion mittig (nur „⊞ Tools") | Boulder Log (geplant; Entwurf `_requirements/mockups/boulder-log/`) | vorgemerkt — noch nicht im Design-System eingetragen |
-| Text nur für Screenreader (z. B. versteckter Titel), keine Klasse im Design-System | Boulder Log (geplant) | vorgemerkt — noch nicht im Design-System eingetragen |
+| ToolHeader ohne sichtbaren Titel, Aktion mittig (nur „⊞ Tools") | Boulder Log (geplant; Entwurf `_requirements/mockups/boulder-log/`); Workout-Timer | vorgemerkt — noch nicht im Design-System eingetragen |
+| Text nur für Screenreader (z. B. versteckter Titel), keine Klasse im Design-System | Boulder Log (geplant); Workout-Timer | vorgemerkt — noch nicht im Design-System eingetragen |
 | Vorschlagsliste am TextInput (native `<datalist>`, Aussehen durch iOS) — prüfen, ob ein Muster im Design-System nötig ist | Boulder Log (geplant), Grad-Eingabe | vorgemerkt — noch nicht im Design-System eingetragen |
-| Stepper-Buttons (−/+) unter 44px Touch-Ziel (`.stepper button` = `--space-10`/40px, effektiv ~40×42) — Zielformat fordert ≥ 44px | Boulder Log (DS-Komponente `.stepper`, im Projekt **nicht** lokal überschrieben); in QA (Klicktester) festgestellt | vorgemerkt — Stepper-Buttons ≥ 44px im Design-System |
+| Stepper-Buttons (−/+) unter 44px Touch-Ziel (`.stepper button` = `--space-10`/40px, effektiv ~40×42) — Zielformat fordert ≥ 44px | Boulder Log (DS-Komponente `.stepper`, im Projekt **nicht** lokal überschrieben); in QA (Klicktester) festgestellt; Workout-Timer | vorgemerkt — Stepper-Buttons ≥ 44px im Design-System |
+| ControlBar mit leerem dritten Platz (Fertig-Ansicht hat nur zwei Aktionen, ControlBar verlangt drei Kinder) | Workout-Timer (Entwurf `_requirements/mockups/workout-timer/`) | vorgemerkt — leerer Nebenplatz in ControlBar im Design-System |
 
 ## Ausnahmen (feste Werte außerhalb von CSS)
 

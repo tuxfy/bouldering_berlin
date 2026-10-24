@@ -1,0 +1,115 @@
+/* Bouldering Berlin Design System — generated from tokens.json */
+:root, [data-theme="dark"] {
+  --n-0: #000;
+  --n-50: #0b0b0b;
+  --n-100: #111;
+  --n-200: #1e1e1e;
+  --n-300: #2a2a2a;
+  --n-400: #444;
+  --n-500: #888888;
+  --n-600: #aaa;
+  --n-700: #e0e0e0;
+  --n-800: #fff;
+  --blue-400: oklch(0.78 0.12 255);
+  --blue-600: oklch(0.58 0.15 255);
+  --blue-700: oklch(0.42 0.10 255);
+  --blue-900: oklch(0.21 0.045 255);
+  --green-400: oklch(0.78 0.16 150);
+  --green-600: oklch(0.58 0.15 150);
+  --green-700: oklch(0.42 0.10 150);
+  --green-900: oklch(0.21 0.045 155);
+  --orange-400: oklch(0.78 0.16 55);
+  --orange-600: oklch(0.58 0.15 55);
+  --orange-700: oklch(0.42 0.10 55);
+  --orange-900: oklch(0.21 0.045 50);
+  --red-400: oklch(0.76 0.14 28);
+  --red-600: oklch(0.58 0.16 28);
+  --red-700: oklch(0.42 0.10 28);
+  --red-900: oklch(0.21 0.045 28);
+  --sage-400: oklch(0.85 0.02 150);
+  --sage-900: oklch(0.18 0.01 150);
+  --white-6: rgba(255,255,255,0.06);
+  --white-10: rgba(255,255,255,0.10);
+  --white-12: rgba(255,255,255,0.12);
+  --white-40: rgba(255,255,255,0.4);
+  --white-55: rgba(255,255,255,0.55);
+  --white-70: rgba(255,255,255,0.7);
+  --black-22: rgba(0,0,0,0.22);
+  --black-60: rgba(0,0,0,0.6);
+  --ink: oklch(0.16 0.02 150);
+  --brand-cyan: #0bc2f2;
+  --color-bg: var(--n-100);
+  --color-overlay: var(--n-0);
+  --color-scrim: var(--black-60);
+  --color-surface: var(--n-200);
+  --color-surface-pressed: var(--n-300);
+  --color-surface-sunken: var(--n-50);
+  --color-border: var(--n-300);
+  --color-divider: var(--n-200);
+  --color-text-strong: var(--n-800);
+  --color-text: var(--n-700);
+  --color-text-secondary: var(--n-600);
+  --color-text-muted: var(--n-500);
+  --color-text-disabled: var(--n-400);
+  --color-primary-bg: var(--n-800);
+  --color-primary-fg: var(--n-100);
+  --color-primary-pressed: var(--n-700);
+  --color-interactive: var(--blue-400);
+  --color-interactive-solid: var(--blue-600);
+  --color-on-solid: var(--n-800);
+  --color-focus: var(--blue-400);
+  --color-success-fg: var(--green-400);
+  --color-success-bg: var(--green-900);
+  --color-success-border: var(--green-700);
+  --color-danger-fg: var(--red-400);
+  --color-danger-bg: var(--red-900);
+  --color-danger-border: var(--red-700);
+}
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --content-pad-x: 16px;
+  --content-pad-y: 20px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 999px;
+  --size-sm: 44px;
+  --size-md: 54px;
+  --size-lg: 72px;
+  --size-row: 64px;
+  --size-icon: 52px;
+  --size-stepper: 128px;
+  --size-bar: 6px;
+  --size-dot: 8px;
+  --content-max: 480px;
+  --controls-max: 360px;
+  --ring-size: 300px;
+  --border-width: 1px;
+  --edge-width: 3px;
+  --focus-width: 2px;
+  --press-opacity: 0.7;
+  --disabled-opacity: 0.4;
+  --z-header: 10;
+  --z-overlay: 100;
+  --font-sans: -apple-system,system-ui,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --font-mono: ui-monospace,'SF Mono',Menlo,monospace;
+}
+.type-display { font-family: var(--font-sans); font-size: 88px; line-height: 1; font-weight: 800; letter-spacing: -0.04em; }
+.type-title { font-family: var(--font-sans); font-size: 24px; line-height: 1.2; font-weight: 800; }
+.type-overline { font-family: var(--font-sans); font-size: 14px; line-height: 1; font-weight: 800; letter-spacing: 0.28em; }
+.type-heading { font-family: var(--font-sans); font-size: 16px; line-height: 1.4; font-weight: 700; }
+.type-body { font-family: var(--font-sans); font-size: 16px; line-height: 1.4; font-weight: 500; }
+.type-label { font-family: var(--font-sans); font-size: 16px; line-height: 1.4; font-weight: 600; }
+.type-meta { font-family: var(--font-sans); font-size: 14px; line-height: 1.4; font-weight: 500; }
+.type-meta-strong { font-family: var(--font-sans); font-size: 14px; line-height: 1.4; font-weight: 600; }
+.type-caps { font-family: var(--font-sans); font-size: 12px; line-height: 1.4; font-weight: 600; letter-spacing: 0.08em; }
+.type-button { font-family: var(--font-sans); font-size: 16px; line-height: 1; font-weight: 700; }
+.type-button-lg { font-family: var(--font-sans); font-size: 18px; line-height: 1; font-weight: 700; }
+.type-glyph { font-family: var(--font-sans); font-size: 24px; line-height: 1; font-weight: 500; }
+.type-mono { font-family: var(--font-mono); font-size: 14px; line-height: 1.6; font-weight: 500; }
