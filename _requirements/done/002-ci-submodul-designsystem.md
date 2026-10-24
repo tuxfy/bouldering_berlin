@@ -242,7 +242,7 @@ Zwei **Hinweise** (nichts muss): `check:clean` installiert den Browser bei jedem
 
 ## CI (vorab)
 
-Pull Request [#1](https://github.com/tuxfy/bouldering_berlin/pull/1) `fix/002-ci-submodul-designsystem` → `rc/0.1.2`, Lauf [39820121763](https://github.com/tuxfy/bouldering_berlin/actions/runs/39820121763): **`test` grün** (erreicht `npm test` und läuft submodul-frei durch), Socket Security grün. Damit ist das Kriterium „CI-Lauf erreicht `npm test` und bricht nicht mehr am Submodul ab" **real auf GitHub** belegt — nicht erst nach dem Merge. Der Merge in `rc/0.1.2` selbst folgt nach der Abnahme (Stufe 7/8).
+Pull Request #1 `fix/002-ci-submodul-designsystem` → `rc/0.1.2`, Lauf 39820121763: **`test` grün** (erreicht `npm test` und läuft submodul-frei durch), Socket Security grün. Damit ist das Kriterium „CI-Lauf erreicht `npm test` und bricht nicht mehr am Submodul ab" **real auf GitHub** belegt — nicht erst nach dem Merge. Der Merge in `rc/0.1.2` selbst folgt nach der Abnahme (Stufe 7/8).
 
 # Abnahme (Wiederaufnahme)
 
