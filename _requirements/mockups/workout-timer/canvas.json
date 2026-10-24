@@ -1,0 +1,54 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-10-24T14:00:00Z"
+  },
+  "title": "Workout-Timer",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "Shell.dc.html": { "x": 0, "y": 0, "w": 390, "h": 844, "title": "Start · Tool-Grid", "is_interactive": true },
+    "Main.dc.html": { "x": 470, "y": 0, "w": 390, "h": 844, "title": "Workout-Timer · interaktiv", "is_interactive": true },
+    "Einstellen.dc.html": { "x": 940, "y": 0, "w": 390, "h": 844, "title": "Zustand: Einstellen", "is_interactive": true },
+    "Vorlauf.dc.html": { "x": 1410, "y": 0, "w": 390, "h": 844, "title": "Zustand: Vorlauf (GET READY)", "is_interactive": true },
+    "Work.dc.html": { "x": 1880, "y": 0, "w": 390, "h": 844, "title": "Zustand: Work", "is_interactive": true },
+    "Rest.dc.html": { "x": 2350, "y": 0, "w": 390, "h": 844, "title": "Zustand: Rest", "is_interactive": true },
+    "Pause.dc.html": { "x": 2820, "y": 0, "w": 390, "h": 844, "title": "Zustand: Pause zwischen Sets", "is_interactive": true },
+    "Angehalten.dc.html": { "x": 3290, "y": 0, "w": 390, "h": 844, "title": "Zustand: Angehalten", "is_interactive": true },
+    "Beenden.dc.html": { "x": 3760, "y": 0, "w": 390, "h": 844, "title": "Zustand: Beenden?", "is_interactive": true },
+    "Fertig.dc.html": { "x": 4230, "y": 0, "w": 390, "h": 844, "title": "Zustand: Fertig", "is_interactive": true }
+  },
+  "order": [
+    "Shell.dc.html",
+    "Main.dc.html",
+    "Einstellen.dc.html",
+    "Vorlauf.dc.html",
+    "Work.dc.html",
+    "Rest.dc.html",
+    "Pause.dc.html",
+    "Angehalten.dc.html",
+    "Beenden.dc.html",
+    "Fertig.dc.html"
+  ],
+  "notes": {
+    "titel": {
+      "x": 0,
+      "y": -300,
+      "text": "workout-timer — Entwurf (3b)",
+      "kind": "title1",
+      "maxW": 4620
+    }
+  },
+  "designSystems": [
+    {
+      "title": "Bouldering Berlin Design System",
+      "namespace": "boulderingberlindesignsystem_25b717",
+      "artifact": null,
+      "version": "1792567487-8d5f",
+      "copiedAt": "2026-10-24T14:00:00Z"
+    }
+  ]
+}
