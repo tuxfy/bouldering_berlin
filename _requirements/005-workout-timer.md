@@ -1,5 +1,5 @@
 -   **Title** Workout-Timer (Intervall-Timer mit Sets)
--   **Status** in progress
+-   **Status** qa
 
 # Idee
 
@@ -220,9 +220,16 @@ Nicht Teil dieser Anforderung (ggf. später als eigene Idee im Backlog):
 
 *Vom Agenten in Stufe 5 ergänzt.*
 
--   **Rot** (vor der Änderung): `<Befehl>` — <n> bestanden / <m> fehlgeschlagen; rot: `<Testname>`, …
--   **Grün** (nach der Änderung): `<Befehl>` — <n> bestanden / 0 fehlgeschlagen
--   **UI-Richtlinie:** `<Befehl>` — 0 Befunde; Ausnahmen: <keine | Liste> *(lief der Prüflauf nicht: Grund und manuelle Prüfung)*
+-   **Rot** (je reinem Modul vor seiner Umsetzung, `npx vitest run <datei>`):
+    -   `timeline.js` — 1 bestanden / 9 fehlgeschlagen
+    -   `engine.js` — 2 bestanden / 15 fehlgeschlagen
+    -   `audio.js` — 1 bestanden / 3 fehlgeschlagen
+    -   `wakelock.js` — 2 bestanden / 3 fehlgeschlagen
+    -   Die DOM-/E2E-Schicht wurde in einem Zug gebaut; die reine Logik (Zeit/Drift, Töne, Wake Lock) ist strikt test-first entstanden.
+-   **Grün** (nach der Umsetzung): `npm test` — alle Prüfungen grün; Unit **76 bestanden / 0**, E2E **29 bestanden / 0**.
+-   **Sauberer Lauf:** `npm run check:clean` — grün (Klon ohne Submodul, `npm ci` + `npm test`).
+-   **UI-Richtlinie:** `npm run check:ui` — 0 Befunde; Ausnahmen: keine (geprüft werden nur `app/**/*.css`; DS-Kopie ausgenommen). Veränderliche Werte über `--fill` bzw. SVG-Attribute, keine Inline-Styles. DS-Lücken (Stepper < 44 px, leerer dritter ControlBar-Platz, ToolHeader ohne Titel, Nur-Screenreader-Text) in `_context/design.md` vermerkt.
+-   **Nur in der Abnahme (manuell, am Gerät):** Klang der Signale, Ton bei gesetztem Lautlos-Schalter, Weiterlaufen bei *manueller* Sperre, Screen Wake Lock auf iOS Safari, PWA-Installation/Standalone. Die zugehörige Logik (Auslösepunkte, Wake-Lock-Aufrufe) ist per Unit-Test abgesichert.
 
 # QA
 
