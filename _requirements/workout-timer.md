@@ -191,13 +191,30 @@ Nicht Teil dieser Anforderung (ggf. später als eigene Idee im Backlog):
 
 *Vom Agenten in Stufe 5 (5a) geschrieben, vom Nutzer freigegeben.*
 
-1.  **Schritte:**
-2.  **Betroffene Dateien:**
-3.  **Testfälle:**
-4.  **Entwurf → Code** *(bei Design)*:
-5.  **Externe Abhängigkeiten** (How-to wo?):
-6.  **Annahmen und Risiken:**
-7.  **Nicht angefasst:**
+1.  **Schritte** — jeder Schritt: **Test zuerst (rot aus dem richtigen Grund: fehlendes Verhalten/Element, nicht fehlende Datei), dann grün, dann Commit.** Bei E2E lädt die Tool-Seite bereits, nur das geprüfte Element/Verhalten fehlt (sonst greift der Navigate-Fallback und liefert die Shell → falsches Rot).
+    1.  **Reine Logik** `timeline.js`: `buildTimeline(settings)` → Phasenliste `[{kind, dur, set, rep}]` (Vorlauf → je Set Reps×Work mit Rest dazwischen, kein Rest nach letztem Work, Pause zwischen Sets, keine Pause nach letztem Set / bei `pause=0`); `totalSeconds(settings)` = **Summe über `buildTimeline`** (so sind Vorlauf, `pause=0` und Rest-Weglassen automatisch korrekt); `clamp(feld, wert)`; `formatTime(sek)` → `m:ss` mit `Math.ceil(sek − 1e-9)` (wörtlich aus `Main.dc.html`).
+    2.  **Reine Zustands-/Ableitungslogik** `engine.js` (uhr-injizierbar, kein DOM) — deckt das Drift-Kriterium ab:
+        -   `progress(timeline, startedAt, pausedAccum, now)` → `{idx, kind, rem, fillCurrent, countdown}`; **Pausen-Akkumulation ist neu zu entwerfen** (der Entwurf summiert sie nicht, daher nicht übernehmbar).
+        -   `view(state, settings)` → `{label, caption, tone, repLabel, setLabel, segments[], hint, next}` inkl. Hint-Sonderfälle „Letzter Rep — gleich geschafft" und Fertig-Zusammenfassung.
+        -   `signalsFor(prev, next)` → welche Töne: `work`/`rest`/`pause` bei Phasenbeginn, Countdown nur beim **ganzzahligen** Übergang 3/2/1, `done` am Timeline-Ende (auch bei Skip aus der letzten Phase).
+    3.  **Einstell-Ansicht:** `index.html` (ToolHeader + `sr-only`-Titel, zwei ConfigGroups mit `cfg-row`/`stepper`, Meta-Zeile „Gesamt", `Start`), `workout-timer.css` (nur Tokens), Controller-Teil: Stepper mit Klemmen, Gesamtdauer live aus `totalSeconds`, Laden/Speichern der Werte (`localStorage`-Schlüssel `bb:workout-timer`). E2E Einstellen + Persistenz über Reload.
+    4.  **Kachel** in `app/index.html` (zweite Kachel, Icon `icon-timer.svg`) + Rücksprung „⊞ Tools". E2E Navigation.
+    5.  **Lauf-Ansicht** Markup (Stage, Counters, `ring`, `segments`, `hint`, `control-bar`, ConfirmSheet) als **dünne DOM-Anbindung an `engine.js`**: veränderliche Werte über **CSS-Custom-Property** (`el.style.setProperty('--fill', …)`, im Stylesheet `width: var(--fill)`) bzw. SVG-`stroke-dashoffset` — **keine Inline-Styles als Gestaltung**; ControlBar-Fertigansicht mit leerem dritten Platz (`<span aria-hidden="true">`); **Audio-Context-Unlock synchron im `Start`-Klick-Handler** vorgesehen. Steuerung `Pause`/`Weiter`, `Skip`, `Reset`→Sheet, `Fertig` mit `Nochmal`/`Zurück`. E2E mit `page.clock` (Zeitraffer) + Minimalwerten.
+    6.  **Audio** `audio.js` (Web Audio `beep`/`signal`, Unlock im Start-Klick aus Schritt 5); verdrahtet die Töne aus `engine.signalsFor`; Stumm-Rückfall, wenn kein Context. Auslöselogik ist in `engine` (Schritt 2) unit-getestet; `audio.js` selbst per Mock (`resume`/`beep`).
+    7.  **Wake Lock** `wakelock.js`: anfordern bei Lauf, erneut bei `visibilitychange`→`visible`, freigeben bei Ende/Verlassen; fehlende API oder abgelehnter `request` → kein Throw, Lauf läuft weiter. Unit (jsdom, navigator-Mock).
+    8.  **SW-Registrierung** am Ende von `workout-timer.js` (`../../sw.js`); Offline/Precache. E2E direkter Einstieg offline (Muster `offline.spec.js`).
+    9.  **Abschluss:** alle Tests + `check:ui` + `check:clean` grün; Akzeptanzkriterien abhaken, manuell-only für die Abnahme markieren.
+2.  **Betroffene Dateien:** neu `app/tools/workout-timer/{index.html, workout-timer.js, timeline.js, engine.js, audio.js, wakelock.js, workout-timer.css}`; geändert `app/index.html` (Kachel); neu `tests/unit/workout-timer-timeline.test.mjs`, `workout-timer-engine.test.mjs`, `workout-timer-audio.test.mjs`, `workout-timer-wakelock.test.mjs` (`// @vitest-environment jsdom` für die DOM-/navigator-nahen Dateien), `tests/e2e/workout-timer.spec.js`. `app/sw-precache.js` ist generiert (nimmt die neuen Dateien automatisch auf).
+3.  **Testfälle (je Kriterium):**
+    -   `timeline.js`: Abfolge inkl. Randfälle (`sets=1`, `pause=0`, `reps=1`); `totalSeconds` inkl. Vorlauf; `clamp` an min/max; `formatTime` (`0`→`0:00`, `5.0`→`0:05`, `4.3`→`0:05`, `600`→`10:00`).
+    -   `engine.js`: `progress` driftfrei über lange Dauer mit gesteuerter `now`; mehrfaches Pause/Weiter (Pausen-Akkumulation); Countdown feuert nur bei 3/2/1; Skip aus letzter Phase → `done`; `view`-Hint-Sonderfälle; SegmentBar-Füllwerte je Zustand.
+    -   `audio.js`: Unlock (`resume`) bei erster Geste; kein Context → `beep` tut nichts (Stumm-Rückfall).
+    -   `wakelock.js`: fehlende API → kein Throw; `request` abgelehnt → abgefangen; `visible` fordert erneut an; Ende/Verlassen gibt frei; kein Doppel-Request.
+    -   E2E: Shell→Tool→zurück; Stepper/Klemmen + Gesamtdauer; Persistenz über Reload; Lauf zeigt korrekte Phase/Zähler/Restzeit (per `page.clock`); Pause/Weiter/Skip (inkl. letzte Phase→Fertig); Reset→Sheet→Beenden/Weitermachen/Scrim; Fertig→Nochmal/Zurück; offline direkter Einstieg.
+4.  **Entwurf → Code:** Einstellen→`cfg-group`/`cfg-row`(+`__label`/`__unit`)/`stepper`/`btn--primary btn--block`; Lauf→`stage`/`counters`/`ring`(`ring__label`/`__value`/`__caption`/`ring__value.pulse`)/`segments`(`__bar`/`__fill` mit `--fill`)/`hint`(`hint__dot`)/`control-bar` mit `btn--icon btn--large` (destructive/secondary) + `btn--primary btn--large` (dritter Platz leer in Fertig); Beenden→`sheet-scrim`/`sheet`/`sheet__title`/`__text`/`__actions`; Kopf→`tool-header` + `sr-only`-Titel; Kachel→`tile`/`tile__icon`/`tile__label`. Texte/Töne/Werte/`fmt`-Rundung aus `Main.dc.html`.
+5.  **Externe Abhängigkeiten:** keine (keine neuen Pakete, kein Dienst, Hosting unverändert). Nur Browser-APIs — Web Audio, Screen Wake Lock, Page Visibility, `localStorage`; im Test über Mocks bzw. Playwright geprüft, am Gerät nachgeprüft (siehe Entscheidungen). How-to: keine externe Schnittstelle, daher kein `_context/`-Eintrag nötig.
+6.  **Annahmen und Risiken:** Wake Lock erst iOS 16.4+ → ohne API sauberer Rückfall (Bildschirm darf schlafen). Ton bei Lautlos-Schalter / manueller Sperre OS-begrenzt → best effort, Gerätenachprüfung. Audio-Klang nicht automatisiert prüfbar → nur Auslöselogik (in `engine`) im Unit-Test, Klang manuell. **Pausen-Akkumulation ist neu entworfen** (nicht aus dem Entwurf übernehmbar) und damit das Hauptrisiko der Zeitlogik → durch `engine`-Unit-Tests mit gesteuerter Uhr abgesichert. E2E laufen in Chromium (iPhone-Emulation, `page.clock` zum Zeitraffer; Wake Lock/Audio dort nur best-effort/neutralisiert), da WebKit-Libs im Image fehlen (`_context/projekt.md`) → Safari-Eigenheiten der Gerätenachprüfung vorbehalten. DS-Lücken (Stepper < 44 px, leerer dritter ControlBar-Platz) bleiben bestehen und sind in `_context/design.md` vermerkt.
+7.  **Nicht angefasst:** bestehendes Boulder-Log, Shell-Logik außer der neuen Kachel, Service-Worker-Grundgerüst (`app/sw.js`), Design-System (nur genutzt). Dazu alles unter „Abgrenzung".
 
 # Testnachweis
 
