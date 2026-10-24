@@ -1,5 +1,5 @@
 -   **Title** Workout-Timer (Intervall-Timer mit Sets)
--   **Status** new
+-   **Status** refined
 
 # Idee
 
@@ -28,12 +28,7 @@ Neue Tools folgen einem festen Muster (Erkenntnis aus 004): eigener Ordner `app/
 
 # Offene Fragen
 
--   Töne: wie erzeugt (Web Audio API)? Ein Signal pro Phasenwechsel oder je Phase unterschiedlich? Countdown-Pieptöne in den letzten Sekunden einer Phase?
--   iOS-Realität: Läuft der Timer (und der Ton) zuverlässig weiter, wenn der Bildschirm sperrt oder die PWA im Hintergrund ist? Braucht es einen Wake Lock, oder ist die Erwartung „Bildschirm anlassen"?
--   Steuerung während des Laufs: Pause/Fortsetzen, Abbrechen, Phase überspringen — oder nur Start/Stopp?
--   Werte-Grenzen, Schrittweiten und sinnvolle Vorgaben für Sets, Work, Rest und Pause.
--   Entfällt die „Pause" nach dem letzten Set? Verhalten am Ende (Schlusssignal, Rückkehr zur Einstell-Ansicht)?
--   Zusätzlich Vibration/Haptik zum Ton? (auf iOS eingeschränkt.)
+-   Keine. (Töne, Steuerung, Werte-Grenzen, Pause nach dem letzten Set, Ende-Verhalten → durch den Entwurf/Brief geklärt; Bildschirm wach, gesperrter Bildschirm, Vibration → unter „Entscheidungen".)
 
 # Design-Brief
 
@@ -128,27 +123,69 @@ Neue Tools folgen einem festen Muster (Erkenntnis aus 004): eigener Ordner `app/
 -   **Bildschirm wach während des Laufs:** feste Anforderung — Screen Wake Lock, solange der Timer läuft (auf iOS Safari ab 16.4; bei verdeckter Seite erneut anfordern).
 -   **Gesperrter Bildschirm:** Weil der Wake Lock das Gerät am Selbst-Sperren hindert, läuft der Timer während des Laufs durch. Für eine *manuelle* Sperre gilt „best effort" ohne harte Garantie — Web-Audio/Timer werden auf iOS beim Sperren meist angehalten; am echten Gerät nachprüfen.
 
+**Technik** (Vorschlag des Agenten, vom Nutzer mit der Plan-Freigabe bestätigt):
+
+-   **Aufbau:** eigenes Tool unter `app/tools/workout-timer/` mit **explizitem `index.html`**, eigener **Service-Worker-Registrierung** und Precache über das generierte `app/sw-precache.js`; Kachel in `app/index.html` — Muster wie Boulder Log (Erkenntnis aus 004). Build-frei (native ES-Module + Web Components).
+-   **Keine neuen Pakete.** Nur Browser-APIs: **Web Audio** (Töne), **Screen Wake Lock** (Bildschirm wach), **Page Visibility** (Wake Lock bei Wiederkehr erneut anfordern, Timer gegen die Uhr abgleichen).
+-   **Zeitbasis:** gegen die Uhr rechnen (`performance.now()`), Anzeige-Takt davon abgeleitet — kein Driften (der Entwurf zählt vereinfacht in 100-ms-Schritten; die App rechnet genau).
+-   **Speicherung:** zuletzt genutzte Werte (Sets, Pause, Work, Reps, Rest) als ein JSON unter einem `localStorage`-Schlüssel (z. B. `bb:workout-timer`), nur auf dem Gerät, offline; beim Öffnen vorbelegt, sonst Vorgaben aus dem Brief.
+-   **Audio-Freischaltung:** der Web-Audio-Context wird durch die erste Nutzer-Geste (Tipp auf `Start`) entsperrt (iOS-Autoplay-Regel); Töne sonst stumm.
+-   **Prüfbare Logik:** die Phasen-Abfolge entsteht als **reine Funktion** (Einstellungen → Phasenliste) — unit-testbar; Werte und Formeln aus dem Entwurf `Main.dc.html` übernommen, nicht nachempfunden.
+-   **Nur am echten Gerät prüfbar** (Nachprüfung nach dem Release, im `_releases/`-Dokument): Ton bei gesetztem Lautlos-Schalter, Verhalten bei *manueller* Sperre, Wake Lock auf iOS Safari, PWA-Installation/Offline/Standalone.
+
 # Verhalten
 
-Was der Nutzer sieht und tut.
+Aus Nutzersicht (Detail im Design-Brief und im Entwurf):
+
+-   **Einstieg:** In der Shell steht eine zweite Kachel „Workout-Timer". Ein Tipp öffnet die Ansicht **Einstellen**.
+-   **Einstellen:** Der Nutzer stellt **Sets, Pause, Work, Reps, Rest** per Stepper (−/+) oder Eingabe ein; Werte außerhalb der Grenzen werden geklemmt. Darunter zeigt „Gesamt · m:ss" die errechnete Gesamtdauer inkl. Vorlauf. `Start` beginnt den Lauf. Die zuletzt genutzten Werte sind beim nächsten Öffnen vorbelegt.
+-   **Lauf:** Es läuft automatisch ab: **Vorlauf (10 s)** → je Set `Reps`× **Work** im Wechsel mit **Rest** (nach dem letzten Work eines Sets **kein** Rest) → **Pause** zwischen den Sets (entfällt nach dem letzten Set; `Pause = 0` wird übersprungen) → **Fertig**. Die Ansicht zeigt jederzeit die aktuelle **Phase**, **Rep r / R** und **Set s / S**, die **verbleibende Zeit** (m:ss) im Ring, eine **SegmentBar** je Rep des Sets und einen Hinweis „Als Nächstes: …". Der Bildschirm bleibt während des Laufs an.
+-   **Töne:** Phasenwechsel und der Countdown 3-2-1 jeder Phase werden akustisch angekündigt; zum Schluss ein Erfolgssignal — so, dass man nicht hinschauen muss (Werte siehe Brief).
+-   **Steuerung:** `Pause`/`Weiter` hält an bzw. setzt fort; `Skip` beendet die laufende Phase sofort (aus der letzten Phase → Fertig); `Reset` hält an und fragt „Workout beenden?" (`Beenden` → Einstellen, Werte bleiben; `Weitermachen`/Scrim → zurück in den vorherigen Zustand).
+-   **Fertig:** Zusammenfassung; `Nochmal` startet denselben Ablauf neu, `Zurück` führt zu Einstellen.
+-   **„⊞ Tools"** führt jederzeit zurück zur Shell.
 
 # Akzeptanzkriterien
 
 | Kriterium | Prüfung |
 |---|---|
-| ... | Unit / E2E / manuell |
+| Kachel „Workout-Timer" in der Shell öffnet die Ansicht Einstellen | E2E |
+| Felder Sets/Pause/Work/Reps/Rest mit den Vorgaben vorbelegt; Stepper ändern in den festgelegten Schritten; Werte außerhalb min/max werden geklemmt | Unit (Logik) + E2E |
+| „Gesamt · m:ss" zeigt die korrekte Gesamtdauer inkl. Vorlauf für gegebene Einstellungen | Unit |
+| Phasen-Abfolge korrekt: Vorlauf → je Set Reps×Work mit Rest dazwischen, kein Rest nach letztem Work, Pause zwischen Sets, keine Pause nach letztem Set, `Pause = 0` übersprungen → Fertig | Unit (reine Timeline-Funktion) |
+| Restzeit läuft gegen die Uhr ohne Driften (lange Läufe, Anhalten/Fortsetzen) | Unit (gesteuerte Uhr) |
+| Lauf-Anzeige stimmt mit dem Zustand überein: Phase/Label/Caption, Rep r/R, Set s/S, Ring-Restzeit m:ss, SegmentBar, „Als Nächstes" | E2E |
+| Steuerung: Start, Pause/Weiter, Skip (inkl. aus letzter Phase → Fertig), Reset → ConfirmSheet → Beenden/Weitermachen/Scrim wie beschrieben | E2E |
+| Fertig-Ansicht mit Zusammenfassung; `Nochmal` startet neu (mit Vorlauf), `Zurück` → Einstellen | E2E |
+| Akustische Signale an den richtigen Stellen (Phasenbeginn, Countdown 3-2-1, Fertig); Context erst nach Start-Geste aktiv | Unit (Auslösepunkte) + manuell (Klang am Gerät) |
+| Bildschirm bleibt während des Laufs wach (Wake Lock angefordert; bei Rückkehr erneut); nach Ende/Verlassen freigegeben | Unit/Integration (API-Aufrufe) + manuell am Gerät |
+| Zuletzt genutzte Werte werden lokal gespeichert und beim nächsten Öffnen vorbelegt | Unit + E2E |
+| Tool ist eigene Seite (`app/tools/workout-timer/index.html`) mit eigener SW-Registrierung und Precache; direkter Einstieg funktioniert offline | E2E + manuell |
+| Nur Dark Mode, Spalte ≤ 480 px, Touch-Ziele ≥ 44 px (Stepper-Lücke in `_context/design.md` vermerkt) | E2E (iPhone-Viewport) / Review |
 | Test für das abzusichernde Verhalten geschrieben — ohne die Änderung rot | Testlauf |
 | Nach der Umsetzung laufen alle Tests grün | Testlauf |
-| UI-Richtlinie eingehalten (nur Tokens und Komponenten des Design-Systems) | Review / Test |
-| *(bei Design)* Entwurf umgesetzt, Werte und Logik aus der Quelle übernommen | manuell |
+| UI-Richtlinie eingehalten (nur Tokens und Komponenten des Design-Systems, keine festen Werte, keine Inline-Styles) | `npm run check:ui` / Review |
+| Entwurf umgesetzt, Werte und Logik aus der abgelegten Quelle (`Main.dc.html`) übernommen, nicht nachempfunden | manuell |
 
 # Abgrenzung
 
--   ...
+Nicht Teil dieser Anforderung (ggf. später als eigene Idee im Backlog):
+
+-   Mehrere speicherbare Programme/Profile (nur die zuletzt genutzten Werte werden gespeichert).
+-   Auswahl verschiedener Klänge, Lautstärkeregler, eigene Tonlängen.
+-   Garantiertes Weiterlaufen von Ton/Timer bei *manuell* gesperrtem Bildschirm (OS-Grenze; nur best effort).
+-   Vibration/Haptik.
+-   Verlauf/Statistik absolvierter Workouts.
+-   Querformat, helles Theme, andere Sprachen.
 
 # Technische Notizen
 
 *Optional, nicht bindend.*
+
+-   Voraussichtlich betroffen: neu `app/tools/workout-timer/index.html`, `app/tools/workout-timer/*.js`, `app/tools/workout-timer/*.css`; geändert `app/index.html` (Kachel). `app/sw-precache.js` ist generiert und nimmt neue Dateien automatisch auf.
+-   Phasen-Abfolge und Zeitformat als reine, unit-testbare Module halten (Logik aus `Main.dc.html`).
+-   Wake Lock an `visibilitychange` koppeln (bei `visible` erneut anfordern, bei Ende/Verlassen freigeben).
+-   `README.md`: keine Änderung nötig (kein neues Setup, keine neue Bedienung des Projekts).
 
 # Umsetzungsplan
 
