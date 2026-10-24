@@ -1,6 +1,6 @@
 // Boulder Log — Controller. Wert/Texte/Logik aus dem freigegebenen Entwurf
 // (_requirements/mockups/boulder-log/Main.dc.html). Reine Formatlogik in format.js.
-import { formatLine, appendLine } from "./format.js";
+import { formatLine, appendLine, clampTries } from "./format.js";
 
 const GRADES = [
   "3",
@@ -102,7 +102,7 @@ function toggleStyle(s, btn) {
 }
 
 function setTries(n) {
-  tries = Math.min(999, Math.max(1, n));
+  tries = clampTries(n);
   triesEl.textContent = String(tries);
 }
 

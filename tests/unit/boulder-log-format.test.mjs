@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { formatLine, appendLine } from "../../app/tools/boulder-log/format.js";
+import {
+  formatLine,
+  appendLine,
+  clampTries,
+} from "../../app/tools/boulder-log/format.js";
 
 // Reine Logik aus dem freigegebenen Entwurf (Main.dc.html, add-Logik).
 // Format: `- <grad>: <n> tries[ (send)][ - <tags>]`, `1 try` bei genau einem Versuch.
@@ -109,5 +113,21 @@ describe("appendLine", () => {
     expect(appendLine("- 5c: 2 tries\n", "- 6a: 1 try")).toBe(
       "- 5c: 2 tries\n- 6a: 1 try",
     );
+  });
+});
+
+describe("clampTries", () => {
+  it("hält das Minimum bei 1", () => {
+    expect(clampTries(0)).toBe(1);
+    expect(clampTries(1)).toBe(1);
+  });
+
+  it("deckelt das Maximum bei 999", () => {
+    expect(clampTries(1000)).toBe(999);
+    expect(clampTries(999)).toBe(999);
+  });
+
+  it("lässt Werte dazwischen unverändert", () => {
+    expect(clampTries(5)).toBe(5);
   });
 });

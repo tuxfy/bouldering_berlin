@@ -36,3 +36,12 @@ export function appendLine(log, line) {
   const base = String(log).replace(/\s+$/, "");
   return base ? base + "\n" + line : line;
 }
+
+/**
+ * Begrenzt die Versuchszahl auf den gültigen Bereich 1…999.
+ * @param {number} n
+ * @returns {number}
+ */
+export function clampTries(n) {
+  return Math.min(999, Math.max(1, n));
+}
