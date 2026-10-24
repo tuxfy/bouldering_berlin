@@ -1,5 +1,5 @@
 -   **Title** Boulder-Log
--   **Status** in progress
+-   **Status** qa
 
 # Idee
 
@@ -245,6 +245,13 @@ Architektur: Tool als **statische Seite + ES-Modul-Controller** (Light DOM mit D
 
 -   **Rot** (vor SW-Registrierung/Precache): `npx playwright test tests/e2e/boulder-log.spec.js --grep Offline` — fehlgeschlagen (kein kontrollierender Service Worker beim direkten Einstieg).
 -   **Grün** (nach SW-Registrierung in der Tool-Seite + Kachel-Link auf `index.html`): dieselbe Auswahl 1/1. Voller Lauf `npm test` grün (E2E 20, Unit 37).
+
+**Abschluss (5e):**
+
+-   **Grün (gesamt):** `npm test` — Unit 37/37, E2E 20/20; lint, format, audit (0), secrets (keine) sauber.
+-   **UI-Richtlinie:** `npm run check:ui` (Stylelint, nur `app/**/*.css`) — 0 Befunde; keine Inline-Styles und keine festen Farb-/Maßwerte in HTML/JS (geprüft). Lokale DS-Lücken (`.sr-only`, zentrierte Header-Aktion, `<datalist>`) in `_context/design.md` vermerkt.
+-   **Sauberer Lauf:** `npm run check:clean` (Klon ohne Submodule, `npm ci` + `npm test`) — grün (E2E 20/20), bestätigt CI-Äquivalenz.
+-   **Nur am Gerät prüfbar (→ Abnahme Stufe 7):** echter Zwischenablage-Inhalt in Safari, echtes Offline-Verhalten/PWA-Installation/Standalone am iPhone, Darstellung der nativen `<datalist>` auf iOS. Alle übrigen Akzeptanzkriterien sind durch Unit-/E2E-Tests abgedeckt.
 
 # QA
 
