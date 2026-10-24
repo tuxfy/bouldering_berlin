@@ -22,7 +22,7 @@ App-spezifische Bedeutungen, z. B. welcher Ton welchen Zustand kennzeichnet. Nur
 
 Marken-weite Rollen (fest im System): **Blau** = Interaktion/Auswahl/Link, **Grün** = Erfolg (`success`), **Rot** = destruktiv/Fehler (`danger`).
 
-Töne pro Tool werden festgelegt, wenn das jeweilige Tool gebaut wird.
+Töne pro Tool werden festgelegt, wenn das jeweilige Tool gebaut wird. Referenz aus der System-README (Intervall-Timer): `prep`/`done` → neutral, `work` → orange, `rest`/`set-pause` → green.
 
 **Boulder Log** (Entwurf: `_requirements/mockups/boulder-log/`):
 
@@ -37,7 +37,7 @@ Content (app-spezifisch, nicht im Design-System):
 
 - **Grad-Vorschläge (Font-Skala, Fb):** `3, 4, 5a, 5b, 5c, 6a, 6a+, 6b, 6b+, 6c, 6c+, 7a, 7a+, 7b, 7b+, 7c, 7c+, 8a` — nur Vorschläge, freie Eingabe erlaubt.
 - **Style-Tags:** `slab, vertical, overhang, roof, dyno, crimp, sloper, pinch, jug, technical, powerful`.
-- **Log-Zeile:** `- <grad>: <n> tries[ (send)][ - <style>, <style>, <weitere Angaben>]`, bei genau einem Versuch `1 try`. Referenz aus der System-README (Intervall-Timer): `prep`/`done` → neutral, `work` → orange, `rest`/`set-pause` → green.
+- **Log-Zeile:** `- <grad>: <n> tries[ (send)][ - <style>, <style>, <weitere Angaben>]`, bei genau einem Versuch `1 try`.
 
 ## Lokal umgesetzt — gehört ins Design-System
 
