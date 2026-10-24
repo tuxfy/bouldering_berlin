@@ -5,7 +5,7 @@ const baseURL = `http://localhost:${PORT}`;
 
 // Zielgerät: iPhone/Safari. In dieser Umgebung läuft WebKit nicht (fehlende System-Libs,
 // kein root), daher Chromium mit iPhone-Emulation. Safari-Eigenheiten → Geräte-Nachprüfung
-// (Abnahme/Release), siehe _kontext/projekt.md.
+// (Abnahme/Release), siehe _context/projekt.md.
 const iPhone = {
   browserName: "chromium",
   viewport: { width: 390, height: 844 },

@@ -8,7 +8,7 @@ export default [
       "app/sw-precache.js",
       "node_modules/**",
       "tests/fixtures/**",
-      "_kontext/designsystem/**",
+      "_design-system/**",
       "playwright-report/**",
       "test-results/**",
     ],

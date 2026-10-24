@@ -2,11 +2,11 @@ import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 
 // Guard: Kein Workflow-Checkout darf Submodule ziehen. Das private Submodul
-// _kontext/designsystem ist in der CI nicht erreichbar und für `npm test` nicht
+// _design-system ist in der CI nicht erreichbar und für `npm test` nicht
 // nötig — das Design-System liegt eingecheckt unter app/vendor/designsystem/.
 // Invariante über ALLE Jobs beider Dateien (schützt auch den deploy-Job),
 // nicht auf eine feste Anzahl Fundstellen fixiert.
-// Siehe anforderungen/002-ci-submodul-designsystem.md.
+// Siehe _requirements/done/002-ci-submodul-designsystem.md.
 
 const WORKFLOWS = [".github/workflows/ci.yml", ".github/workflows/deploy.yml"];
 

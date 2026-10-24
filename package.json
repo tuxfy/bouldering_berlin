@@ -10,7 +10,7 @@
     "start": "npm run sw:build && node scripts/serve.mjs",
     "lint": "eslint .",
     "format:check": "prettier --check .",
-    "check:ui": "stylelint \"app/**/*.css\" --config _anweisungen/pruefung/stylelint.json --ignore-path .stylelintignore",
+    "check:ui": "stylelint \"app/**/*.css\" --config .stylelintrc.json --ignore-path .stylelintignore",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
     "audit": "node scripts/audit.mjs",

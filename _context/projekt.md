@@ -1,6 +1,6 @@
 # Projekt
 
-*In Stufe 0 (`_anweisungen/00-einrichtung.md`) festgelegt; bei Änderungen dort erneut. Offenes ausdrücklich als offen markiert.*
+*In Stufe 0 (`_agent-process/anweisungen/00-einrichtung.md`) festgelegt; bei Änderungen dort erneut. Offenes ausdrücklich als offen markiert.*
 
 ## Zweck
 
@@ -14,7 +14,7 @@ Eine Sammlung kleiner, mobiler Tools rund ums Bouldern („Bouldering Berlin Too
 - **Framework:** keins. Native Web Components + ES-Module; jedes Tool eine eigene Seite/Komponente.
 - **Build:** **keiner.** Die App wird als statische Dateien ausgeliefert.
 - **PWA:** handgeschriebenes `manifest.json` + Service Worker (ohne Workbox/Build), offline-fähig.
-- **Laufzeit-Abhängigkeiten:** keine. Das Design-System kommt als kopierte CSS (siehe „Befehle" und `_kontext/design.md`). npm/`package.json` existiert nur für **Dev-Werkzeuge** (Prüfungen) — die App selbst bleibt build-frei.
+- **Laufzeit-Abhängigkeiten:** keine. Das Design-System kommt als kopierte CSS (siehe „Befehle" und `_context/design.md`). npm/`package.json` existiert nur für **Dev-Werkzeuge** (Prüfungen) — die App selbst bleibt build-frei.
 
 ## Zielformat
 
@@ -32,7 +32,7 @@ Eine Sammlung kleiner, mobiler Tools rund ums Bouldern („Bouldering Berlin Too
 |---|---|---|
 | Code-Linter | ESLint (flat config) | `npm run lint` |
 | Formatierer | Prettier (Standardeinstellungen) | `npm run format:check` |
-| Prüflauf UI-Richtlinie | Stylelint 16 + stylelint-declaration-strict-value 1, Config `_anweisungen/pruefung/stylelint.json` | `npm run check:ui` |
+| Prüflauf UI-Richtlinie | Stylelint 16 + stylelint-declaration-strict-value 1, Config `.stylelintrc.json` | `npm run check:ui` |
 | Unit-Tests | Vitest | `npm run test:unit` |
 | E2E-Tests | Playwright (iPhone-Viewport, dark; axe optional) | `npm run test:e2e` |
 | Schwachstellen in Abhängigkeiten | npm audit | `npm run audit` (`npm audit --omit=dev` blockiert; voller `npm audit` nur Warnung) |
@@ -51,8 +51,8 @@ Hinweis UI-Prüflauf: nur **App-Stylesheets** prüfen (`app/**/*.css`), **nicht*
 *Lokal starten (Abnahme), Design-System kopieren (falls nötig), weitere.*
 
 - **Lokal starten (Abnahme):** `npm start` → erzeugt den Service Worker (`npm run sw:build`) und startet einen statischen Server (z. B. `npx serve`) auf dem Ordner `app/` unter `http://localhost:<port>`. `localhost` gilt als sicherer Kontext, daher funktioniert der Service Worker lokal.
-- **Design-System kopieren:** `npm run ds:copy` → kopiert die ausgelieferten Dateien aus dem Submodul `_kontext/designsystem/` (`tokens.css`, `components/bundle.css`, `assets/Icons/`, `assets/Logos/`) nach `app/vendor/designsystem/`. Stand (Submodul-Commit) in `_kontext/design.md` eintragen.
-- **Design-System aktualisieren:** `git submodule update --remote _kontext/designsystem`, danach `npm run ds:copy` und neuen Commit-Stand in `design.md`.
+- **Design-System kopieren:** `npm run ds:copy` → kopiert die ausgelieferten Dateien aus dem Submodul `_design-system/` (`tokens.css`, `components/bundle.css`, `assets/Icons/`, `assets/Logos/`) nach `app/vendor/designsystem/`. Stand (Submodul-Commit) in `_context/design.md` eintragen.
+- **Design-System aktualisieren:** `git submodule update --remote _design-system`, danach `npm run ds:copy` und neuen Commit-Stand in `design.md`.
 - **Dev-Werkzeuge installieren:** `npm ci` (aus der Lock-Datei).
 
 ## Umgebung des Agenten
@@ -67,10 +67,10 @@ Hinweis UI-Prüflauf: nur **App-Stylesheets** prüfen (`app/**/*.css`), **nicht*
 
 ## Auslieferung und Release
 
-*Wohin (Rolle „Hoster", How-to in `_kontext/`), Release-Modell, Zurückrollen.*
+*Wohin (Rolle „Hoster", How-to in `_context/`), Release-Modell, Zurückrollen.*
 
-- **Hoster:** GitHub Pages (statisches Hosting). Deploy per GitHub Actions. How-to beim Grundgerüst als `_kontext/hoster.md` anlegen. *(offen: GitHub-Repo/Pages-URL und ggf. CI-Rechte.)*
-- **Release-Modell:** Standard mit Release-Kandidat `rc/<version>` (siehe `_anweisungen/08-release.md`). Branches: je Anforderung `feature/<Nr>-<name>` von `main`; nach Abnahme in `rc/<version>`; Release = Zusammenführen nach `main` mit Tag `v<version>`.
+- **Hoster:** GitHub Pages (statisches Hosting). Deploy per GitHub Actions. How-to beim Grundgerüst als `_context/hoster.md` anlegen. *(offen: GitHub-Repo/Pages-URL und ggf. CI-Rechte.)*
+- **Release-Modell:** dauerhafter Sammel-Branch `next` (siehe `_agent-process/anweisungen/08-release.md`). Branches: je Anforderung `feature/<kurzer-name>` bzw. `fix/<kurzer-name>` von `main`; nach Abnahme per PR in `next`; Release = `next` nach `main` zusammenführen mit Tag `v<version>`.
 - **Zurückrollen:** vorherigen Tag/Commit erneut auf Pages veröffentlichen (Deployment auf den letzten funktionierenden Stand zurücksetzen).
 
 ## Abnahme
@@ -78,4 +78,4 @@ Hinweis UI-Prüflauf: nur **App-Stylesheets** prüfen (`app/**/*.css`), **nicht*
 *Wo und wie der Nutzer abnimmt (lokal, Befehl); was nur am echten Gerät prüfbar ist.*
 
 - **Lokal:** `npm start`, im Browser im mobilen Viewport (iPhone), Dark Mode.
-- **Nur am echten Gerät prüfbar** (dann als Nachprüfung nach dem Release, im `releases/`-Dokument): PWA-Installation („Zum Home-Bildschirm"), echtes Offline-Verhalten, Standalone-Darstellung und Safari-Eigenheiten.
+- **Nur am echten Gerät prüfbar** (dann als Nachprüfung nach dem Release, im `_releases/`-Dokument): PWA-Installation („Zum Home-Bildschirm"), echtes Offline-Verhalten, Standalone-Darstellung und Safari-Eigenheiten.

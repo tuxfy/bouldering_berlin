@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: ["main", "rc/*", "feature/*"]
+    branches: ["main", "next", "feature/*", "fix/*"]
   pull_request:
 
 # Prüfungen laufen ohne Recht zum Ausliefern.
@@ -27,5 +27,5 @@ jobs:
         run: |
           curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
             | sudo tar -xz -C /usr/local/bin gitleaks
-      # Ein Befehl — identisch zu lokal (siehe _kontext/projekt.md):
+      # Ein Befehl — identisch zu lokal (siehe _context/projekt.md):
       - run: npm test
