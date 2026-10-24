@@ -1,3 +1,6 @@
 [submodule "_kontext/designsystem"]
-	path = _kontext/designsystem
+	path = _design-system
 	url = git@github.com:tuxfy/design_system_bb.git
+[submodule "_agent-process"]
+	path = _agent-process
+	url = git@github.com:tuxfy/agent-process.git
