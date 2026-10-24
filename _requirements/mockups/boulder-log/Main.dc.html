@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Boulder Log</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/boulderingberlindesignsystem_25b717/tokens.css">
+<link rel="stylesheet" href="ds/boulderingberlindesignsystem_25b717/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div data-theme="dark" style="position: relative; width: 390px; height: 844px; display: flex; flex-direction: column; overflow: hidden; background: var(--color-bg); color: var(--color-text); font: var(--type-body)">
+
+  <header class="tool-header" style="justify-content: center">
+    <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap">Boulder Log</h1>
+    <a href="Shell.dc.html" class="btn btn--secondary btn--compact">⊞ Tools</a>
+  </header>
+
+  <main style="flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: var(--space-4); padding: var(--content-pad-y) var(--content-pad-x)">
+
+    <div style="display: flex; align-items: center; gap: var(--space-2)">
+      <input class="field" type="text" list="fb-grades" placeholder="Grad" aria-label="Grad" autocomplete="off" value="{{grade}}" onChange="{{editGrade}}" style="flex: 1 1 auto; min-width: 0">
+      <datalist id="fb-grades">
+        <sc-for list="{{gradeOptions}}" as="o" hint-placeholder-count="18">
+          <option value="{{o.v}}"></option>
+        </sc-for>
+      </datalist>
+      <div class="stepper" style="flex: none">
+        <button type="button" aria-label="Weniger tries" onClick="{{dec}}">−</button>
+        <output class="stepper__value" aria-label="tries" aria-live="polite">{{tries}}</output>
+        <button type="button" aria-label="Mehr tries" onClick="{{inc}}">+</button>
+      </div>
+      <button type="button" class="{{sendClass}}" aria-pressed="{{send}}" onClick="{{toggleSend}}" style="flex: none">send</button>
+      <button type="button" class="btn btn--icon btn--interactive btn--compact" aria-label="Hinzufügen" disabled="{{noGrade}}" onClick="{{add}}" style="flex: none"><span class="btn__glyph" aria-hidden="true">+</span></button>
+    </div>
+
+    <div role="group" aria-label="Style" style="display: flex; flex-wrap: wrap; gap: var(--space-2)">
+      <sc-for list="{{styles}}" as="s" hint-placeholder-count="11">
+        <button type="button" class="{{s.cls}}" aria-pressed="{{s.on}}" onClick="{{s.pick}}">{{s.label}}</button>
+      </sc-for>
+    </div>
+
+    <input class="field" type="text" placeholder="Weitere Angaben …" aria-label="Weitere Angaben" value="{{note}}" onChange="{{editNote}}">
+
+    <textarea class="textarea" aria-label="Boulder Log" spellcheck="false" placeholder="Noch keine Einträge." value="{{log}}" onChange="{{editLog}}" style="flex: 1 1 auto; min-height: 0; resize: none"></textarea>
+
+    <div style="display: flex; gap: var(--space-2)">
+      <button type="button" class="{{copyClass}}" disabled="{{isEmpty}}" onClick="{{copy}}" style="flex: 1">{{copyLabel}}</button>
+      <button type="button" class="btn btn--destructive btn--compact" disabled="{{isEmpty}}" onClick="{{askReset}}">Reset</button>
+    </div>
+  </main>
+
+  <sc-if value="{{sheetOpen}}" hint-placeholder-val="{{ false }}">
+    <div class="sheet-scrim" style="position: absolute" onClick="{{scrim}}">
+      <div class="sheet" role="alertdialog" aria-modal="true" aria-label="Alle Einträge löschen?">
+        <div class="sheet__title">Alle Einträge löschen?</div>
+        <div class="sheet__text">Das lässt sich nicht rückgängig machen.</div>
+        <div class="sheet__actions">
+          <button type="button" class="btn btn--destructive btn--block" onClick="{{confirm}}">Löschen</button>
+          <button type="button" class="btn btn--secondary btn--block" onClick="{{cancel}}">Abbrechen</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"zustand":{"editor":"enum","options":["liste","leer","reset"],"default":"liste","section":"Entwurf"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  seed(z) {
+    var sample = '- 6a: 2 tries (send)\n- 6b: 2 tries\n- 6c: 3 tries (send) - crimp, sloper';
+    return {
+      z: z,
+      log: z === 'leer' ? '' : sample,
+      grade: z === 'leer' ? '' : '6b+',
+      tries: 1, send: false, styles: [], note: '',
+      sheet: z === 'reset', copied: false
+    };
+  }
+  st() {
+    var z = this.props.zustand ?? 'liste';
+    var s = this.state;
+    return (s && s.z === z) ? s : this.seed(z);
+  }
+  up(ch) { this.setState(Object.assign({}, this.st(), ch)); }
+  componentWillUnmount() { clearTimeout(this.t); }
+  renderVals() {
+    var self = this;
+    var s = this.st();
+    var GRADES = ['3', '4', '5a', '5b', '5c', '6a', '6a+', '6b', '6b+', '6c', '6c+', '7a', '7a+', '7b', '7b+', '7c', '7c+', '8a'];
+    var STYLES = ['slab', 'vertical', 'overhang', 'roof', 'dyno', 'crimp', 'sloper', 'pinch', 'jug', 'technical', 'powerful'];
+    var grade = s.grade.trim();
+    return {
+      grade: s.grade,
+      editGrade: function (ev) { self.up({ grade: ev.target.value }); },
+      gradeOptions: GRADES.map(function (g) { return { v: g }; }),
+      tries: s.tries,
+      dec: function () { self.up({ tries: Math.max(1, self.st().tries - 1) }); },
+      inc: function () { self.up({ tries: Math.min(999, self.st().tries + 1) }); },
+      send: s.send,
+      sendClass: 'toggle' + (s.send ? ' is-on' : ''),
+      toggleSend: function () { self.up({ send: !self.st().send }); },
+      styles: STYLES.map(function (t) {
+        var on = s.styles.indexOf(t) >= 0;
+        return {
+          label: t, on: on, cls: 'toggle' + (on ? ' is-on' : ''),
+          pick: function () {
+            var cur = self.st().styles;
+            self.up({ styles: STYLES.filter(function (x) { return x === t ? !on : cur.indexOf(x) >= 0; }) });
+          }
+        };
+      }),
+      note: s.note,
+      editNote: function (ev) { self.up({ note: ev.target.value }); },
+      noGrade: grade === '',
+      add: function () {
+        var c = self.st();
+        var g = c.grade.trim();
+        if (!g) return;
+        var n = c.note.trim();
+        var tags = c.styles.slice();
+        if (n) tags.push(n);
+        var line = '- ' + g + ': ' + c.tries + (c.tries === 1 ? ' try' : ' tries') + (c.send ? ' (send)' : '') +
+          (tags.length ? ' - ' + tags.join(', ') : '');
+        self.up({ log: c.log ? c.log.replace(/\s+$/, '') + '\n' + line : line, tries: 1, send: false, styles: [], note: '' });
+      },
+      log: s.log,
+      editLog: function (ev) { self.up({ log: ev.target.value }); },
+      isEmpty: s.log.trim() === '',
+      copyClass: s.copied ? 'btn btn--success btn--compact' : 'btn btn--secondary btn--compact',
+      copyLabel: s.copied ? 'Kopiert ✓' : 'Kopieren',
+      copy: function () {
+        try { navigator.clipboard.writeText(self.st().log); } catch (e) {}
+        self.up({ copied: true });
+        clearTimeout(self.t);
+        self.t = setTimeout(function () { self.up({ copied: false }); }, 2000);
+      },
+      askReset: function () { self.up({ sheet: true }); },
+      sheetOpen: s.sheet,
+      confirm: function () { self.up({ log: '', sheet: false }); },
+      cancel: function () { self.up({ sheet: false }); },
+      scrim: function (ev) { if (ev && ev.target === ev.currentTarget) self.up({ sheet: false }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

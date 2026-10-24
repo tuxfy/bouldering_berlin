@@ -9,6 +9,7 @@ export default [
       "node_modules/**",
       "tests/fixtures/**",
       "_design-system/**",
+      "_requirements/mockups/**",
       "playwright-report/**",
       "test-results/**",
     ],
