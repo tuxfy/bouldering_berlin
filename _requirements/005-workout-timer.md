@@ -1,5 +1,5 @@
 -   **Title** Workout-Timer (Intervall-Timer mit Sets)
--   **Status** qa
+-   **Status** review
 
 # Idee
 
@@ -233,11 +233,14 @@ Nicht Teil dieser Anforderung (ggf. später als eigene Idee im Backlog):
 
 # QA
 
-*Vom Agenten in Stufe 6 ergänzt.*
-
--   **Automatisch:** je Prüfung Befehl und Ergebnis; nicht Eingerichtetes nennen
--   **Geprüft durch:** <Rollen>
--   **Befunde:** je Befund kurz, was damit passiert ist
+-   **Automatisch:** `npm test` grün — Lint, Format, UI-Prüflauf (`check:ui`, 0 Befunde), Unit **76/0**, `audit`, `check:secrets`, E2E **30/0**. `npm run check:clean` (CI-Nachbau ohne Submodul) grün. Hinweis: Der Pre-Commit-Hook (Leitplanke aus Stufe 0) ist in diesem Container nicht aktiv; die Prüfungen wurden vor jedem Commit selbst gefahren.
+-   **Geprüft durch:** Reviewer, Security, Klicktester (iPhone-Viewport in Chromium-Emulation; echte Safari/WebKit, Ton, Wake Lock und manuelle Sperre bleiben der Geräte-Nachprüfung vorbehalten).
+-   **Befunde:**
+    -   **[behoben]** Negative Direkteingabe in ein Feld wurde zum Betrag statt auf das Minimum geklemmt (Minus vor dem Klemmen entfernt). Korrektur: Rohwert mit Vorzeichen parsen, dann `clampField`. Test: E2E „Gesamtdauer … Stepper und Klemmen" (negative Eingabe → Minimum).
+    -   **[ergänzt]** Reviewer: Pausen-Akkumulation war nur mit einer Pause abgedeckt. Neuer E2E-Test „mehrere Pause/Weiter-Zyklen: nur laufende Zeit zählt (driftfrei)".
+    -   **[kein Handlungsbedarf]** Security-Hinweise: ControlBar-`innerHTML` enthält nur statische Literale (keine Daten-Interpolation); Stepper-Eingabe wird robust gefiltert/geklemmt.
+    -   **[kein Handlungsbedarf]** Reviewer-Hinweise: optionaler Sheet-Guard in `frame()` (Freeze läuft bereits über den Pausen-Zustand, Verhalten identisch); stilles Abfangen von `localStorage`-Fehlern ist von der Anforderung gedeckt (Speichern = optionaler Komfort).
+    -   **[offen, Gerät]** Klicktester: Klang der Signale, Screen Wake Lock, Verhalten bei manueller Sperre und PWA-Installation nur am echten iPhone prüfbar — für die Abnahme markiert. Screenshots der Zustände unter `.qa/workout-timer/` (nicht committet).
 
 # Abnahme
 
