@@ -226,6 +226,11 @@ Architektur: Tool als **statische Seite + ES-Modul-Controller** (Light DOM mit D
 -   **Rot** (vor der Änderung): `npx vitest run tests/unit/boulder-log-format.test.mjs` — Suite fehlgeschlagen: `Cannot find module '../../app/tools/boulder-log/format.js'`.
 -   **Grün** (nach der Änderung): `npx vitest run tests/unit/boulder-log-format.test.mjs` — 13 bestanden / 0 fehlgeschlagen. Voller Lauf `npm test` grün (lint, format, check:ui, Unit 37, audit, secrets, E2E 3).
 
+**Schritt 2a — Shell-Kachel + Tool-Seite + Eingabe/Hinzufügen:**
+
+-   **Rot** (vor dem Controller `boulder-log.js`): `npx playwright test tests/e2e/boulder-log.spec.js` — 5 fehlgeschlagen (Add-Aktivierung, Datalist-Optionen, Anhängen, freie Eingabe, mehrere Einträge), 3 bestanden (Navigation, Stepper-Minimum, Platzhalter). Rot am fehlenden Verhalten, nicht an 404 (Seite erreichbar).
+-   **Grün** (nach `boulder-log.js`): `npx playwright test tests/e2e/boulder-log.spec.js tests/e2e/start.spec.js` — 9/9. Voller Lauf `npm test` grün (E2E 11, Unit 37).
+
 *(weitere Schritte folgen)*
 
 # QA
