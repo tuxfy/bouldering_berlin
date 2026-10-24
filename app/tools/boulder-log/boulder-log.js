@@ -44,6 +44,9 @@ const addEl = $("add");
 const noteEl = $("note");
 const logEl = $("log");
 const stylesEl = document.querySelector(".bl-styles");
+const copyEl = $("copy");
+const resetEl = $("reset");
+const sheetEl = $("sheet");
 
 let tries = 1;
 let send = false;
@@ -93,6 +96,21 @@ function updateAddState() {
   addEl.disabled = gradeEl.value.trim() === "";
 }
 
+// Kopieren und Reset nur bei nicht-leerem Log.
+function updateActionsState() {
+  const empty = logEl.value.trim() === "";
+  copyEl.disabled = empty;
+  resetEl.disabled = empty;
+}
+
+function openSheet() {
+  sheetEl.hidden = false;
+}
+
+function closeSheet() {
+  sheetEl.hidden = true;
+}
+
 gradeEl.addEventListener("input", updateAddState);
 $("tries-dec").addEventListener("click", () => setTries(tries - 1));
 $("tries-inc").addEventListener("click", () => setTries(tries + 1));
@@ -114,6 +132,23 @@ addEl.addEventListener("click", () => {
     btn.setAttribute("aria-pressed", "false");
   }
   noteEl.value = "";
+  updateActionsState();
+});
+
+// Log ist frei editierbar — Aktionszustand mitführen.
+logEl.addEventListener("input", updateActionsState);
+
+// Reset über ConfirmSheet (destruktiv).
+resetEl.addEventListener("click", openSheet);
+$("sheet-cancel").addEventListener("click", closeSheet);
+$("sheet-confirm").addEventListener("click", () => {
+  logEl.value = "";
+  closeSheet();
+  updateActionsState();
+});
+sheetEl.addEventListener("click", (ev) => {
+  if (ev.target === sheetEl) closeSheet(); // Klick auf den Scrim schließt
 });
 
 updateAddState();
+updateActionsState();

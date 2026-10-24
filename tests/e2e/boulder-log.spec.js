@@ -96,3 +96,59 @@ test.describe("Boulder Log — Eingabe", () => {
     await expect(log).toHaveValue("");
   });
 });
+
+test.describe("Boulder Log — Reset", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(TOOL);
+  });
+
+  async function addOne(page, grade = "6a") {
+    await page.getByLabel("Grad").fill(grade);
+    await page.getByRole("button", { name: "Hinzufügen" }).click();
+  }
+
+  test("Kopieren und Reset sind bei leerem Log deaktiviert, mit Eintrag aktiv", async ({
+    page,
+  }) => {
+    await expect(page.getByRole("button", { name: "Kopieren" })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "Reset" })).toBeDisabled();
+
+    await addOne(page);
+
+    await expect(page.getByRole("button", { name: "Kopieren" })).toBeEnabled();
+    await expect(page.getByRole("button", { name: "Reset" })).toBeEnabled();
+  });
+
+  test("Reset fragt nach; Abbrechen behält das Log", async ({ page }) => {
+    await addOne(page);
+    await page.getByRole("button", { name: "Reset" }).click();
+
+    const sheet = page.getByRole("alertdialog", {
+      name: "Alle Einträge löschen?",
+    });
+    await expect(sheet).toBeVisible();
+
+    await page.getByRole("button", { name: "Abbrechen" }).click();
+    await expect(sheet).toBeHidden();
+    await expect(page.getByLabel("Boulder Log")).toHaveValue("- 6a: 1 try");
+  });
+
+  test("Reset → Löschen leert das Log", async ({ page }) => {
+    await addOne(page);
+    await page.getByRole("button", { name: "Reset" }).click();
+    await page.getByRole("button", { name: "Löschen" }).click();
+
+    await expect(page.getByRole("alertdialog")).toBeHidden();
+    await expect(page.getByLabel("Boulder Log")).toHaveValue("");
+    await expect(page.getByRole("button", { name: "Reset" })).toBeDisabled();
+  });
+
+  test("Klick auf den Hintergrund schließt das Sheet", async ({ page }) => {
+    await addOne(page);
+    await page.getByRole("button", { name: "Reset" }).click();
+    await expect(page.getByRole("alertdialog")).toBeVisible();
+
+    await page.locator("#sheet").click({ position: { x: 10, y: 10 } });
+    await expect(page.getByRole("alertdialog")).toBeHidden();
+  });
+});
