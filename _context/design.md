@@ -1,20 +1,20 @@
 # Design
 
-*In Stufe 0 (`_anweisungen/00-einrichtung.md`) ergänzen.*
+*In Stufe 0 (`_agent-process/anweisungen/00-einrichtung.md`) ergänzen.*
 
 ## Design-System
 
-Welches zentrale Design-System das Projekt nutzt und wie es eingebunden ist (z. B. Kopie unter `_kontext/designsystem/`).
+Welches zentrale Design-System das Projekt nutzt und wie es eingebunden ist (z. B. Kopie unter `_design-system/`).
 
 - **System:** „Bouldering Berlin Toolkit" — Design-System der Marke, maßgebliche Fassung im Repo `tuxfy/design_system_bb`.
-- **Quelle:** als **Git-Submodul** unter `_kontext/designsystem/`. Wird im Projekt **nie bearbeitet** (Änderungen nur im Design-System-Repo selbst).
+- **Quelle:** als **Git-Submodul** unter `_design-system/`. Wird im Projekt **nie bearbeitet** (Änderungen nur im Design-System-Repo selbst).
 - **Einbindung:** **CSS-Vertrag + Vanilla.** In die App kommen nur die ausgelieferten CSS-Dateien und Assets — per `npm run ds:copy` kopiert nach `app/vendor/designsystem/`:
   - `tokens.css` (alle Tokens als CSS-Variablen),
   - `components/bundle.css` (Komponenten-Klassen `.btn`, `.stepper`, `.tile`, `.stage` … + Schrift-/Motion-Atome),
   - `assets/Icons/`, `assets/Logos/`.
   Markup und Klassen folgen den Komponenten-READMEs des Systems; das **Verhalten** wird in Vanilla-JS neu umgesetzt. Die React-Quellen (`components/bundle.js`, `components/src/*.jsx`, `*.d.ts`) dienen **nur als Referenz**, laufen nicht in der App (kein React, kein Build).
 - **Theme:** nur Dark Mode (`[data-theme="dark"]`) — das System sieht bewusst kein helles Theme vor. Keine Abweichung.
-- **Stand:** `443d530` (Submodul-HEAD, `git -C _kontext/designsystem rev-parse --short HEAD`). Bei jeder Aktualisierung neu eintragen.
+- **Stand:** `443d530` (Submodul-HEAD, `git -C _design-system rev-parse --short HEAD`). Bei jeder Aktualisierung neu eintragen.
 
 ## Zuordnungen
 

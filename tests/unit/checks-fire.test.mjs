@@ -20,7 +20,7 @@ describe("Prüfungen greifen bei einem Verstoß", () => {
         "stylelint",
         "tests/fixtures/bad.css",
         "--config",
-        "_anweisungen/pruefung/stylelint.json",
+        ".stylelintrc.json",
       ]),
     ).toBe(true);
   });

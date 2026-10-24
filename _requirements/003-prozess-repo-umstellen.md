@@ -98,7 +98,12 @@ Aus Sicht von Entwickler/CI:
 
 # Testnachweis
 
-*Vom Agenten in Stufe 5 ergänzt.*
+-   **Rot** (vor der Korrektur):
+    -   `npx vitest run tests/unit/repo-paths.test.mjs` → **11 fehlgeschlagen / 3 bestanden** (14): Alt-Tokens in `eslint.config.js`, `.prettierignore`, `package.json`, `gitleaks.toml`, `scripts/*`, Workflows, Tests.
+    -   `npm test` rot: **lint** 80 Fehler (ESLint lintet `_design-system/`), **format:check** 81 Dateien, **check:ui** Config `_anweisungen/pruefung/stylelint.json` nicht gefunden.
+-   **Grün** (nach der Korrektur): `npm test` — **grün**: ESLint 0 · Prettier 0 · Stylelint (UI, `.stylelintrc.json`) 0 Befunde · Vitest **24/24** (5 Dateien, inkl. 14 `repo-paths`-Guards; `checks-fire` prüft Stylelint jetzt echt über `.stylelintrc.json`) · Audit 0 prod / 0 dev · gitleaks keine · Playwright (iPhone/dark) 3/3.
+-   **Sauberer Lauf:** `npm run check:clean` — **grün** (submodul-freier Klon des 5e-Stands; Selbsttest „`_design-system` leer: ja"). Belegt, dass `npm test` ohne Submodul durchläuft.
+-   **UI-Richtlinie:** `npm run check:ui` — 0 Befunde; keine UI/CSS berührt. Ausnahmen: keine.
 
 # QA
 

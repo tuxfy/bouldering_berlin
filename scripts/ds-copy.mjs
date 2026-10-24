@@ -2,11 +2,11 @@
 // Kopiert den ausgelieferten CSS-Vertrag des Design-Systems (Tokens + Komponenten-CSS)
 // samt benötigter Assets aus dem Submodul nach app/vendor/designsystem/.
 // React-Quellen (bundle.js, src/, *.d.ts) werden bewusst NICHT kopiert — sie dienen nur als Referenz.
-// Siehe _kontext/design.md.
+// Siehe _context/design.md.
 import { cpSync, existsSync, mkdirSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
 
-const SRC = process.env.DS_SRC || "_kontext/designsystem";
+const SRC = process.env.DS_SRC || "_design-system";
 const DEST = process.env.DS_DEST || "app/vendor/designsystem";
 
 // Datei (oder Ordner) im Quell- → Zielbaum, relativ zu SRC/DEST.

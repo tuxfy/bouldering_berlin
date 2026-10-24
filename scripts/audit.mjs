@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Schwachstellen in Abhängigkeiten: ausgelieferte (prod) blockieren, Entwicklungswerkzeuge
-// (nur im vollen Audit) sind Warnung. Siehe _kontext/projekt.md und _anweisungen/00-einrichtung.md.
+// (nur im vollen Audit) sind Warnung. Siehe _context/projekt.md und _agent-process/anweisungen/00-einrichtung.md.
 import { execSync } from "node:child_process";
 
 /** Wertet zwei npm-audit-JSONs aus: voll und prod-only. */

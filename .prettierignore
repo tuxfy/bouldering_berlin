@@ -3,10 +3,11 @@ app/vendor
 app/sw-precache.js
 tests/fixtures
 package-lock.json
-_anweisungen
-_kontext
-anforderungen
-releases
+_agent-process
+_design-system
+_context
+_requirements
+_releases
 .claude
 test-results
 playwright-report

@@ -8,7 +8,8 @@ description = "Abhängigkeiten, vendorte/generierte Dateien, Prozess-Ordner und 
 paths = [
   '''node_modules/''',
   '''app/vendor/''',
-  '''_kontext/designsystem/''',
+  '''_design-system/''',
+  '''_agent-process/''',
   '''package-lock\.json''',
   # Eng gefasst: nur die bewusste Dummy-Datei der Negativprobe, nicht der ganze Fixture-Ordner.
   '''tests/fixtures/secret/leak\.txt''',
