@@ -1,5 +1,5 @@
 -   **Title** Workout-Timer (Intervall-Timer mit Sets)
--   **Status** refined
+-   **Status** in progress
 
 # Idee
 
