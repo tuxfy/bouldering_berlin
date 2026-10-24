@@ -14,6 +14,7 @@ Eine Sammlung kleiner, mobiler Tools rund ums Bouldern („Bouldering Berlin Too
 - **Framework:** keins. Native Web Components + ES-Module; jedes Tool eine eigene Seite/Komponente.
 - **Build:** **keiner.** Die App wird als statische Dateien ausgeliefert.
 - **PWA:** handgeschriebenes `manifest.json` + Service Worker (ohne Workbox/Build), offline-fähig.
+  - **Neue Tool-Seiten** (Erkenntnis aus 004): mit **explizitem `index.html`** verlinken (die Navigations-URL muss ein Precache-Asset treffen — sonst greift der Navigate-Fallback in `app/sw.js` und liefert die Shell) und den **Service Worker in der Tool-Seite selbst registrieren** (wie `app/main.js`), damit auch der direkte Einstieg offline funktioniert. `app/sw-precache.js` ist generiert (gitignored) und nimmt neue Dateien unter `app/` automatisch auf.
 - **Laufzeit-Abhängigkeiten:** keine. Das Design-System kommt als kopierte CSS (siehe „Befehle" und `_context/design.md`). npm/`package.json` existiert nur für **Dev-Werkzeuge** (Prüfungen) — die App selbst bleibt build-frei.
 
 ## Zielformat
