@@ -221,7 +221,12 @@ Architektur: Tool als **statische Seite + ES-Modul-Controller** (Light DOM mit D
 
 # Testnachweis
 
-*Vom Agenten in Stufe 5 ergänzt.*
+**Schritt 1 — Format-Modul (`format.js`):**
+
+-   **Rot** (vor der Änderung): `npx vitest run tests/unit/boulder-log-format.test.mjs` — Suite fehlgeschlagen: `Cannot find module '../../app/tools/boulder-log/format.js'`.
+-   **Grün** (nach der Änderung): `npx vitest run tests/unit/boulder-log-format.test.mjs` — 13 bestanden / 0 fehlgeschlagen. Voller Lauf `npm test` grün (lint, format, check:ui, Unit 37, audit, secrets, E2E 3).
+
+*(weitere Schritte folgen)*
 
 # QA
 
