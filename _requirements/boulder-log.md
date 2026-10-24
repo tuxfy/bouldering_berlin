@@ -1,5 +1,5 @@
 -   **Title** Boulder-Log
--   **Status** new
+-   **Status** refined
 
 # Idee
 
@@ -28,16 +28,7 @@ Es gibt bisher **keinen** Weg von der Shell in ein Tool (keine Navigation/kein R
 
 # Offene Fragen
 
-*Werden in Stufe 3/4 beantwortet — hier nur gesammelt.*
-
--   **Schwierigkeit:** Welche Skala? Berliner Hallen nutzen oft Farbkreise/Hallen-Farben statt Graden (Font-Skala). Feste Auswahl, pro Halle unterschiedlich, oder frei?
--   **Halle:** Feste Liste zum Antippen, frei eintippbar, oder zuletzt genutzte vorausgewählt?
--   **Send & Versuche:** Was bedeutet „Send" genau (geschafft ja/nein, Flash = 1. Versuch)? Wie verhält sich das zu „Anzahl Versuche"? Werden nur geschaffte oder auch nur probierte Boulder erfasst?
--   **Style:** Welche Werte (z. B. Slab, Overhang, Dyno, Crimp …) und wie viele? Ein Wert oder mehrere pro Boulder? Pflicht oder optional?
--   **Session:** Wie wird eine Session abgegrenzt — automatisch über Datum/Zeit oder manuell gestartet/beendet?
--   **Fortschritt:** Gehört eine Fortschritts-/Statistikansicht („werde ich besser?") schon dazu oder vorerst nur die Liste? (→ ggf. Abgrenzung)
--   **Korrigieren:** Lassen sich Einträge bei Fehleingabe bearbeiten oder löschen?
--   **Datensicherheit:** „Bleiben auf dem Handy" — Risiko Datenverlust beim Leeren des Browser-Speichers; ist ein Export/Backup gewünscht oder bewusst außen vor?
+-   keine — in „Entscheidungen" überführt.
 
 # Design-Brief
 
@@ -106,23 +97,81 @@ Es gibt bisher **keinen** Weg von der Shell in ein Tool (keine Navigation/kein R
 
 # Entscheidungen
 
--   *(folgen aus Stufe 3/4)*
+Aus Klärung und Design übernommen, hier ergänzt (beantwortete offene Fragen eingeschlossen).
+
+**Fachlich / Verhalten:**
+
+-   **Skala:** Grad als Font-Skala (Fb) `3 … 8a` über eine Vorschlagsliste; **freie Eingabe bleibt möglich**. (war offen — Hallen-Farben verworfen, weil pro Halle verschieden.)
+-   **Style:** vordefinierte Tags, mehrere wählbar, **optional**; dazu Freitext „Weitere Angaben", der im Log **an die Styles angehängt** wird. (war offen)
+-   **Send & Versuche:** `send` ist ein Toggle (geschafft ja/nein), `tries` ≥ 1; auch **nur probierte** Boulder (ohne `send`) werden erfasst. (war offen)
+-   **Session:** genau **ein** aktuelles Log — **kein Datum, keine Historie**. (war offen)
+-   **Halle:** **keine** Hallen-Auswahl in dieser Version. (war offen)
+-   **Korrigieren/Löschen einzelner Einträge:** ausschließlich **direkt im editierbaren Log-Textfeld** — kein Bearbeiten-/Lösch-Dialog pro Eintrag. (war offen)
+-   **Nach Hinzufügen:** Grad bleibt stehen; `tries` → 1, `send` aus, Styles und „Weitere Angaben" leer.
+-   **Kopieren:** ganzes Log in die Zwischenablage; Bestätigung am Button „Kopiert ✓" für 2 s.
+-   **Reset:** leert das Log vollständig; Bestätigung über **ConfirmSheet**.
+-   **Leeres Log:** Platzhalter „Noch keine Einträge."; **Kopieren und Reset deaktiviert**.
+-   **Zeilenformat:** `- <grad>: <n> tries[ (send)][ - <style>, …, <weitere Angaben>]`, bei genau einem Versuch `1 try`.
+
+**Technik** (Agent schlägt vor, Nutzer entscheidet):
+
+-   **Navigation:** je Tool eine **eigene Seite** (gemäß `_context/projekt.md`: „jedes Tool eine eigene Seite/Komponente"). Die Shell verlinkt per **Kachel (Tile)** auf die Boulder-Log-Seite; „⊞ Tools" im Header führt zurück. Kein Router, kein Build.
+-   **Speicher:** `localStorage`, ein Schlüssel. **Der Inhalt des Log-Textfelds ist die Datenquelle** (ein String) — kein IndexedDB nötig. Bleibt auf dem Gerät, offline-fähig.
+-   **Zwischenablage:** native `navigator.clipboard.writeText` (sicherer Kontext: `localhost`/`https` gegeben).
+-   **Grad-Vorschläge:** native `<datalist>`; Aussehen bestimmt iOS (DS-Lücke, in `_context/design.md` vermerkt).
+-   **Offline:** neue Tool-Seite und ihre Dateien in die **Precache-Liste des Service Workers** aufnehmen.
+-   **Neue Pakete/Abhängigkeiten:** **keine.**
+-   **Nur am echten Gerät prüfbar:** Zwischenablage in Safari, echtes Offline-Verhalten, PWA-Installation/Standalone, Darstellung der `<datalist>` auf iOS.
 
 # Verhalten
 
-*(Stufe 4)*
+Was der Nutzer sieht und tut (aus dem freigegebenen Entwurf, `_requirements/mockups/boulder-log/`):
+
+-   **Einstieg:** In der Shell steht im Tool-Grid eine Kachel **„Boulder Log"** (Icon). Tippen öffnet den Boulder-Log-Screen. Im Header führt **„⊞ Tools"** zurück zur Shell.
+-   **Eintragen (eine Zeile):** Grad eintippen (Vorschläge aus der Font-Skala, freie Eingabe möglich) · `tries` über den Stepper (Standard 1) · `send` optional an · **„+"** fügt hinzu. „+" ist **deaktiviert, solange kein Grad** eingetragen ist.
+-   **Style:** darunter Tags zum Antippen (mehrere), optional; „Weitere Angaben" als Freitext für zusätzliche Stichworte.
+-   **Nach dem Hinzufügen** erscheint unten im **Log** eine neue Zeile im festgelegten Format; Grad bleibt stehen, der Rest wird zurückgesetzt — so lässt sich mehreres am selben Grad schnell eintragen.
+-   **Log ansehen/korrigieren:** Das Log ist ein **editierbares Monospace-Textfeld**; einzelne Zeilen lassen sich direkt ändern oder löschen. Leeres Log zeigt „Noch keine Einträge.".
+-   **Kopieren:** „Kopieren" legt das ganze Log in die Zwischenablage; der Button zeigt kurz „Kopiert ✓".
+-   **Reset:** „Reset" fragt über ein Sheet nach („Alle Einträge löschen?") und leert das Log erst nach „Löschen".
+-   **Dauerhaft & offline:** Das Log bleibt nach Schließen/Neuladen der App erhalten (Gerät) und funktioniert ohne Netz.
 
 # Akzeptanzkriterien
 
-*(Stufe 4)*
+| Kriterium | Prüfung |
+|---|---|
+| Shell zeigt eine „Boulder Log"-Kachel; Tippen öffnet den Screen; „⊞ Tools" führt zurück | E2E |
+| Grad-Feld bietet die Font-Skala als Vorschläge und erlaubt freie Eingabe; „+" ist ohne Grad deaktiviert | E2E |
+| Hinzufügen hängt genau eine Zeile im Format `- <grad>: <n> tries[ (send)][ - …]` unten an; `1 try` bei genau einem Versuch | Unit (Formatfunktion) + E2E |
+| Nach Hinzufügen: Grad bleibt, `tries`→1, `send` aus, Styles und „Weitere Angaben" leer | E2E |
+| Log ist frei editierbar; manuelle Änderungen bleiben erhalten | E2E |
+| Kopieren legt das ganze Log in die Zwischenablage; Button zeigt „Kopiert ✓" für 2 s | E2E (Clipboard) + manuell (Safari am Gerät) |
+| Reset öffnet das ConfirmSheet; „Löschen" leert das Log, „Abbrechen" lässt es unverändert | E2E |
+| Bei leerem Log: Platzhalter „Noch keine Einträge."; Kopieren und Reset deaktiviert | E2E |
+| Log bleibt nach Neuladen erhalten (localStorage); ohne Netz nutzbar | E2E (Reload) + manuell (echtes Offline/Gerät) |
+| Test für das abzusichernde Verhalten geschrieben — ohne die Änderung rot | Testlauf |
+| Nach der Umsetzung laufen alle Tests grün | Testlauf |
+| UI-Richtlinie eingehalten (nur Tokens und Komponenten des Design-Systems, keine festen Werte, keine Inline-Styles) | `npm run check:ui` / Review |
+| Entwurf umgesetzt, Werte/Texte/Logik aus der abgelegten Quelle (`Main.dc.html`) übernommen | manuell / Review |
+| `README.md` ergänzt — nur wenn sich Setup, Konfiguration oder Bedienung ändern | Review |
 
 # Abgrenzung
 
--   *(folgt; abhängig von „Fortschritt" und „Datensicherheit" oben)*
+Ausdrücklich **nicht** Teil dieser Anforderung (jeweils Kandidat für eine eigene Idee, Stufe 1):
+
+-   **Fortschritt / Statistik** („werde ich besser?") — keine Auswertung, keine Graphen, keine Trends.
+-   **Export / Backup / Datei-Ausgabe** — der einzige Weg, Daten rauszubringen, ist **„Kopieren"** (Zwischenablage). Kein Teilen, kein Download, keine Cloud/Sync, kein Konto.
+-   **Halle / Hallen-Auswahl**, **Session-Historie**, **Datum/Zeit** je Eintrag.
+-   **Mehrere/benannte Logs.**
+-   **Datensicherheit:** Die Daten liegen nur im Browser-Speicher des Geräts; Leeren des Speichers oder Deinstallation löscht sie. Bewusst in Kauf genommen; Sicherung erfolgt bei Bedarf über „Kopieren".
 
 # Technische Notizen
 
 *Optional, nicht bindend.*
+
+-   Voraussichtlich betroffen: `app/index.html` (Kachel + „Noch keine Tools" ausblenden), neue Tool-Seite `app/tools/boulder-log/` (HTML/JS/CSS), Service-Worker-Precache (`app/sw-precache.js` bzw. `scripts/gen-sw.mjs`), ggf. `app/app.css`.
+-   Die **Formatierung einer Log-Zeile** als reine Funktion ausgliedern (gut per Unit-Test absicherbar).
+-   Clipboard/`<datalist>`/Offline sind teils nur am Gerät final prüfbar (siehe Entscheidungen).
 
 # Umsetzungsplan
 
