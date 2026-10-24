@@ -134,14 +134,14 @@ Ein **Hinweis** (nichts muss): Der `.gitmodules`-Sektionsname `[submodule "_kont
 
 ## CI
 
-Pull Request [#4](https://github.com/tuxfy/bouldering_berlin/pull/4) `feature/prozess-repo-umstellen` → `next`, Lauf [40071325294](https://github.com/tuxfy/bouldering_berlin/actions/runs/40071325294): **`test` grün**, Socket Security grün. `MERGEABLE`/`CLEAN`.
+Pull Request #4 `feature/prozess-repo-umstellen` → `next`, Lauf 40071325294: **`test` grün**, Socket Security grün. `MERGEABLE`/`CLEAN`.
 
 # Abnahme
 
 -   **Datum:** 2026-10-24
 -   **Abgenommen von:** Nutzer (ausdrücklich), auf dem Feature-Branch `feature/prozess-repo-umstellen`.
 -   **Geprüft (Checkliste des Abnahmepakets):**
-    -   CI real grün: PR [#4](https://github.com/tuxfy/bouldering_berlin/pull/4), Check `test` grün (Lauf 40071325294), Socket Security grün, `MERGEABLE`/`CLEAN`.
+    -   CI real grün: PR #4, Check `test` grün (Lauf 40071325294), Socket Security grün, `MERGEABLE`/`CLEAN`.
     -   Keine lebende Datei verweist mehr auf alte Pfade (`_kontext`, `_anweisungen`, `anforderungen/`) — Guard `repo-paths` greift (vorher 11/14 rot, jetzt grün).
     -   `checks-fire` prüft Stylelint wieder echt über `.stylelintrc.json` (nicht über Config-Fehler) — kein hohler Test mehr.
     -   Sauberer Lauf `npm run check:clean` grün (submodul-frei, Selbsttest gegen `_design-system`).
