@@ -1,5 +1,5 @@
 -   **Title** Prozess-Repo-Umstellung: Verweise auf neue Pfade nachziehen
--   **Status** review
+-   **Status** accepted
 
 # Idee
 
@@ -138,4 +138,20 @@ Pull Request [#4](https://github.com/tuxfy/bouldering_berlin/pull/4) `feature/pr
 
 # Abnahme
 
-*In Stufe 7 ergänzt.*
+-   **Datum:** 2026-10-24
+-   **Abgenommen von:** Nutzer (ausdrücklich), auf dem Feature-Branch `feature/prozess-repo-umstellen`.
+-   **Geprüft (Checkliste des Abnahmepakets):**
+    -   CI real grün: PR [#4](https://github.com/tuxfy/bouldering_berlin/pull/4), Check `test` grün (Lauf 40071325294), Socket Security grün, `MERGEABLE`/`CLEAN`.
+    -   Keine lebende Datei verweist mehr auf alte Pfade (`_kontext`, `_anweisungen`, `anforderungen/`) — Guard `repo-paths` greift (vorher 11/14 rot, jetzt grün).
+    -   `checks-fire` prüft Stylelint wieder echt über `.stylelintrc.json` (nicht über Config-Fehler) — kein hohler Test mehr.
+    -   Sauberer Lauf `npm run check:clean` grün (submodul-frei, Selbsttest gegen `_design-system`).
+    -   Abgrenzung eingehalten: `_requirements/done/*`, `_releases/*`, `_agent-process/`, `_design-system/`, `app/vendor/` unverändert (`git diff`).
+-   **Nichts am Gerät zu prüfen** — keine UI-/App-Änderung; es blieb kein manueller Rest offen.
+
+# Rückblick
+
+-   **Projekt:** Der Ordner-Umzug (`4cffe9d`) ließ Verweise auf alte Pfade in Konfig, Skripten, Workflows und Doku stehen → CI rot. Der neue Guard `tests/unit/repo-paths.test.mjs` verhindert künftig, dass Alt-Tokens (`_kontext`, `_anweisungen`, `anforderungen/`) in lebende Dateien zurückkehren.
+-   **Prozess (Vorschlag fürs Prozess-Repo, hier nicht geändert):**
+    -   Eine Umbenennung/Umstrukturierung sollte den Verweis-Nachzug im **selben** Schritt enthalten (oder einen Guard-Test mitliefern), damit zwischen Umzug und Korrektur nie ein roter Zustand committet wird.
+    -   Negativproben müssen den **Grund** des Rotwerdens prüfen, nicht nur das Rotwerden: `checks-fire` war zwischenzeitlich „grün" bzw. „rot aus dem falschen Grund" (fehlende Config statt erkannter Hex-Farbe). Lehre: einen Fehlgrund asserten, sonst wird der Test hohl.
+-   **Betrieb:** „Grün heißt grün in der CI" hat erneut getragen — maßgeblich war der Lauf auf dem gepushten Branch (PR #4), nicht das lokale Grün.
