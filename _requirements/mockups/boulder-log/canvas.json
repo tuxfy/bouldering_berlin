@@ -1,0 +1,70 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-10-24T09:10:00Z"
+  },
+  "title": "boulder-log",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "Shell.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Start · Tool-Grid",
+      "is_interactive": true
+    },
+    "Main.dc.html": {
+      "x": 470,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Boulder Log · interaktiv",
+      "is_interactive": true
+    },
+    "Leer.dc.html": {
+      "x": 940,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Zustand: leer",
+      "is_interactive": true
+    },
+    "Reset.dc.html": {
+      "x": 1410,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Zustand: Reset",
+      "is_interactive": true
+    }
+  },
+  "order": [
+    "Shell.dc.html",
+    "Main.dc.html",
+    "Leer.dc.html",
+    "Reset.dc.html"
+  ],
+  "notes": {
+    "titel": {
+      "x": 0,
+      "y": -300,
+      "text": "boulder-log — Entwurf (3b)",
+      "kind": "title1",
+      "maxW": 1800
+    }
+  },
+  "designSystems": [
+    {
+      "title": "Bouldering Berlin Design System",
+      "namespace": "boulderingberlindesignsystem_25b717",
+      "artifact": null,
+      "version": "1792567487-8d5f",
+      "copiedAt": "2026-10-24T09:10:00Z"
+    }
+  ]
+}

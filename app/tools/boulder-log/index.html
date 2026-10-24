@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="de" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="color-scheme" content="dark" />
+    <title>Boulder Log</title>
+
+    <link rel="manifest" href="../../manifest.webmanifest" />
+    <link
+      rel="icon"
+      href="../../vendor/designsystem/assets/Logos/app-icon-192.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="../../vendor/designsystem/assets/Logos/app-icon-192.png"
+    />
+
+    <link rel="stylesheet" href="../../vendor/designsystem/tokens.css" />
+    <link
+      rel="stylesheet"
+      href="../../vendor/designsystem/components/bundle.css"
+    />
+    <link rel="stylesheet" href="./boulder-log.css" />
+  </head>
+  <body>
+    <div class="screen">
+      <header class="tool-header bl-header">
+        <h1 class="sr-only">Boulder Log</h1>
+        <a class="btn btn--secondary btn--compact" href="../../">⊞ Tools</a>
+      </header>
+
+      <main class="bl-main">
+        <div class="bl-entry">
+          <input
+            class="field bl-grade"
+            type="text"
+            list="fb-grades"
+            placeholder="Grad"
+            aria-label="Grad"
+            autocomplete="off"
+            id="grade"
+          />
+          <datalist id="fb-grades"></datalist>
+          <div class="stepper">
+            <button type="button" aria-label="Weniger tries" id="tries-dec">
+              −
+            </button>
+            <output
+              class="stepper__value"
+              aria-label="tries"
+              aria-live="polite"
+              id="tries"
+              >1</output
+            >
+            <button type="button" aria-label="Mehr tries" id="tries-inc">
+              +
+            </button>
+          </div>
+          <button type="button" class="toggle" aria-pressed="false" id="send">
+            send
+          </button>
+          <button
+            type="button"
+            class="btn btn--icon btn--interactive btn--compact"
+            aria-label="Hinzufügen"
+            id="add"
+            disabled
+          >
+            <span class="btn__glyph" aria-hidden="true">+</span>
+          </button>
+        </div>
+
+        <div class="bl-styles" role="group" aria-label="Style"></div>
+
+        <input
+          class="field"
+          type="text"
+          placeholder="Weitere Angaben …"
+          aria-label="Weitere Angaben"
+          id="note"
+        />
+
+        <textarea
+          class="textarea bl-log"
+          aria-label="Boulder Log"
+          spellcheck="false"
+          placeholder="Noch keine Einträge."
+          id="log"
+        ></textarea>
+
+        <div class="bl-actions">
+          <button
+            type="button"
+            class="btn btn--secondary btn--compact bl-copy"
+            id="copy"
+            disabled
+          >
+            Kopieren
+          </button>
+          <button
+            type="button"
+            class="btn btn--destructive btn--compact"
+            id="reset"
+            disabled
+          >
+            Reset
+          </button>
+        </div>
+      </main>
+
+      <div class="sheet-scrim" id="sheet" hidden>
+        <div
+          class="sheet"
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="sheet-title"
+        >
+          <h2 class="sheet__title" id="sheet-title">Alle Einträge löschen?</h2>
+          <p class="sheet__text">Das lässt sich nicht rückgängig machen.</p>
+          <div class="sheet__actions">
+            <button
+              type="button"
+              class="btn btn--destructive btn--block"
+              id="sheet-confirm"
+            >
+              Löschen
+            </button>
+            <button
+              type="button"
+              class="btn btn--secondary btn--block"
+              id="sheet-cancel"
+            >
+              Abbrechen
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./boulder-log.js"></script>
+  </body>
+</html>
