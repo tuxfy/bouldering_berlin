@@ -1,5 +1,5 @@
 -   **Title** Boulder-Log
--   **Status** refined
+-   **Status** in progress
 
 # Idee
 
@@ -175,7 +175,49 @@ Ausdrücklich **nicht** Teil dieser Anforderung (jeweils Kandidat für eine eige
 
 # Umsetzungsplan
 
-*Vom Agenten in Stufe 5 (5b) geschrieben, vom Nutzer freigegeben.*
+Architektur: Tool als **statische Seite + ES-Modul-Controller** (Light DOM mit DS-Klassen, wie die Shell aus 001 — kein Shadow DOM, sonst greift die globale DS-CSS nicht; von allen drei Rollen bestätigt). Reine Logik (`formatLine` + `appendLine`) in einem eigenen Modul, per Unit-Test abgesichert; **tries-Clamping (1–999) und Grad-Trim/„+"-Sperre liegen im Controller und werden per E2E geprüft**. Werte/Texte/Logik aus `_requirements/mockups/boulder-log/Main.dc.html` übernehmen.
+
+**Test-zuerst mit „rot aus dem richtigen Grund"** (senior-dev B1): Vor dem ersten roten E2E eines Schritts existiert eine **erreichbare** Minimal-Fassung (Route + Kachel), sodass der Test an der fehlenden **Erwartung** scheitert, nicht an 404. Jeder Schritt lässt die Suite am Ende grün (Commit je grünem Schritt).
+
+1.  **Schritte:**
+    1.  **Format-Modul:** `format.js` mit reinen Funktionen `formatLine({grade,tries,send,styles,note})` **und `appendLine(log, line)`** (Anhängen inkl. Sonderfall leeres Log und Trailing-Whitespace); Unit-Tests zuerst (rot → grün). Keine DOM-/Browser-APIs.
+    2.  **a) Shell-Anbindung + Tool-Grundgerüst + Eingabe:** Kachel in `app/index.html` (verlinkt `./tools/boulder-log/`, Icon `icon-boulderlog.svg`), „Noch keine Tools"-Hinweis entfernen, `start.spec.js` **im selben Schritt** auf die Kachel anpassen (bleibt positiv: Kachel vorhanden + verlinkt, Hinweis weg). Tool-Seite `index.html` (Markup, DS-Klassen, **keine** Inline-Styles) + `boulder-log.css` (Layout aus Entwurf, nur Tokens) + `boulder-log.js` (Zustand Grad/tries/send/Style/Weitere, Hinzufügen). E2E: Navigation hin/zurück; „+" ohne Grad deaktiviert / mit Grad aktiv; Hinzufügen hängt Zeile an; danach tries=1, send aus, Styles+Weitere leer, Grad bleibt; Datalist-Options + freie Eingabe; Leerzustand-Platzhalter.
+        **b) Reset + ConfirmSheet** (eigener Unterschritt, eigener roter→grüner E2E): Reset → Sheet; Abbrechen behält; Löschen leert; Scrim-Klick schließt; Kopieren+Reset bei leerem Log disabled.
+    3.  **Dauerhaftigkeit + Kopieren:** `localStorage` laden/speichern (neu ggü. Entwurf); `navigator.clipboard.writeText` + „Kopiert ✓" (2 s, dann zurück). E2E: nach Reload erhalten; Kopieren-Label + disabled-Logik (deterministisch).
+    4.  **Offline + Feinschliff:** expliziter Offline-E2E der **Tool-Seite** (DevOps 1); `sw-precache.js` per `npm run sw:build` neu erzeugen und **mitcommitten** (nie von Hand ändern).
+    5.  **Grün:** `npm test`, `npm run check:ui`, `npm run check:clean`; Kriterien abhaken, nur-am-Gerät-Prüfbares für die Abnahme markieren.
+
+2.  **Betroffene Dateien:**
+    -   neu: `app/tools/boulder-log/{index.html,boulder-log.js,boulder-log.css,format.js}`
+    -   neu (Tests): `tests/unit/boulder-log-format.test.mjs`, `tests/e2e/boulder-log.spec.js`
+    -   geändert: `app/index.html` (Kachel + Hinweis), `tests/e2e/start.spec.js` (Kachel statt leer)
+    -   neu erzeugt + mitcommittet: `app/sw-precache.js` (durch `npm run sw:build`; nicht von Hand)
+
+3.  **Testfälle je Akzeptanzkriterium:**
+    -   *Unit* (`boulder-log-format.test.mjs`, reine Logik): `1 try` vs. `n tries`; mit/ohne `(send)`; mit Styles; Styles + Weitere; nur Weitere; Join „, "; **Grenzfälle:** Grad mit umgebenden Leerzeichen → getrimmt; `note` nur Leerzeichen → nicht angehängt; `styles` **und** `note` leer → keine ` - `-Liste; `appendLine`: leeres Log → **keine** führende Leerzeile; Log mit Trailing-Newline → genau ein `\n`.
+    -   *E2E* (`boulder-log.spec.js`): „+" ohne Grad deaktiviert / mit Grad aktiv (**Grad nur aus Leerzeichen → deaktiviert**); Hinzufügen hängt genau eine Zeile an; danach tries=1, send aus, Styles+Weitere leer, **Grad bleibt**; **Stepper-Grenzen 1 und 999**; Datalist hat 18 Options im DOM + **freie Eingabe** (Wert außerhalb der Liste) landet korrekt im Log; Log editierbar und **nach Reload erhalten** (localStorage); Kopieren → Button „Kopiert ✓" + disabled bei leerem Log (**deterministisch**); Zwischenablage-Inhalt best-effort via `grantPermissions(['clipboard-read','clipboard-write'])` + `readText()`, klar als Chromium-Nachweis markiert — Safari-Verhalten = Geräteprüfung; Reset → Sheet, Abbrechen behält, Löschen leert; leeres Log → Platzhalter „Noch keine Einträge.", Kopieren+Reset disabled.
+    -   *E2E Offline* (eigener Fall, Muster aus `offline.spec.js`): Tool-Seite online besuchen → auf aktiven SW warten → `setOffline(true)` → **Tool-Seite** neu laden → auf ein **Tool-spezifisches** Element prüfen (nicht den Shell-Titel, sonst greift unbemerkt der Navigate-Fallback).
+    -   *E2E* (`start.spec.js`): Shell zeigt genau **eine** Kachel „Boulder Log", verlinkt aufs Tool; Hinweis „Noch keine Tools." nicht mehr sichtbar.
+
+4.  **Entwurf → Code** (aus `Main.dc.html` übernehmen):
+    -   Header: sichtbar nur „⊞ Tools" (`btn btn--secondary btn--compact`) → Shell; Titel „Boulder Log" nur für Screenreader (lokale `.sr-only`-Klasse — DS-Lücke, in `design.md` vermerkt).
+    -   Eingabezeile: `.field` + `list="fb-grades"` + `<datalist>` (18 Grade; ID dokumentseitig eindeutig) · `.stepper` (−/`output`/+, tries 1–999) · Send-ToggleChip (`toggle`/`is-on`) · „+" (`btn btn--icon btn--interactive btn--compact`, disabled ohne Grad).
+    -   Style-Tags (`toggle`/`is-on`, Mehrfach); „Weitere Angaben" (`.field`); Log (`.textarea`, mono, `resize:none`, Platzhalter „Noch keine Einträge.").
+    -   Aktionen: Kopieren (`btn btn--secondary btn--compact` → `btn--success` „Kopiert ✓") · Reset (`btn btn--destructive btn--compact`).
+    -   Sheet: `.sheet-scrim`/`.sheet` „Alle Einträge löschen?" · „Das lässt sich nicht rückgängig machen." · „Löschen"/„Abbrechen".
+    -   Format exakt: `- <grad>: <n> tries[ (send)][ - <tags>]`, tags = Styles + (Weitere, falls gesetzt), Join „, "; Anhängen mit `\n`.
+    -   Alle **Inline-Styles** des Entwurfs werden in `boulder-log.css` mit Tokens übersetzt.
+
+5.  **Externe Abhängigkeiten:** keine neuen Pakete. Browser-APIs (Standard, keine Zugangsdaten): `localStorage` (Speicher), `navigator.clipboard.writeText` (sicherer Kontext localhost/https), natives `<datalist>`, Service Worker (Offline, vorhanden). Im Test: E2E (Clipboard via `grantPermissions`), Offline über vorhandenes Muster (`offline.spec.js`).
+
+6.  **Annahmen und Risiken:**
+    -   Benötigte Tokens (`--content-pad-x/y`, `--color-scrim`, `--size-stepper` …) in der Projekt-DS (`443d530`) **vorhanden** (geprüft) → Entwurf 1:1 umsetzbar.
+    -   `start.spec.js` (gehört zu 001) wird angepasst: Erwartung „leere Übersicht" → „eine Kachel". **Keine Abschwächung**, sondern geändertes Verhalten (erstes Tool); die neue Prüfung bleibt **positiv**.
+    -   **Offline-E2E setzt den automatischen `sw:build` voraus** (via `npm start` in `playwright.config.js`): `app/sw-precache.js` wird vor dem Lauf frisch erzeugt, der Test hängt daher nicht an der committeten Datei und testet die Tool-Seite aus dem Precache (nicht den Shell-Fallback).
+    -   Clipboard-Lesen ist in headless Chromium je nach Fokus/Umgebung **flaky** → E2E sichert deterministisch Label + disabled; echter Zwischenablage-Inhalt in Safari = **Geräteprüfung**. Ebenso iOS-`<datalist>`-Aussehen = Geräteprüfung.
+    -   `localStorage` im privaten Modus evtl. flüchtig → Datensicherheit bewusst abgegrenzt.
+
+7.  **Nicht angefasst:** Aussehen/Verhalten der Shell außer Kachel + Hinweis; andere Tools; Design-System; Build/CI/Hosting/Release-Modell; Manifest; `scripts/gen-sw.mjs` (nur Ausführung). Abgegrenzt (nicht umgesetzt): Fortschritt/Statistik, Export/Backup, Halle, Historie/Datum, Cloud/Sync.
 
 # Testnachweis
 
