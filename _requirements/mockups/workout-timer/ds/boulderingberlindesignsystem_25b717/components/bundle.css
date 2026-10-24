@@ -1,0 +1,200 @@
+/* Bouldering Berlin Design System — Komponenten-Stylesheet. Lädt nach tokens.css.
+   Hier stehen nur Werte, die tokens.json nicht abbildet (Schrift-Atome und font-Shorthands, Bewegung, Tracking, Strichstärke). */
+:root{
+--text-xs:12px;
+--text-sm:14px;
+--text-md:16px;
+--text-lg:18px;
+--text-xl:24px;
+--text-display:88px;
+--weight-medium:500;
+--weight-semibold:600;
+--weight-bold:700;
+--weight-heavy:800;
+--leading-none:1;
+--leading-tight:1.2;
+--leading-normal:1.4;
+--leading-relaxed:1.6;
+--tracking-display:-0.04em;
+--tracking-tight:-0.02em;
+--tracking-caps:0.08em;
+--tracking-wide:0.28em;
+--type-display:var(--weight-heavy) var(--text-display)/var(--leading-none) var(--font-sans);
+--type-title:var(--weight-heavy) var(--text-xl)/var(--leading-tight) var(--font-sans);
+--type-heading:var(--weight-bold) var(--text-md)/var(--leading-normal) var(--font-sans);
+--type-button-lg:var(--weight-bold) var(--text-lg)/var(--leading-none) var(--font-sans);
+--type-button:var(--weight-bold) var(--text-md)/var(--leading-none) var(--font-sans);
+--type-body:var(--weight-medium) var(--text-md)/var(--leading-normal) var(--font-sans);
+--type-label:var(--weight-semibold) var(--text-md)/var(--leading-normal) var(--font-sans);
+--type-meta:var(--weight-medium) var(--text-sm)/var(--leading-normal) var(--font-sans);
+--type-meta-strong:var(--weight-semibold) var(--text-sm)/var(--leading-normal) var(--font-sans);
+--type-caps:var(--weight-semibold) var(--text-xs)/var(--leading-normal) var(--font-sans);
+--type-overline:var(--weight-heavy) var(--text-sm)/var(--leading-none) var(--font-sans);
+--type-glyph:var(--weight-medium) var(--text-xl)/var(--leading-none) var(--font-sans);
+--type-mono:var(--weight-medium) var(--text-sm)/var(--leading-relaxed) var(--font-mono);
+--stroke-ring:10;
+--duration-fast:120ms;
+--duration-slow:600ms;
+--duration-pulse:calc(var(--duration-fast) * 2);
+--ease-standard:ease;
+--ease-out:ease-out;
+--press-scale:0.97;
+}
+@keyframes pulse{0%{transform:scale(1)}40%{transform:scale(1.07)}100%{transform:scale(1)}}
+
+/* ── Basis ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font:var(--type-body);background:var(--color-bg);color:var(--color-text);min-height:100dvh;-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+input::placeholder,textarea::placeholder{color:var(--color-text-muted)}
+a{color:var(--color-interactive);text-decoration:none}a:hover{color:var(--color-text-strong)}
+button{-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:var(--focus-width) solid var(--color-focus);outline-offset:2px}
+
+/* Komponenten — nutzen ausschließlich Rollen-Tokens (--color-*, --type-*, --size-*, --radius-*, --space-*).
+   Regel: Rolle → Farbe · Größe → Höhe/Breite/Radius/Schrift · Kontext → Rollen neu belegt. */
+
+/* ── Töne: einziger Ort, an dem Farbrampen zu Tönen werden. Jede Komponente mit data-tone liest --tone-fg / --tone-bg ── */
+[data-tone="neutral"]{--tone-fg:var(--sage-400);--tone-bg:var(--sage-900)}
+[data-tone="orange"]{--tone-fg:var(--orange-400);--tone-bg:var(--orange-900)}
+[data-tone="green"]{--tone-fg:var(--green-400);--tone-bg:var(--green-900)}
+[data-tone="blue"]{--tone-fg:var(--blue-400);--tone-bg:var(--blue-900)}
+[data-tone="red"]{--tone-fg:var(--red-400);--tone-bg:var(--red-900)}
+
+/* ── Button / IconButton ── */
+.btn{font:var(--type-button);border:var(--border-width) solid transparent;border-radius:var(--radius-md);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);white-space:nowrap;padding:0 var(--space-4);transition:background var(--duration-fast) var(--ease-standard),color var(--duration-fast) var(--ease-standard),transform var(--duration-fast) var(--ease-standard)}
+/* Größen */
+.btn--compact{height:var(--size-sm)}
+.btn--block{height:var(--size-md);width:100%;font:var(--type-button-lg)}
+.btn--large{height:var(--size-lg);width:100%;font:var(--type-button-lg);border-radius:var(--radius-lg)}
+/* Rollen */
+.btn--primary{background:var(--color-primary-bg);color:var(--color-primary-fg);border-color:var(--color-primary-bg)}
+.btn--primary:active{background:var(--color-primary-pressed)}
+.btn--secondary{background:var(--color-surface);color:var(--color-text);border-color:var(--color-border)}
+.btn--secondary:active{background:var(--color-surface-pressed)}
+.btn--destructive{background:var(--color-surface);color:var(--color-danger-fg);border-color:var(--color-danger-border)}
+.btn--destructive:active{background:var(--color-danger-bg)}
+.btn--success{background:var(--color-success-bg);color:var(--color-success-fg);border-color:var(--color-success-border)}
+.btn--interactive{background:var(--color-interactive-solid);color:var(--color-on-solid);border-color:var(--color-interactive-solid)}
+.btn--ghost{background:none;border-color:transparent;color:var(--color-text-muted);padding:0}
+.btn--ghost:active{color:var(--color-text)}
+/* Icon-Form: quadratisch, gleiche Höhe wie die Größe */
+.btn--icon{padding:0;flex-direction:column;gap:var(--space-1)}
+.btn--icon.btn--compact{width:var(--size-sm)}
+.btn--icon.btn--large{width:var(--size-lg)}
+.btn--icon.btn--ghost{height:auto;width:auto}
+.btn__glyph{font:var(--type-glyph)}
+.btn__label{font:var(--type-caps);letter-spacing:var(--tracking-caps);text-transform:uppercase}
+/* Zustände */
+.btn:active{transform:scale(var(--press-scale))}
+.btn--ghost:active{transform:none}
+.btn:disabled{opacity:var(--disabled-opacity);pointer-events:none}
+
+/* ── ToggleChip ── */
+.toggle{height:var(--size-sm);min-width:var(--size-sm);padding:0 var(--space-2);background:var(--color-surface);border:var(--border-width) solid var(--color-border);border-radius:var(--radius-md);color:var(--color-text-muted);font:var(--type-caps);letter-spacing:var(--tracking-caps);cursor:pointer;transition:background var(--duration-fast),color var(--duration-fast)}
+.toggle.is-on{background:var(--color-success-bg);border-color:var(--color-success-border);color:var(--color-success-fg)}
+
+/* ── TextLink ── */
+.text-link{background:none;border:none;padding:0;cursor:pointer;display:inline-flex;align-items:baseline;gap:var(--space-1);font:var(--type-meta);color:var(--color-text)}
+.text-link:active{opacity:var(--press-opacity)}
+.text-link__strong{font:var(--type-meta-strong);color:var(--color-text)}
+.text-link__meta{color:var(--color-text-muted)}
+.text-link--empty{color:var(--color-text-muted);text-decoration:underline;text-underline-offset:2px}
+
+/* ── Field / TextArea ── */
+.field{height:var(--size-sm);width:100%;padding:0 var(--space-3);background:var(--color-surface);border:var(--border-width) solid var(--color-border);border-radius:var(--radius-md);color:var(--color-text-strong);font:var(--type-body);-webkit-appearance:none;appearance:none}
+.field:focus{outline:none;border-color:var(--color-interactive)}
+.textarea{width:100%;min-height:calc(var(--size-sm) * 4);padding:var(--space-3);background:var(--color-surface);border:var(--border-width) solid var(--color-border);border-radius:var(--radius-md);color:var(--color-text);font:var(--type-mono);resize:vertical}
+.textarea--sans{font:var(--type-body)}
+.textarea:focus{outline:none;border-color:var(--color-interactive)}
+
+/* ── Stepper ── */
+.stepper{display:flex;align-items:center;width:var(--size-stepper);height:var(--size-sm);background:var(--color-surface);border:var(--border-width) solid var(--color-border);border-radius:var(--radius-md);overflow:hidden}
+.stepper button{width:var(--space-10);height:100%;flex-shrink:0;background:none;border:none;color:var(--color-text-secondary);font-size:var(--text-lg);font-family:var(--font-sans);cursor:pointer}
+.stepper button:active{background:var(--color-surface-pressed);color:var(--color-text-strong)}
+.stepper__value{flex:1;min-width:0;width:100%;text-align:center;background:none;border:none;padding:0;color:var(--color-text-strong);font:var(--type-label);font-variant-numeric:tabular-nums}
+.stepper:focus-within{border-color:var(--color-interactive)}
+.stepper__value:focus{outline:none}
+
+/* ── ToolHeader / SubBar ── */
+.tool-header{position:sticky;top:0;z-index:var(--z-header);display:flex;justify-content:space-between;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);background:var(--color-bg);border-bottom:var(--border-width) solid var(--color-divider)}
+.tool-header__title{font:var(--type-heading);color:var(--color-text-strong)}
+.tool-header__action{flex-shrink:0}
+.sub-bar{display:flex;justify-content:center;padding:var(--space-2) var(--space-4);background:var(--color-bg);border-bottom:var(--border-width) solid var(--color-divider)}
+
+/* ── Tile ── */
+.tile{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-3);padding:var(--space-4);background:var(--color-surface);border:var(--border-width) solid var(--color-border);border-radius:var(--radius-lg);cursor:pointer;font-family:var(--font-sans);transition:background var(--duration-fast),transform var(--duration-fast)}
+.tile:active{background:var(--color-surface-pressed);transform:scale(var(--press-scale))}
+.tile__icon{display:flex}.tile__icon img{width:var(--size-icon);height:var(--size-icon);display:block}
+.tile__label{font:var(--type-meta-strong);color:var(--color-text);text-align:center}
+
+/* ── ListItem ── */
+.list-item{display:block;width:100%;text-align:left;padding:var(--space-3) 0;background:none;border:none;border-bottom:var(--border-width) solid var(--color-divider);cursor:pointer;font-family:var(--font-sans)}
+.list-item:active{opacity:var(--press-opacity)}
+.list-item__title{font:var(--type-label);color:var(--color-text)}
+.list-item.is-selected .list-item__title{color:var(--color-interactive)}
+.list-item__meta{font:var(--type-meta);color:var(--color-text-muted)}
+
+/* ── StatusMessage ── */
+.status-msg{min-height:calc(1em * var(--leading-normal));font:var(--type-meta)}
+.status-msg--danger{padding:var(--space-2) var(--space-3);text-align:center;color:var(--color-danger-fg);background:var(--color-danger-bg);border:var(--border-width) solid var(--color-danger-border);border-radius:var(--radius-md)}
+.status-msg--info{padding:var(--space-2) 0;color:var(--color-text-muted)}
+.status-msg--empty{padding:var(--space-4) 0;color:var(--color-text-muted)}
+
+/* ── ConfirmSheet (Bottom-Sheet, ersetzt window.confirm) ── */
+.sheet-scrim{position:fixed;inset:0;z-index:var(--z-overlay);background:var(--color-scrim);display:flex;align-items:flex-end;justify-content:center;animation:sheet-fade var(--duration-fast) var(--ease-out)}
+.sheet{width:100%;max-width:var(--content-max);display:flex;flex-direction:column;gap:var(--space-4);padding:var(--space-6) var(--space-4) calc(var(--space-6) + env(safe-area-inset-bottom));background:var(--color-surface);border:var(--border-width) solid var(--color-border);border-bottom:none;border-radius:var(--radius-lg) var(--radius-lg) 0 0;animation:sheet-up var(--duration-fast) var(--ease-out)}
+.sheet__title{font:var(--type-heading);color:var(--color-text-strong)}
+.sheet__text{font:var(--type-meta);color:var(--color-text-secondary);margin-top:calc(var(--space-3) * -1)}
+.sheet__actions{display:flex;flex-direction:column;gap:var(--space-2);margin-top:var(--space-2)}
+@keyframes sheet-fade{from{opacity:0}}
+@keyframes sheet-up{from{transform:translateY(var(--space-6));opacity:0}}
+
+/* ── ConfigRow ── */
+.cfg-group{border-top:var(--border-width) solid var(--color-divider)}
+.cfg-row{display:flex;align-items:center;gap:var(--space-3);min-height:var(--size-row);border-bottom:var(--border-width) solid var(--color-divider)}
+.cfg-row__label{flex:1;align-self:stretch;display:flex;align-items:center;margin:var(--space-4) 0;padding-left:var(--space-3);border-left:var(--edge-width) solid var(--color-border);font:var(--type-body);color:var(--color-text)}
+.cfg-row[data-tone] .cfg-row__label{border-left-color:var(--tone-fg)}
+.cfg-row__unit{width:var(--space-4);font:var(--type-meta);color:var(--color-text-muted)}
+
+/* ══ PATTERNS ══ */
+
+/* ── Stage: Kontext-Container. Tönt den Grund (Stufe 900) und belegt die Rollen neu → Kinder passen sich an ── */
+.stage{
+--color-bg:var(--tone-bg);
+--color-surface:var(--white-6);--color-surface-pressed:var(--white-12);--color-surface-sunken:var(--black-22);
+--color-border:var(--white-10);--color-divider:var(--white-6);
+--color-text-secondary:var(--white-70);--color-text-muted:var(--white-55);--color-text-disabled:var(--white-40);
+--color-primary-bg:var(--tone-fg);--color-primary-fg:var(--ink);--color-primary-pressed:var(--tone-fg);
+display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-6);padding:var(--space-2) var(--space-5) var(--space-6);
+background:var(--color-bg);color:var(--color-text-strong);font-family:var(--font-sans);transition:background var(--duration-slow) var(--ease-standard)}
+.stage .btn--primary{transition:background var(--duration-slow) var(--ease-standard),transform var(--duration-fast)}
+
+/* ── Counters (z. B. „Schritt 3 / 5") ── */
+.counters{display:flex;justify-content:center;gap:var(--space-6);font:var(--type-label);letter-spacing:var(--tracking-caps);text-transform:uppercase;color:var(--color-text-secondary)}
+.counters>span{white-space:nowrap}
+.counters b{font-weight:var(--weight-semibold);color:var(--color-text-strong);font-variant-numeric:tabular-nums}
+
+/* ── ProgressRing ── */
+.ring{position:relative;width:var(--ring-size);height:var(--ring-size);max-width:78vw;max-height:78vw}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring__track{fill:none;stroke:var(--color-divider);stroke-width:var(--stroke-ring)}
+.ring__prog{fill:none;stroke:var(--tone-fg,var(--color-interactive));stroke-width:var(--stroke-ring);stroke-linecap:round;transition:stroke-dashoffset var(--duration-fast) linear,stroke var(--duration-slow) var(--ease-standard)}
+.ring__center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-2)}
+.ring__label{font:var(--type-overline);letter-spacing:var(--tracking-wide);padding-left:var(--tracking-wide);color:var(--tone-fg,var(--color-interactive));transition:color var(--duration-slow) var(--ease-standard)}
+.ring__value{font:var(--type-display);letter-spacing:var(--tracking-display);font-variant-numeric:tabular-nums}
+.ring__value.pulse{animation:pulse var(--duration-pulse) var(--ease-out)}
+.ring__caption{font:var(--type-meta);color:var(--color-text-muted)}
+
+/* ── SegmentBar ── */
+.segments{display:flex;gap:var(--space-2);width:100%;max-width:var(--ring-size)}
+.segments__bar{flex:1;height:var(--size-bar);border-radius:var(--radius-full);background:var(--color-border);overflow:hidden}
+.segments__fill{height:100%;border-radius:var(--radius-full);background:var(--tone-fg,var(--color-interactive));transition:width var(--duration-fast) linear}
+
+/* ── Hint (Pille mit Ton-Punkt) ── */
+.hint{min-height:var(--size-sm);display:inline-flex;align-items:center;gap:var(--space-3);padding:0 var(--space-4);border-radius:var(--radius-md);background:var(--color-surface-sunken);font:var(--type-meta);color:var(--color-text-secondary)}
+.hint__dot{width:var(--size-dot);height:var(--size-dot);border-radius:var(--radius-full);background:var(--tone-fg)}
+.hint__dot:not([data-tone]){background:var(--color-text-disabled)}
+
+/* ── ControlBar: Neben · Haupt · Neben ── */
+.control-bar{display:grid;grid-template-columns:var(--size-lg) 1fr var(--size-lg);align-items:center;gap:var(--space-4);width:100%;max-width:var(--controls-max)}

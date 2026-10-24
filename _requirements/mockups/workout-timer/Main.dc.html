@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Workout-Timer</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/boulderingberlindesignsystem_25b717/tokens.css">
+<link rel="stylesheet" href="ds/boulderingberlindesignsystem_25b717/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div data-theme="dark" style="position: relative; width: 390px; height: 844px; display: flex; flex-direction: column; overflow: hidden; background: var(--color-bg); color: var(--color-text); font: var(--type-body)">
+
+  <header class="tool-header" style="justify-content: center">
+    <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap">Workout-Timer</h1>
+    <a href="Shell.dc.html" class="btn btn--secondary btn--compact">⊞ Tools</a>
+  </header>
+
+  <sc-if value="{{isConfig}}" hint-placeholder-val="{{ true }}">
+    <main style="flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: var(--space-6); padding: var(--space-8) var(--content-pad-x) var(--space-5)">
+      <div class="cfg-group">
+        <sc-for list="{{groupA}}" as="r" hint-placeholder-count="2">
+          <div class="cfg-row" data-tone="{{r.tone}}">
+            <span class="cfg-row__label">{{r.label}}</span>
+            <div class="stepper">
+              <button type="button" aria-label="{{r.lessLabel}}" onClick="{{r.dec}}">−</button>
+              <input class="stepper__value" type="text" inputmode="numeric" pattern="[0-9]*" aria-label="{{r.label}}" value="{{r.value}}" onChange="{{r.edit}}">
+              <button type="button" aria-label="{{r.moreLabel}}" onClick="{{r.inc}}">+</button>
+            </div>
+            <span class="cfg-row__unit">{{r.unit}}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div class="cfg-group">
+        <sc-for list="{{groupB}}" as="r" hint-placeholder-count="3">
+          <div class="cfg-row" data-tone="{{r.tone}}">
+            <span class="cfg-row__label">{{r.label}}</span>
+            <div class="stepper">
+              <button type="button" aria-label="{{r.lessLabel}}" onClick="{{r.dec}}">−</button>
+              <input class="stepper__value" type="text" inputmode="numeric" pattern="[0-9]*" aria-label="{{r.label}}" value="{{r.value}}" onChange="{{r.edit}}">
+              <button type="button" aria-label="{{r.moreLabel}}" onClick="{{r.inc}}">+</button>
+            </div>
+            <span class="cfg-row__unit">{{r.unit}}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="flex: 1 1 auto"></div>
+      <p style="margin: 0; text-align: center; font: var(--type-meta); color: var(--color-text-muted)">Gesamt · <b style="color: var(--color-text-strong); font-variant-numeric: tabular-nums">{{totalLabel}}</b></p>
+      <button type="button" class="btn btn--primary btn--block" onClick="{{start}}">Start</button>
+    </main>
+  </sc-if>
+
+  <sc-if value="{{isStage}}" hint-placeholder-val="{{ false }}">
+    <div class="stage" data-tone="{{tone}}" style="flex: 1 1 auto; min-height: 0">
+      <div class="counters">
+        <span>Rep <b>{{repLabel}}</b></span>
+        <span>Set <b>{{setLabel}}</b></span>
+      </div>
+      <div class="ring">
+        <svg viewBox="0 0 300 300" aria-hidden="true">
+          <circle class="ring__track" cx="150" cy="150" r="138"></circle>
+          <circle class="ring__prog" cx="150" cy="150" r="138" stroke-dasharray="{{circ}}" stroke-dashoffset="{{offset}}"></circle>
+        </svg>
+        <div class="ring__center" role="timer" aria-live="off">
+          <div class="ring__label">{{label}}</div>
+          <div class="{{valueClass}}">{{value}}</div>
+          <div class="ring__caption">{{caption}}</div>
+        </div>
+      </div>
+      <div class="segments" data-tone="{{segTone}}" aria-hidden="true">
+        <sc-for list="{{segments}}" as="g" hint-placeholder-count="6">
+          <div class="segments__bar"><div class="segments__fill" style="{{g.style}}"></div></div>
+        </sc-for>
+      </div>
+      <div class="hint"><span class="hint__dot" data-tone="{{hintTone}}"></span>{{hint}}</div>
+      <div class="control-bar">
+        <sc-if value="{{isDone}}" hint-placeholder-val="{{ false }}">
+          <button type="button" class="btn btn--icon btn--secondary btn--large" aria-label="Zurück zum Einstellen" onClick="{{back}}"><span class="btn__glyph" aria-hidden="true">←</span><span class="btn__label">Zurück</span></button>
+        </sc-if>
+        <sc-if value="{{isRun}}" hint-placeholder-val="{{ true }}">
+          <button type="button" class="btn btn--icon btn--destructive btn--large" aria-label="Reset" onClick="{{askReset}}"><span class="btn__glyph" aria-hidden="true">↺</span><span class="btn__label">Reset</span></button>
+        </sc-if>
+        <button type="button" class="btn btn--primary btn--large" onClick="{{main}}">{{mainLabel}}</button>
+        <sc-if value="{{isRun}}" hint-placeholder-val="{{ true }}">
+          <button type="button" class="btn btn--icon btn--secondary btn--large" aria-label="Überspringen" onClick="{{skip}}"><span class="btn__glyph" aria-hidden="true">⇥</span><span class="btn__label">Skip</span></button>
+        </sc-if>
+        <sc-if value="{{isDone}}" hint-placeholder-val="{{ false }}">
+          <span aria-hidden="true"></span>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{sheetOpen}}" hint-placeholder-val="{{ false }}">
+    <div class="sheet-scrim" style="position: absolute" onClick="{{scrim}}">
+      <div class="sheet" role="alertdialog" aria-modal="true" aria-label="Workout beenden?">
+        <div class="sheet__title">Workout beenden?</div>
+        <div class="sheet__text">Der Lauf wird abgebrochen, die Einstellungen bleiben.</div>
+        <div class="sheet__actions">
+          <button type="button" class="btn btn--destructive btn--block" onClick="{{confirm}}">Beenden</button>
+          <button type="button" class="btn btn--secondary btn--block" onClick="{{cancel}}">Weitermachen</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"zustand":{"editor":"enum","options":["interaktiv","einstellen","vorlauf","work","rest","pause","angehalten","beenden","fertig"],"default":"interaktiv","section":"Entwurf"},"tempo":{"editor":"enum","options":["1×","5×","20×"],"default":"1×","section":"Entwurf"},"ton":{"editor":"boolean","default":true,"section":"Entwurf"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  cfgDefault() { return { sets: 5, pause: 180, work: 7, reps: 6, rest: 3 }; }
+
+  timeline(c) {
+    var t = [{ k: 'prep', d: 10, set: 1, rep: 1 }];
+    for (var s = 1; s <= c.sets; s++) {
+      for (var r = 1; r <= c.reps; r++) {
+        t.push({ k: 'work', d: c.work, set: s, rep: r });
+        if (r < c.reps) t.push({ k: 'rest', d: c.rest, set: s, rep: r });
+      }
+      if (s < c.sets && c.pause > 0) t.push({ k: 'pause', d: c.pause, set: s, rep: c.reps });
+    }
+    return t;
+  }
+
+  find(t, k, set, rep) {
+    for (var i = 0; i < t.length; i++) if (t[i].k === k && t[i].set === set && t[i].rep === rep) return i;
+    return 0;
+  }
+
+  seed(z) {
+    var c = this.cfgDefault();
+    var t = this.timeline(c);
+    var base = { z: z, cfg: c, view: 'config', idx: 0, rem: 0, paused: false, live: false, sheet: false, wasPaused: false };
+    var run = function (i, rem, extra) { return Object.assign({}, base, { view: 'run', idx: i, rem: rem }, extra || {}); };
+    if (z === 'vorlauf') return run(0, 6.4);
+    if (z === 'work') return run(this.find(t, 'work', 2, 3), 4.3);
+    if (z === 'rest') return run(this.find(t, 'rest', 2, 3), 2.1);
+    if (z === 'pause') return run(this.find(t, 'pause', 2, 6), 128.4);
+    if (z === 'angehalten') return run(this.find(t, 'work', 2, 3), 4.3, { paused: true });
+    if (z === 'beenden') return run(this.find(t, 'work', 2, 3), 4.3, { paused: true, sheet: true, wasPaused: false });
+    if (z === 'fertig') return Object.assign({}, base, { view: 'done' });
+    return base;
+  }
+
+  st() {
+    var z = this.props.zustand ?? 'interaktiv';
+    var s = this.state;
+    return (s && s.z === z) ? s : this.seed(z);
+  }
+  up(ch) { this.setState(Object.assign({}, this.st(), ch)); }
+
+  speed() {
+    var t = this.props.tempo ?? '1×';
+    return t === '20×' ? 20 : (t === '5×' ? 5 : 1);
+  }
+
+  // Testtöne (Web Audio) — nur, um Signale im Entwurf zu hören.
+  audio() {
+    if (this.props.ton === false) return null;
+    try {
+      if (!this.ac) {
+        this.ac = new (window.AudioContext || window.webkitAudioContext)();
+        // Kompressor hebt den wahrgenommenen Pegel, ohne zu übersteuern.
+        this.out = this.ac.createDynamicsCompressor();
+        this.out.threshold.value = -24; this.out.knee.value = 6; this.out.ratio.value = 8;
+        this.out.attack.value = 0.002; this.out.release.value = 0.1;
+        this.out.connect(this.ac.destination);
+      }
+      if (this.ac.state === 'suspended') this.ac.resume();
+      return this.ac;
+    } catch (e) { return null; }
+  }
+  beep(freq, ms, delay, wave) {
+    var ac = this.audio();
+    if (!ac) return;
+    var t0 = ac.currentTime + (delay || 0);
+    var o = ac.createOscillator();
+    var g = ac.createGain();
+    o.type = wave || 'square';
+    o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(1.0, t0 + 0.005);
+    g.gain.setValueAtTime(1.0, t0 + ms / 1000 * 0.8);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + ms / 1000);
+    o.connect(g); g.connect(this.out || ac.destination);
+    o.start(t0); o.stop(t0 + ms / 1000 + 0.02);
+  }
+  signal(kind) {
+    // Frequenzen um 1–3 kHz: dort ist das Gehör am empfindlichsten, sie setzen sich gegen Hallenlärm durch.
+    if (kind === 'tick') this.beep(1760, 180);
+    // Phasenstart: ein langer Ton; Work eine Oktave höher als Rest/Pause.
+    else if (kind === 'work') this.beep(2093, 800);
+    else if (kind === 'rest' || kind === 'pause') this.beep(1046, 800);
+    else if (kind === 'done') { this.beep(1318, 250); this.beep(1760, 250, 0.3); this.beep(2637, 900, 0.6); }
+  }
+
+  componentDidMount() {
+    var self = this;
+    this.iv = setInterval(function () { self.tick(); }, 100);
+  }
+  componentWillUnmount() { clearInterval(this.iv); }
+
+  tick() {
+    var s = this.st();
+    if (s.view !== 'run' || !s.live || s.paused || s.sheet) return;
+    var before = Math.ceil(s.rem);
+    var rem = s.rem - 0.1 * this.speed();
+    var after = Math.ceil(rem);
+    if (rem <= 0) { this.advance(s); return; }
+    if (after < before && after >= 1 && after <= 3) this.signal('tick');
+    this.up({ rem: rem });
+  }
+
+  advance(s) {
+    var t = this.timeline(s.cfg);
+    var i = s.idx + 1;
+    if (i >= t.length) { this.signal('done'); this.up({ view: 'done', live: false, paused: false }); return; }
+    this.signal(t[i].k);
+    this.up({ idx: i, rem: t[i].d, live: s.live });
+  }
+
+  fmt(sec) {
+    var n = Math.max(0, Math.ceil(sec - 1e-9));
+    var m = Math.floor(n / 60);
+    var r = n % 60;
+    return m + ':' + (r < 10 ? '0' : '') + r;
+  }
+
+  renderVals() {
+    var self = this;
+    var s = this.st();
+    var c = s.cfg;
+    var t = this.timeline(c);
+    var total = t.reduce(function (a, x) { return a + x.d; }, 0);
+
+    var row = function (key, label, tone, unit, min, max, step) {
+      var set = function (v) {
+        var cur = self.st();
+        var n = Math.min(max, Math.max(min, v));
+        var cfg = Object.assign({}, cur.cfg);
+        cfg[key] = n;
+        self.up({ cfg: cfg });
+      };
+      return {
+        label: label, tone: tone, unit: unit, value: c[key],
+        lessLabel: label + ' weniger', moreLabel: label + ' mehr',
+        dec: function () { set(self.st().cfg[key] - step); },
+        inc: function () { set(self.st().cfg[key] + step); },
+        edit: function (ev) {
+          var n = parseInt(String(ev.target.value).replace(/[^0-9]/g, ''), 10);
+          if (!isNaN(n)) set(n);
+        }
+      };
+    };
+
+    var TONE = { prep: 'neutral', work: 'orange', rest: 'green', pause: 'green' };
+    var LABEL = { prep: 'GET READY', work: 'WORK', rest: 'REST', pause: 'PAUSE' };
+    var CAPTION = { prep: 'Mach dich bereit', work: 'Gib alles', rest: 'Durchatmen', pause: 'Set geschafft — kurz erholen' };
+    var NAME = { work: 'Work', rest: 'Rest', pause: 'Pause' };
+    var CIRC = 2 * Math.PI * 138;
+
+    var isDone = s.view === 'done';
+    var cur = isDone ? null : t[Math.min(s.idx, t.length - 1)];
+    var progress = isDone ? 1 : (cur.d > 0 ? 1 - s.rem / cur.d : 1);
+    var nxt = isDone ? null : t[s.idx + 1];
+
+    var fills = [];
+    for (var i = 1; i <= c.reps; i++) {
+      var f = 0;
+      if (isDone || (cur && cur.k === 'pause')) f = 1;
+      else if (cur && cur.k === 'work') f = i < cur.rep ? 1 : (i === cur.rep ? progress : 0);
+      else if (cur && cur.k === 'rest') f = i <= cur.rep ? 1 : 0;
+      fills.push({ style: 'width: ' + (Math.round(f * 1000) / 10) + '%' });
+    }
+
+    var hint, hintTone;
+    if (isDone) { hint = c.sets + ' Sets · ' + c.reps + ' Reps · ' + c.work + ' s / ' + c.rest + ' s'; hintTone = undefined; }
+    else if (nxt) { hint = 'Als Nächstes: ' + NAME[nxt.k] + ' · ' + this.fmt(nxt.d); hintTone = TONE[nxt.k]; }
+    else { hint = 'Letzter Rep — gleich geschafft'; hintTone = undefined; }
+
+    var remSec = isDone ? 0 : s.rem;
+    var pulse = !isDone && !s.paused && s.live && Math.ceil(remSec) <= 3 && (Math.ceil(remSec) - remSec) < 0.3;
+
+    var startRun = function () {
+      self.audio();
+      var tl = self.timeline(self.st().cfg);
+      self.signal('tick');
+      self.up({ view: 'run', idx: 0, rem: tl[0].d, paused: false, live: true, sheet: false });
+    };
+
+    return {
+      isConfig: s.view === 'config',
+      isStage: s.view !== 'config',
+      isRun: s.view === 'run',
+      isDone: isDone,
+      groupA: [row('sets', 'Sets', undefined, '', 1, 20, 1), row('pause', 'Pause', 'green', 's', 0, 900, 15)],
+      groupB: [row('work', 'Work', 'orange', 's', 1, 600, 1), row('reps', 'Reps', 'orange', '', 1, 30, 1), row('rest', 'Rest', 'green', 's', 1, 600, 1)],
+      totalLabel: this.fmt(total),
+      start: startRun,
+
+      tone: isDone ? 'neutral' : TONE[cur.k],
+      segTone: isDone ? 'neutral' : (cur.k === 'pause' ? 'green' : 'orange'),
+      repLabel: (isDone ? c.reps : cur.rep) + ' / ' + c.reps,
+      setLabel: (isDone ? c.sets : cur.set) + ' / ' + c.sets,
+      circ: CIRC.toFixed(2),
+      offset: (CIRC * (1 - Math.min(1, Math.max(0, progress)))).toFixed(2),
+      label: isDone ? 'DONE' : LABEL[cur.k],
+      value: isDone ? this.fmt(total) : this.fmt(remSec),
+      valueClass: 'ring__value' + (pulse ? ' pulse' : ''),
+      caption: isDone ? 'Workout geschafft' : (s.paused ? 'Angehalten' : CAPTION[cur.k]),
+      segments: fills,
+      hint: hint,
+      hintTone: hintTone,
+
+      mainLabel: isDone ? 'Nochmal' : (s.paused ? 'Weiter' : 'Pause'),
+      main: function () {
+        var x = self.st();
+        if (x.view === 'done') { startRun(); return; }
+        self.audio();
+        self.up({ paused: !x.paused, live: true });
+      },
+      skip: function () { self.advance(Object.assign({}, self.st(), { live: true })); },
+      back: function () { self.up({ view: 'config', live: false }); },
+      askReset: function () { var x = self.st(); self.up({ sheet: true, wasPaused: x.paused, paused: true }); },
+
+      sheetOpen: s.sheet,
+      confirm: function () { self.up({ view: 'config', sheet: false, live: false, paused: false }); },
+      cancel: function () { var x = self.st(); self.up({ sheet: false, paused: x.wasPaused }); },
+      scrim: function (ev) { if (ev && ev.target === ev.currentTarget) { var x = self.st(); self.up({ sheet: false, paused: x.wasPaused }); } }
+    };
+  }
+}
+</script>
+</body>
+</html>
