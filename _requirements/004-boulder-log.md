@@ -236,6 +236,11 @@ Architektur: Tool als **statische Seite + ES-Modul-Controller** (Light DOM mit D
 -   **Rot** (vor der Verdrahtung): `npx playwright test tests/e2e/boulder-log.spec.js --grep Reset` — 4 fehlgeschlagen (Aktivierung, Sheet öffnen, Löschen, Scrim).
 -   **Grün** (nach der Verdrahtung): `npx playwright test tests/e2e/boulder-log.spec.js` — 12/12. Voller Lauf `npm test` grün (E2E 15, Unit 37).
 
+**Schritt 3 — Dauerhaftigkeit (localStorage) + Kopieren:**
+
+-   **Rot** (vor der Umsetzung): `npx playwright test tests/e2e/boulder-log.spec.js --grep "Speichern & Kopieren"` — 3 fehlgeschlagen (Neuladen behält Einträge, manuelle Änderung bleibt, Kopieren), 1 bestanden (Reset-leer trivial).
+-   **Grün** (nach der Umsetzung): dieselbe Auswahl 4/4. Voller Lauf `npm test` grün (E2E 19, Unit 37). Zwischenablage-Inhalt in Chromium bestätigt; Safari-Clipboard = Geräteprüfung (Stufe 7).
+
 *(weitere Schritte folgen)*
 
 # QA

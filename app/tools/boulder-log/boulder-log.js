@@ -48,6 +48,26 @@ const copyEl = $("copy");
 const resetEl = $("reset");
 const sheetEl = $("sheet");
 
+const STORAGE_KEY = "boulder-log";
+
+function loadLog() {
+  try {
+    return localStorage.getItem(STORAGE_KEY) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+function saveLog() {
+  try {
+    localStorage.setItem(STORAGE_KEY, logEl.value);
+  } catch {
+    // Speicher nicht verfügbar (z. B. privater Modus) — bewusst ignoriert.
+  }
+}
+
+logEl.value = loadLog();
+
 let tries = 1;
 let send = false;
 const selectedStyles = new Set();
@@ -133,10 +153,31 @@ addEl.addEventListener("click", () => {
   }
   noteEl.value = "";
   updateActionsState();
+  saveLog();
 });
 
-// Log ist frei editierbar — Aktionszustand mitführen.
-logEl.addEventListener("input", updateActionsState);
+// Log ist frei editierbar — Aktionszustand mitführen und speichern.
+logEl.addEventListener("input", () => {
+  updateActionsState();
+  saveLog();
+});
+
+// Kopieren: ganzes Log in die Zwischenablage, Bestätigung „Kopiert ✓" für 2 s.
+let copyTimer;
+copyEl.addEventListener("click", () => {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(logEl.value).catch(() => {});
+  }
+  copyEl.textContent = "Kopiert ✓";
+  copyEl.classList.remove("btn--secondary");
+  copyEl.classList.add("btn--success");
+  clearTimeout(copyTimer);
+  copyTimer = setTimeout(() => {
+    copyEl.textContent = "Kopieren";
+    copyEl.classList.remove("btn--success");
+    copyEl.classList.add("btn--secondary");
+  }, 2000);
+});
 
 // Reset über ConfirmSheet (destruktiv).
 resetEl.addEventListener("click", openSheet);
@@ -145,6 +186,7 @@ $("sheet-confirm").addEventListener("click", () => {
   logEl.value = "";
   closeSheet();
   updateActionsState();
+  saveLog();
 });
 sheetEl.addEventListener("click", (ev) => {
   if (ev.target === sheetEl) closeSheet(); // Klick auf den Scrim schließt

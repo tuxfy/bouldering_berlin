@@ -152,3 +152,57 @@ test.describe("Boulder Log — Reset", () => {
     await expect(page.getByRole("alertdialog")).toBeHidden();
   });
 });
+
+test.describe("Boulder Log — Speichern & Kopieren", () => {
+  test.use({ permissions: ["clipboard-read", "clipboard-write"] });
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto(TOOL);
+  });
+
+  test("Einträge bleiben nach dem Neuladen erhalten", async ({ page }) => {
+    await page.getByLabel("Grad").fill("6b+");
+    await page.getByRole("button", { name: "Hinzufügen" }).click();
+    await expect(page.getByLabel("Boulder Log")).toHaveValue("- 6b+: 1 try");
+
+    await page.reload();
+    await expect(page.getByLabel("Boulder Log")).toHaveValue("- 6b+: 1 try");
+  });
+
+  test("manuelle Änderungen am Log bleiben erhalten", async ({ page }) => {
+    const log = page.getByLabel("Boulder Log");
+    await log.fill("- 7a: 2 tries (send)\n- 7a+: 5 tries");
+
+    await page.reload();
+    await expect(log).toHaveValue("- 7a: 2 tries (send)\n- 7a+: 5 tries");
+  });
+
+  test("Reset wird ebenfalls gespeichert", async ({ page }) => {
+    await page.getByLabel("Grad").fill("6a");
+    await page.getByRole("button", { name: "Hinzufügen" }).click();
+    await page.getByRole("button", { name: "Reset" }).click();
+    await page.getByRole("button", { name: "Löschen" }).click();
+
+    await page.reload();
+    await expect(page.getByLabel("Boulder Log")).toHaveValue("");
+  });
+
+  test("Kopieren bestätigt am Button und legt das Log in die Zwischenablage", async ({
+    page,
+  }) => {
+    await page.getByLabel("Grad").fill("6c");
+    await page.getByRole("button", { name: "Hinzufügen" }).click();
+
+    await page.locator("#copy").click();
+    await expect(page.locator("#copy")).toHaveText("Kopiert ✓");
+
+    // Chromium-Nachweis des Zwischenablage-Inhalts (Safari = Geräteprüfung).
+    const clip = await page.evaluate(() => navigator.clipboard.readText());
+    expect(clip).toBe("- 6c: 1 try");
+
+    // Die Bestätigung verschwindet wieder.
+    await expect(page.locator("#copy")).toHaveText("Kopieren", {
+      timeout: 4000,
+    });
+  });
+});
