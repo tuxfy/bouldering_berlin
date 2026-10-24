@@ -1,5 +1,5 @@
 -   **Title** Workout-Timer (Intervall-Timer mit Sets)
--   **Status** review
+-   **Status** accepted
 
 # Idee
 
@@ -244,6 +244,4 @@ Nicht Teil dieser Anforderung (ggf. später als eigene Idee im Backlog):
 
 # Abnahme
 
-*In Stufe 7 ergänzt.*
-
--   **Abgenommen am:** <Datum> — <was geprüft wurde>
+-   **Abgenommen am:** 2026-10-24 — lokal/am iPhone geprüft: Darstellung (Dark Mode, Spalte, eine Hand), Ablauf (Einstellen mit Steppern/Klemmen/Gesamtdauer, Lauf über Vorlauf/Work/Rest/Pause bis Fertig, Steuerung Pause/Weiter/Skip/Reset) und Ton. **Offen für die Geräte-Nachprüfung nach dem Release** (GitHub Pages, HTTPS): Screen Wake Lock, Verhalten bei manueller Sperre/Lautlos, Offline-Betrieb und PWA-Installation (über LAN-HTTP nicht als sicherer Kontext prüfbar).
