@@ -1,5 +1,5 @@
 -   **Title** Boulder-Log
--   **Status** qa
+-   **Status** review
 
 # Idee
 
@@ -275,7 +275,7 @@ Architektur: Tool als **statische Seite + ES-Modul-Controller** (Light DOM mit D
 -   *Security (Hinweis):* Ein fehlgeschlagenes `writeText` zeigt dennoch „Kopiert ✓" (nur Schreibzugriff, keine Datenpreisgabe) — Robustheits-/UX-Punkt, entspricht dem freigegebenen Entwurf; keine Änderung, Kandidat für eine spätere Idee.
 -   *Weitere Hinweise ohne Änderung:* kein Escape-Handler am Sheet (nicht gefordert, nicht im Entwurf); `.sr-only` nutzt `--border-width` als 1px-Maß (token-rein, vom Plan vorgesehen); `eslint.config.js`-Ignore für Mockups (notwendig, folgt dem bestehenden `_design-system/**`-Muster).
 
-**CI (6d):** *(folgt nach dem Pull Request nach `next`)*
+**CI (6d):** grün — `test` bestanden (Commit `b18e4ff`), Pull Request #11 nach `next`; Socket Security grün.
 
 # Abnahme
 
